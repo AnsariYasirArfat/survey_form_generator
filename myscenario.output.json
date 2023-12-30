@@ -1,0 +1,117 @@
+{
+    "title": "Guide to Become an Expert in Software Engineer Fields",
+    "completedHtml": "<h3>Thank you for your feedback</h3>",
+    "completedHtmlOnCondition": [
+     {
+      "html": "<h3>Thank you for your feedback</h3> <h4>We are glad that you love our product. Your ideas and suggestions will help us make it even better.</h4>"
+     },
+     {
+      "html": "<h3>Thank you for your feedback</h3> <h4>We are glad that you shared your ideas with us. They will help us make our product better.</h4>"
+     }
+    ],
+    "pages": [
+     {
+      "name": "page1",
+      "elements": [
+       {
+        "type": "radiogroup",
+        "name": "Main_Q1",
+        "title": "In which field do you want to become an expert?",
+        "choices": [
+         {
+          "value": "Item 1",
+          "text": "Web Development"
+         },
+         {
+          "value": "Item 2",
+          "text": "Machine Learning"
+         },
+         {
+          "value": "Item 3",
+          "text": "Mobile Development"
+         }
+        ]
+       },
+       {
+        "type": "radiogroup",
+        "name": "Sub_Q1_A",
+        "visibleIf": "{Main_Q1} = 'Item 1'",
+        "title": "In Web Development, there are three fields, select your interest.",
+        "choices": [
+         {
+          "value": "Item 1",
+          "text": "Backend Development"
+         },
+         {
+          "value": "Item 2",
+          "text": "Frontend Development"
+         },
+         {
+          "value": "Item 3",
+          "text": "Database Development"
+         }
+        ]
+       },
+       {
+        "type": "radiogroup",
+        "name": "Sub_Q1_B",
+        "visibleIf": "{Main_Q1} = 'Item 3'",
+        "title": "In Mobile Development, choose your preferred platform.",
+        "choices": [
+         {
+          "value": "Item 1",
+          "text": "Android"
+         },
+         {
+          "value": "Item 2",
+          "text": "iOS"
+         },
+         {
+          "value": "Item 3",
+          "text": "Cross-platform (e.g., React Native)."
+         }
+        ]
+       },
+       {
+        "type": "radiogroup",
+        "name": "Sub_Q1_C",
+        "visibleIf": "{Main_Q1} = 'Item 2'",
+        "title": "In Machine Learning, there are various domains, choose your interest.",
+        "choices": [
+         {
+          "value": "Item 1",
+          "text": "Natural Language Processing,"
+         },
+         {
+          "value": "Item 2",
+          "text": "Computer Vision"
+         },
+         {
+          "value": "Item 3",
+          "text": "Reinforcement Learning"
+         }
+        ]
+       },
+       {
+        "type": "text",
+        "name": "Sub_Q1_A_B",
+        "visibleIf": "{Sub_Q1_A} = 'Item 2'",
+        "title": "For Frontend Development, rate your knowledge in HTML, CSS, & JavaScript."
+       },
+       {
+        "type": "text",
+        "name": "Sub_Q1_B_B",
+        "visibleIf": "{Sub_Q1_B} = 'Item 2'",
+        "title": "For iOS Development, rate your proficiency in Swift programming language."
+       },
+       {
+        "type": "rating",
+        "name": "Sub_Q1_C_B",
+        "visibleIf": "{Sub_Q1_C} = 'Item 2'",
+        "title": "In Computer Vision, rate your knowledge of image recognition algorithms from 1 to 5"
+       }
+      ]
+     }
+    ],
+    "showQuestionNumbers": "off"
+   }
