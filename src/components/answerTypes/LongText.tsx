@@ -1,12 +1,16 @@
-import { Textarea } from "@nextui-org/react";
+import { Divider, Textarea } from "@nextui-org/react";
 import React from "react";
 
 const LongText = () => {
   return (
     <div>
-      <h5 className="p-2 text-base font-medium text-blue-600">
+      <h5 className="text-center pt-2 text-base font-medium text-blue-800">
         Answer type: Long text
       </h5>
+      <div className="mx-4 my-2">
+        <Divider />
+      </div>
+
       <Textarea
         label="Answer Field"
         readOnly

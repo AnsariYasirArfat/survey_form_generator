@@ -7,19 +7,25 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Tooltip,
 } from "@nextui-org/react";
+import { Network } from "lucide-react";
 
 const ConditionalLogicEditor = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <>
-      <Button
-        onPress={onOpen}
-        className="h-full w-full font-semibold"
-        fullWidth
-      >
-        Add Logic
-      </Button>
+      <Tooltip content="Logic">
+        <Button
+          onPress={onOpen}
+          // className="h-full w-full font-semibold"
+          // fullWidth
+          radius="sm"
+          size={"sm"}
+        >
+          <Network size={"16"} />
+        </Button>
+      </Tooltip>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

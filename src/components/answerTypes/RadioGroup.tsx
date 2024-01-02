@@ -1,7 +1,7 @@
 "use client";
 import React, { ChangeEvent, useState } from "react";
 import {
-  RadioGroup as RadioeType,
+  RadioGroup as RadioType,
   Radio,
   Divider,
   Button,
@@ -24,6 +24,7 @@ const RadioGroup = () => {
     setOptions([...options, { value: `Option ${optionCount}` }]);
     setOptionCount((prevCount) => prevCount + 1);
   };
+
   const minusOption = (optionToMinus: any) => {
     const udatedOption = options.filter(
       (option: any) => optionToMinus !== option
@@ -51,7 +52,7 @@ const RadioGroup = () => {
         <Divider />
       </div>
 
-      <RadioeType
+      <RadioType
         // label="Add label if needed"
         // isReadOnly
         classNames={{
@@ -108,7 +109,7 @@ const RadioGroup = () => {
             <Plus size={16} />
           </Button>
         </div>
-      </RadioeType>
+      </RadioType>
     </div>
   );
 };
