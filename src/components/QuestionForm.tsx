@@ -1,6 +1,7 @@
 "use client";
 
 import { ChangeEvent } from "react";
+import { v4 as uuidv4 } from "uuid";
 import {
   Card,
   CardHeader,
@@ -13,8 +14,12 @@ import {
   SelectItem,
   Tooltip,
 } from "@nextui-org/react";
-import { Asterisk, CopyPlus, Network, Trash2 } from "lucide-react";
-import { answerTypesData, singleInputTypes } from "@/utils/answerTypesData";
+import { Asterisk, CopyPlus, Plus, Trash2 } from "lucide-react";
+import {
+  answerTypesData,
+  rateTypes,
+  singleInputTypes,
+} from "@/utils/answerTypesData";
 import ConditionalLogicEditor from "./ConditionalLogicEditor";
 import LongText from "./answerTypes/LongText";
 import RadioGroup from "./answerTypes/RadioGroup";
@@ -26,16 +31,19 @@ import DefaultAnswer from "./answerTypes/DefaultUI";
 
 // text?: string;
 export interface Question {
+  questionId?: string;
   name?: string;
   title?: string;
   inputType?: string;
   type?: string;
   choices?: string[];
+  defaultValue?: number;
   min?: number | string;
   max?: number | string;
   step?: number | string;
   rateType?: string;
-  defaultValue?: number;
+  rateCount?: number;
+  isRequired?: boolean;
 }
 export interface QuestionFormProp {
   questions: Question[];
@@ -43,10 +51,46 @@ export interface QuestionFormProp {
 }
 
 const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
+  const addQuestions = () => {
+    setQuestions([
+      ...questions,
+      {
+        questionId: uuidv4(),
+        isRequired: false,
+
+        // rateType: "number",
+        // type: "ratingscale",
+      },
+    ]);
+    // const targetElement = document.getElementById("heading2");
+    // if (targetElement) {
+    //   console.log("target: ", targetElement);
+    //   targetElement.scrollIntoView({
+    //     behavior: "smooth",
+    //     block: "start",
+    //   });
+    // }
+  };
+
+  const deleteQuestions = (questionToDelete: Question) => {
+    const updatedQuestions = questions.filter(
+      (question: Question) => questionToDelete !== question
+    );
+    setQuestions(updatedQuestions);
+  };
+
+  const duplicateQuestions = (questionToDuplicate: Question) => {
+    const questionToAdd = { ...questionToDuplicate };
+    questionToAdd.questionId = uuidv4();
+    const allQuestion = [...questions, questionToAdd];
+
+    setQuestions(allQuestion);
+  };
+
   const handleDataChange = (
     index: number,
     field: keyof Question,
-    value: string
+    value: string | boolean
   ) => {
     // Updating the specified field of the question at the given index
     const updatedQuestions: any = [...questions];
@@ -62,9 +106,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
           <SingleInput
             question={question}
             index={index}
-            // inputType={question.inputType}
-            // questions={questions}
-            // setQuestions={setQuestions}
             handleDataChange={handleDataChange}
           />
         );
@@ -82,7 +123,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
         return <Boolean />;
 
       case "ratingscale":
-        return <RatingScale />;
+        return <RatingScale question={question} />;
       default:
         return <DefaultAnswer />;
     }
@@ -102,6 +143,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
           <Card key={index} isFooterBlurred className="w-full bg-blue-300 ">
             <CardHeader className="grid grid-cols-4 gap-3">
               <Input
+                isRequired={question.isRequired}
                 type="text"
                 classNames={{
                   input: ["text-black capitalize font-semibold"],
@@ -127,6 +169,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                 isClearable
               />
               <Input
+                isRequired={question.isRequired}
                 isClearable
                 type="text"
                 classNames={{
@@ -137,7 +180,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                 label="Question title:"
                 // description="Write your question here"
                 labelPlacement={"outside"}
-                placeholder="Write the question you'd like to present to users here:"
+                // placeholder="Write the question you'd like to present to users here:"
                 size={"md"}
                 value={question.title || ""}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -196,22 +239,67 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                     </Select>
                   </div>
                 )}
+                {question && question.type === "ratingscale" && (
+                  <div className="w-full">
+                    <Select
+                      label="Select Rate Type:"
+                      className="max-w-xs"
+                      // placeholder="Select an type"
+                      defaultSelectedKeys={["number"]}
+                      selectedKeys={
+                        question.rateType ? [question.rateType] : undefined
+                      }
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        handleDataChange(index, "rateType", e.target.value)
+                      }
+                    >
+                      {rateTypes.map((rateType) => (
+                        <SelectItem key={rateType.type} value={rateType.type}>
+                          {rateType.label}
+                        </SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
               </div>
               <div className="flex justify-end h-full items-end gap-2">
                 <ConditionalLogicEditor />
 
                 <Tooltip content="Required">
-                  <Button radius="sm" size={"sm"}>
-                    <Asterisk size={"16"} />
+                  <Button
+                    radius="sm"
+                    size={"sm"}
+                    onClick={() => {
+                      handleDataChange(
+                        index,
+                        "isRequired",
+                        !question.isRequired
+                      );
+                      console.log("isRequired: ", !question.isRequired);
+                    }}
+                  >
+                    <Asterisk
+                      size={question.isRequired ? `24` : `16`}
+                      color={question.isRequired ? `red` : `black`}
+                    />
                   </Button>
                 </Tooltip>
                 <Tooltip content="Duplicate">
-                  <Button radius="sm" size={"sm"}>
+                  <Button
+                    radius="sm"
+                    size={"sm"}
+                    onClick={() => duplicateQuestions(question)}
+                  >
                     <CopyPlus size={"16"} />
                   </Button>
                 </Tooltip>
                 <Tooltip content="Delete" color={"danger"}>
-                  <Button radius="sm" size={"sm"} color={"danger"}>
+                  <Button
+                    radius="sm"
+                    size={"sm"}
+                    color={"danger"}
+                    onClick={() => deleteQuestions(question)}
+                  >
                     <Trash2 size={"16"} />
                   </Button>
                 </Tooltip>
@@ -219,6 +307,18 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
             </CardFooter>
           </Card>
         ))}
+        <div className="flex justify-center items-center">
+          <Button
+            onClick={addQuestions}
+            className="w-full h-12 m-4 font-bold text-xl"
+            color="primary"
+            radius="sm"
+            variant="ghost"
+          >
+            <Plus size={16} />
+            Add Questions
+          </Button>
+        </div>
       </div>
     </div>
   );

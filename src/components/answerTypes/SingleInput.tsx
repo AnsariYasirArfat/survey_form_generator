@@ -1,6 +1,6 @@
 import { Divider, Input, Slider, Switch } from "@nextui-org/react";
-import React, { ChangeEvent, useState } from "react";
-import { Question, QuestionFormProp } from "../QuestionForm";
+import React, { useState } from "react";
+import { Question } from "../QuestionForm";
 
 interface SingleinputProps {
   question: Question;

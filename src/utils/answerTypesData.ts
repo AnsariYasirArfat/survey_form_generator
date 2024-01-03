@@ -16,7 +16,7 @@ export const answerTypesData = [
     type: "checkboxes",
   },
   {
-    label: "Yes / NO",
+    label: "Yes / No",
     type: "boolean",
   },
   {
@@ -53,5 +53,16 @@ export const singleInputTypes = [
   {
     label: "Time",
     type: "time",
+  },
+];
+
+export const rateTypes = [
+  {
+    label: "Numbers",
+    type: "number",
+  },
+  {
+    label: "Stars",
+    type: "stars",
   },
 ];

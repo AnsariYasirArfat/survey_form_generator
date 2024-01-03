@@ -1,7 +1,7 @@
 import { Divider, Switch } from "@nextui-org/react";
 import { MoonIcon, SunIcon } from "lucide-react";
 import React, { useState } from "react";
-import Style from "./booleanStyle.module.css";
+import Style from "../../style_module/booleanStyle.module.css";
 
 const Boolean = () => {
   const [isChecked, setIsChecked] = useState(true);
@@ -18,6 +18,7 @@ const Boolean = () => {
         <div className={`${Style.radio_inputs} gap-2`}>
           <label className={`${Style.radio} `}>
             <input
+              readOnly
               type="radio"
               checked={isChecked}
               onChange={() => setIsChecked(true)}
@@ -26,6 +27,7 @@ const Boolean = () => {
           </label>
           <label className={`${Style.radio} `}>
             <input
+              readOnly
               type="radio"
               checked={!isChecked}
               onChange={() => setIsChecked(false)}

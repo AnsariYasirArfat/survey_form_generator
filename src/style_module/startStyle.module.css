@@ -1,0 +1,48 @@
+/* Default state for all stars */
+.stars > input {
+  position: absolute;
+  appearance: none;
+}
+
+.stars > label {
+  float: left;
+  cursor: pointer;
+  font-size: 30px;
+  fill: #3b82f6; /* Set default color for SVG */
+}
+
+/* Set color for checked stars and hovered stars */
+.stars > input:checked ~ label {
+  fill: #3b82f6;
+}
+
+/* Set color for stars beyond the selected star */
+.stars > input:checked ~ label ~ input ~ label {
+  fill: #ccc; /* Gray color for stars beyond the selected star */
+}
+
+/* Set color for hovered but not checked stars */
+/* .stars > label:hover ~ input ~ label {
+  fill: #ff9e0b;
+} */
+
+/* Style for number rating */
+.number div > input {
+  position: absolute;
+  appearance: none;
+}
+
+.number div > label {
+  float: left;
+  cursor: pointer;
+  font-size: 30px;
+}
+.number div > input:checked ~ label div {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.number div > input:checked ~ label ~ input ~ label div {
+  background-color: #ccc;
+  color: black;
+}
