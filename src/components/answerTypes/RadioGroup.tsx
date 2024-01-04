@@ -8,9 +8,18 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Minus, Plus } from "lucide-react";
-import { Choices } from "../QuestionForm";
+import { Choices, Question } from "../QuestionForm";
 
-const RadioGroup = () => {
+interface RadioGroupProps {
+  question: Question;
+  index: number;
+  handleDataChange: (
+    index: number,
+    field: keyof Question,
+    value: string
+  ) => void;
+}
+const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
   const [optionCount, setOptionCount] = useState(3);
   const [options, setOptions] = useState<Choices[]>([
     {
@@ -107,7 +116,6 @@ const RadioGroup = () => {
               input: ["text-black capitalize font-semibold"],
             }}
           />
-
           <Button
             onClick={addOption}
             variant="bordered"
