@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Card,
@@ -29,14 +29,17 @@ import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 
-// text?: string;
+export interface Choices {
+  value?: string;
+  text?: string;
+}
 export interface Question {
   questionId?: string;
   name?: string;
   title?: string;
   inputType?: string;
   type?: string;
-  choices?: string[];
+  choices?: Choices[];
   defaultValue?: number;
   min?: number | string;
   max?: number | string;
@@ -44,32 +47,43 @@ export interface Question {
   rateType?: string;
   rateCount?: number;
   isRequired?: boolean;
+  maxSelectedChoices?: number;
+  minSelectedChoices?: number;
 }
+
 export interface QuestionFormProp {
   questions: Question[];
   setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
 }
 
 const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
+  const [generatedQuestionId, setgeneratedQuestionId] = useState("");
+
+  useEffect(() => {
+    const targetElement = document.getElementById(`${generatedQuestionId}`);
+    if (targetElement) {
+      // console.log("target: ", targetElement);
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [generatedQuestionId]);
+
   const addQuestions = () => {
+    const generatedId = uuidv4();
+    setgeneratedQuestionId(generatedId);
+
     setQuestions([
       ...questions,
       {
-        questionId: uuidv4(),
+        questionId: generatedId,
         isRequired: false,
 
         // rateType: "number",
         // type: "ratingscale",
       },
     ]);
-    // const targetElement = document.getElementById("heading2");
-    // if (targetElement) {
-    //   console.log("target: ", targetElement);
-    //   targetElement.scrollIntoView({
-    //     behavior: "smooth",
-    //     block: "start",
-    //   });
-    // }
   };
 
   const deleteQuestions = (questionToDelete: Question) => {
@@ -80,8 +94,10 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
   };
 
   const duplicateQuestions = (questionToDuplicate: Question) => {
+    const generatedId = uuidv4();
+    setgeneratedQuestionId(generatedId);
     const questionToAdd = { ...questionToDuplicate };
-    questionToAdd.questionId = uuidv4();
+    questionToAdd.questionId = generatedId;
     const allQuestion = [...questions, questionToAdd];
 
     setQuestions(allQuestion);
@@ -140,7 +156,12 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
       </h1>
       <div className="mx-4 grid grid-cols-1 gap-4 ">
         {questions.map((question, index) => (
-          <Card key={index} isFooterBlurred className="w-full bg-blue-300 ">
+          <Card
+            key={index}
+            id={question.questionId}
+            isFooterBlurred
+            className="w-full bg-blue-300 "
+          >
             <CardHeader className="grid grid-cols-4 gap-3">
               <Input
                 isRequired={question.isRequired}

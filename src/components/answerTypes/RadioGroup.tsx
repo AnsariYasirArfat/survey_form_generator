@@ -8,20 +8,28 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Minus, Plus } from "lucide-react";
+import { Choices } from "../QuestionForm";
 
 const RadioGroup = () => {
   const [optionCount, setOptionCount] = useState(3);
-  const [options, setOptions] = useState<any>([
+  const [options, setOptions] = useState<Choices[]>([
     {
+      text: "Option 1",
       value: "Option 1",
     },
     {
+      text: "Option 2",
       value: "Option 2",
     },
   ]);
 
+  console.log("options: ", options);
+
   const addOption = () => {
-    setOptions([...options, { value: `Option ${optionCount}` }]);
+    setOptions([
+      ...options,
+      { text: `Option ${optionCount}`, value: `Option ${optionCount}` },
+    ]);
     setOptionCount((prevCount) => prevCount + 1);
   };
 
@@ -66,9 +74,9 @@ const RadioGroup = () => {
               <Input
                 size={"sm"}
                 type="text"
-                value={option.value}
+                value={option.text}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  editOption(index, "value", e.target.value)
+                  editOption(index, "text", e.target.value)
                 }
                 classNames={{
                   base: ["me-4"],
