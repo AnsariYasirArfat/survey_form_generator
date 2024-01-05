@@ -33,6 +33,7 @@ export interface Choices {
   value?: string;
   text?: string;
 }
+
 export interface Question {
   questionId?: string;
   name?: string;
@@ -41,9 +42,9 @@ export interface Question {
   type?: string;
   choices?: Choices[];
   defaultValue?: number;
-  min?: number | string;
-  max?: number | string;
-  step?: number | string;
+  min?: number;
+  max?: number;
+  step?: number;
   rateType?: string;
   rateCount?: number;
   isRequired?: boolean;
@@ -110,7 +111,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
   const handleDataChange = (
     index: number,
     field: keyof Question,
-    value: string | boolean
+    value: string | boolean | number | Choices[]
   ) => {
     // Updating the specified field of the question at the given index
     const updatedQuestions: any = [...questions];
@@ -143,40 +144,48 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
     }
 
     if (
-      (questionToUpdate.type !== "checkboxes" ||
-        questionToUpdate.type !== "radiogroup") &&
+      questionToUpdate.type !== "checkboxes" &&
+      questionToUpdate.type !== "radiogroup" &&
       questionToUpdate.choices !== undefined
     ) {
       delete questionToUpdate.choices;
     }
+    // if (
+    //   questionToUpdate.type === "singleinput" &&
+    //   (questionToUpdate.inputType !== "number" ||
+    //     questionToUpdate.inputType !== "range" ||
+    //     questionToUpdate.inputType !== "date" ||
+    //     questionToUpdate.inputType !== "time") &&
+    //   (questionToUpdate.max !== undefined || questionToUpdate.min !== undefined)
+    // ) {
+    //   delete questionToUpdate.max;
+    //   delete questionToUpdate.min;
+    // }
+    // if (
+    //   questionToUpdate.type === "singleinput" &&
+    //   (questionToUpdate.inputType !== "number" ||
+    //     questionToUpdate.inputType !== "range") &&
+    //   questionToUpdate.step !== undefined
+    // ) {
+    //   delete questionToUpdate.step;
+    // }
+    // if (
+    //   questionToUpdate.type !== "singleinput" &&
+    //   (questionToUpdate.max !== undefined ||
+    //     questionToUpdate.min !== undefined ||
+    //     questionToUpdate.step !== undefined)
+    // ) {
+    //   delete questionToUpdate.max;
+    //   delete questionToUpdate.min;
+    //   delete questionToUpdate.step;
+    // }
     if (
-      questionToUpdate.type === "singleinput" &&
-      (questionToUpdate.inputType !== "number" ||
-        questionToUpdate.inputType !== "range" ||
-        questionToUpdate.inputType !== "date" ||
-        questionToUpdate.inputType !== "time") &&
-      (questionToUpdate.max !== undefined || questionToUpdate.min !== undefined)
+      (questionToUpdate.type !== "singleinput" ||
+        questionToUpdate.type === "singleinput") &&
+      questionToUpdate.inputType !== "range" &&
+      questionToUpdate.defaultValue !== undefined
     ) {
-      delete questionToUpdate.max;
-      delete questionToUpdate.min;
-    }
-    if (
-      questionToUpdate.type === "singleinput" &&
-      (questionToUpdate.inputType !== "number" ||
-        questionToUpdate.inputType !== "range") &&
-      questionToUpdate.step !== undefined
-    ) {
-      delete questionToUpdate.step;
-    }
-    if (
-      questionToUpdate.type !== "singleinput" &&
-      (questionToUpdate.max !== undefined ||
-        questionToUpdate.min !== undefined ||
-        questionToUpdate.step !== undefined)
-    ) {
-      delete questionToUpdate.max;
-      delete questionToUpdate.min;
-      delete questionToUpdate.step;
+      delete questionToUpdate.defaultValue;
     }
     setQuestions(updatedQuestions);
   };
@@ -206,7 +215,13 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
         );
 
       case "checkboxes":
-        return <CheckBoxes />;
+        return (
+          <CheckBoxes
+            question={question}
+            index={index}
+            handleDataChange={handleDataChange}
+          />
+        );
 
       case "boolean":
         return <Boolean />;
@@ -220,7 +235,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
 
   return (
     <div>
-      <h1 className="font-bold text-xl text-center text-blue-400 mb-2">
+      <h1 className="font-bold text-xl text-center text-blue-400 my-2">
         {questions.length === 0
           ? "Create Survey Questions"
           : questions.length === 1
@@ -235,20 +250,20 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
 
           // console.log("question: ", question.name);
 
-          if (
-            question.type === "singleinput" &&
-            question.inputType === undefined
-          ) {
-            handleDataChange(index, "inputType", "text");
-          }
-          console.log("question: ", question.inputType);
-          if (
-            question.type === "ratingscale" &&
-            question.rateType === undefined
-          ) {
-            handleDataChange(index, "rateType", "number");
-          }
-          console.log("question: ", question.rateType);
+          // if (
+          //   question.type === "singleinput" &&
+          //   question.inputType === undefined
+          // ) {
+          //   handleDataChange(index, "inputType", "text");
+          // }
+          // console.log("question: ", question.inputType);
+          // if (
+          //   question.type === "ratingscale" &&
+          //   question.rateType === undefined
+          // ) {
+          //   handleDataChange(index, "rateType", "number");
+          // }
+          // console.log("question: ", question.rateType);
 
           return (
             <Card
@@ -318,9 +333,41 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                     className="max-w-xs"
                     // placeholder="Select an type"
                     selectedKeys={question.type ? [question.type] : undefined}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                      handleDataChange(index, "type", e.target.value)
-                    }
+                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                      handleDataChange(index, "type", e.target.value);
+                      if (question.type === "singleinput") {
+                        handleDataChange(index, "inputType", "text");
+                      }
+                      if (question.type === "ratingscale") {
+                        handleDataChange(index, "rateType", "number");
+                      }
+                      if (question.type === "checkboxes") {
+                        handleDataChange(index, "choices", [
+                          {
+                            value: "Choice 1",
+                            text: "Choice 1",
+                          },
+                          {
+                            value: "Choice 2",
+                            text: "Choice 2",
+                          },
+                        ]);
+                        handleDataChange(index, "maxSelectedChoices", 1);
+                        handleDataChange(index, "minSelectedChoices", 1);
+                      }
+                      if (question.type === "radiogroup") {
+                        handleDataChange(index, "choices", [
+                          {
+                            value: "Choice 1",
+                            text: "Choice 1",
+                          },
+                          {
+                            value: "Choice 2",
+                            text: "Choice 2",
+                          },
+                        ]);
+                      }
+                    }}
                   >
                     {answerTypesData.map((answerType) => (
                       <SelectItem key={answerType.type} value={answerType.type}>
@@ -340,9 +387,15 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                         selectedKeys={
                           question.inputType ? [question.inputType] : undefined
                         }
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                          handleDataChange(index, "inputType", e.target.value)
-                        }
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                          handleDataChange(index, "inputType", e.target.value);
+                          if (e.target.value === "range") {
+                            handleDataChange(index, "max", 100);
+                            handleDataChange(index, "min", 0);
+                            handleDataChange(index, "defaultValue", 50);
+                            handleDataChange(index, "step", 10);
+                          }
+                        }}
                       >
                         {singleInputTypes.map((inputType) => (
                           <SelectItem
@@ -427,12 +480,12 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
         <div className="flex justify-center items-center">
           <Button
             onClick={addQuestions}
-            className="w-full h-12 m-4 font-bold text-xl"
+            className="w-full h-12 font-semibold text-lg"
             color="primary"
             radius="sm"
             variant="ghost"
           >
-            <Plus size={16} />
+            <Plus size={20} />
             Add Questions
           </Button>
         </div>

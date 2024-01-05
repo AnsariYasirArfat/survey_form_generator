@@ -8,7 +8,7 @@ interface SingleinputProps {
   handleDataChange: (
     index: number,
     field: keyof Question,
-    value: string
+    value: string | boolean | number
   ) => void;
 }
 
@@ -17,42 +17,35 @@ const SingleInput = ({
   index,
   handleDataChange,
 }: SingleinputProps) => {
-  const {
-    inputType,
-    max = 100,
-    min = 0,
-    defaultValue = 50,
-    step = 10,
-  } = question;
   const [isSelected, setIsSelected] = useState(false);
-  const stepInt = parseInt(`${step}`);
-  const minValue = parseInt(`${min}`);
-  const maxValue = parseInt(`${max}`);
-  const defaultValueInt = parseInt(`${defaultValue}`);
+  // const stepInt = parseInt(`${question?.step}`);
+  // const minValue = parseInt(`${question?.min}`);
+  // const maxValue = parseInt(`${question?.max}`);
+  // const defaultValueInt = parseInt(`${question?.defaultValue}`);
 
   return (
     <div>
       <h5 className="text-center pt-2 text-base font-medium text-blue-800">
         Answer type: Single Input{" "}
-        {inputType && (
+        {question.inputType && (
           <>
-            <span>{inputType}</span>
+            <span>{question.inputType}</span>
           </>
         )}
       </h5>
       <div className="mx-4 my-2">
         <Divider />
       </div>
-      {inputType !== "range" ? (
+      {question.inputType !== "range" ? (
         <Input
           readOnly
-          type={inputType ? inputType : "text"}
-          placeholder={`Enter your ${inputType ? inputType : "text"}`}
+          type={question.inputType}
+          placeholder={`Enter your ${question.inputType}`}
           value={""}
           classNames={{
-            base: ["w-full p-4 "],
+            base: ["w-full p-4"],
           }}
-          // label={`${inputType ? inputType : "Text"}`}
+          // label={`${question.inputType ? question.inputType : "Text"}`}
           // isDisabled
         />
       ) : (
@@ -72,8 +65,11 @@ const SingleInput = ({
               labelPlacement="outside"
               placeholder="0.00"
               size="sm"
-              value={`${step}`}
-              onChange={(e) => handleDataChange(index, "step", e.target.value)}
+              value={`${question.step}`}
+              onChange={(e) => {
+                console.log("step onchange: ", e);
+                handleDataChange(index, "step", e.target.valueAsNumber);
+              }}
             />
             <Input
               type="number"
@@ -81,8 +77,10 @@ const SingleInput = ({
               placeholder="0.00"
               labelPlacement="outside"
               size="sm"
-              value={`${min}`}
-              onChange={(e) => handleDataChange(index, "min", e.target.value)}
+              value={`${question.min}`}
+              onChange={(e) =>
+                handleDataChange(index, "min", e.target.valueAsNumber)
+              }
             />
             <Input
               type="number"
@@ -90,19 +88,22 @@ const SingleInput = ({
               placeholder="0.00"
               labelPlacement="outside"
               size="sm"
-              value={`${max}`}
-              onChange={(e) => handleDataChange(index, "max", e.target.value)}
+              value={`${question.max}`}
+              onChange={(e) =>
+                handleDataChange(index, "max", e.target.valueAsNumber)
+              }
             />
             <Input
               type="number"
               label="Defaule Value"
               labelPlacement="outside"
               size="sm"
-              // min={0}
-              value={`${defaultValue}`}
-              onChange={(e) =>
-                handleDataChange(index, "defaultValue", e.target.value)
-              }
+              min={0}
+              value={`${question.defaultValue}`}
+              onChange={(e) => {
+                handleDataChange(index, "defaultValue", e.target.valueAsNumber);
+                console.log("step default: ", e);
+              }}
             />
           </div>
           <Slider
@@ -110,13 +111,11 @@ const SingleInput = ({
             size="md"
             color="primary"
             label={"Range"}
-            step={stepInt}
-            showSteps={stepInt ? isSelected : false}
-            minValue={minValue || 0}
-            maxValue={maxValue || 100}
-            defaultValue={
-              maxValue < defaultValueInt ? maxValue / 2 : defaultValueInt
-            }
+            step={question.step}
+            showSteps={question.step ? isSelected : false}
+            minValue={question.min}
+            maxValue={question.max}
+            defaultValue={question.defaultValue}
             className="w-full p-4"
           />
         </>

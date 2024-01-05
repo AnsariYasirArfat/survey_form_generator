@@ -9,9 +9,19 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Minus, Plus } from "lucide-react";
-import { Choices } from "../QuestionForm";
+import { Choices, Question } from "../QuestionForm";
 
-const CheckBoxes = () => {
+interface CheckBoxesProps {
+  question: Question;
+  index: number;
+  handleDataChange: (
+    index: number,
+    field: keyof Question,
+    value: string | boolean | number | Choices[]
+  ) => void;
+}
+
+const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
   const [optionCount, setOptionCount] = useState(3);
   const [minSelectedChoices, setMinSelectedChoices] = useState<number>(1);
   const [maxSelectedChoices, setMaxSelectedChoices] = useState<number>(1);
@@ -84,9 +94,13 @@ const CheckBoxes = () => {
           label="Max. Select Choice?"
           labelPlacement="outside"
           size="sm"
-          min={0}
+          min={minSelectedChoices > maxSelectedChoices ? minSelectedChoices : 0}
           max={options.length}
-          value={`${maxSelectedChoices}`}
+          value={
+            minSelectedChoices > maxSelectedChoices
+              ? `${minSelectedChoices}`
+              : `${maxSelectedChoices}`
+          }
           onChange={
             (e) => {
               setMaxSelectedChoices(e.target.valueAsNumber);

@@ -1,94 +1,110 @@
-{
-  /* <div className={`${Style.rating}`}>
-        <input
-          type="radio"
-          id="star5"
-          name="rate"
-          value="5"
-          checked={isChecked}
-          onChange={() => setIsChecked(true)}
-        />
-        <label htmlFor="star5" title="text">
-          <svg
-            viewBox="0 0 576 512"
-            height="1em"
-            xmlns="http://www.w3.org/2000/svg"
-            className={`${Style.star_solid}`}
+const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
+  const [optionCount, setOptionCount] = useState(3);
+  const [options, setOptions] = useState<Choices[]>([
+    {
+      text: "Option 1",
+      value: "Option 1",
+    },
+    {
+      text: "Option 2",
+      value: "Option 2",
+    },
+  ]);
+
+  console.log("options: ", options);
+
+  const addOption = () => {
+    setOptions([
+      ...options,
+      { text: `Option ${optionCount}`, value: `Option ${optionCount}` },
+    ]);
+    setOptionCount((prevCount) => prevCount + 1);
+  };
+
+  const minusOption = (optionToMinus: any) => {
+    const udatedOption = options.filter(
+      (option: any) => optionToMinus !== option
+    );
+    setOptions(udatedOption);
+  };
+
+  const editOption = (index: number, field: string, value: string) => {
+    setOptions((prevOptions: any) => {
+      const updatedOptions = [...prevOptions];
+      updatedOptions[index] = {
+        ...updatedOptions[index],
+        [field]: value,
+      };
+      return updatedOptions;
+    });
+  };
+
+  return (
+    <div>
+      <h5 className="text-center pt-2 text-base font-medium text-blue-800">
+        Answer type: Radio Group
+      </h5>
+      <div className="mx-4 my-2">
+        <Divider />
+      </div>
+
+      <RadioType
+        // label="Add label if needed"
+        // isReadOnly
+        classNames={{
+          base: ["p-4"],
+        }}
+      >
+        {options.map((option: any, index: number) => {
+          return (
+            <div key={index} className="flex justify-between items-center">
+              <Radio value={option.value} />
+              <Input
+                size={"sm"}
+                type="text"
+                value={option.text}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  editOption(index, "text", e.target.value)
+                }
+                classNames={{
+                  base: ["me-4"],
+                  input: ["text-black capitalize font-semibold"],
+                }}
+              />
+              <Button
+                onClick={() => minusOption(option)}
+                variant="bordered"
+                color="danger"
+                size="sm"
+              >
+                <Minus size={16} />
+              </Button>
+            </div>
+          );
+        })}
+        <div className="flex justify-between items-center">
+          <Radio value={"add"} isDisabled />
+          <Input
+            isDisabled
+            size={"sm"}
+            type="text"
+            value={`Option ${optionCount}`}
+            readOnly
+            classNames={{
+              base: ["me-4"],
+              input: ["text-black capitalize font-semibold"],
+            }}
+          />
+          <Button
+            onClick={addOption}
+            variant="bordered"
+            color="success"
+            size="sm"
           >
-            <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
-          </svg>
-        </label>
-        <input
-          type="radio"
-          id="star4"
-          name="rate"
-          value="4"
-          checked={isChecked}
-          onChange={() => setIsChecked(true)}
-        />
-        <label htmlFor="star4" title="text">
-          <svg
-            viewBox="0 0 576 512"
-            height="1em"
-            xmlns="http://www.w3.org/2000/svg"
-            className="star-solid"
-          >
-            <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
-          </svg>
-        </label>
-        <input
-          type="radio"
-          id="star3"
-          name="rate"
-          value="3"
-          checked={isChecked}
-          onChange={() => setIsChecked(true)}
-        />
-        <label htmlFor="star3" title="text">
-          <svg
-            viewBox="0 0 576 512"
-            height="1em"
-            xmlns="http://www.w3.org/2000/svg"
-            className="star-solid"
-          >
-            <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
-          </svg>
-        </label>
-        <input
-          type="radio"
-          id="star2"
-          name="rate"
-          value="2"
-          checked={isChecked}
-          onChange={() => setIsChecked(true)}
-        />
-        <label htmlFor="star2" title="text">
-          <svg
-            viewBox="0 0 576 512"
-            height="1em"
-            xmlns="http://www.w3.org/2000/svg"
-            className="star-solid"
-          >
-            <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
-          </svg>
-        </label>
-        <input
-          type="radio"
-          id="star1"
-          name="rate"
-          value="1"
-          checked={isChecked}
-          onChange={() => setIsChecked(true)}
-        />
-        <label htmlFor="star1" title="text">
-          <svg
-            viewBox="0 0 576 512"
-            height="1em"
-            xmlns="http://www.w3.org/2000/svg"
-            className="star-solid"
-          >
-            <path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"></path>
-          </svg>
-        </label>
-      </div> */
-}
+            <Plus size={16} />
+          </Button>
+        </div>
+      </RadioType>
+    </div>
+  );
+};

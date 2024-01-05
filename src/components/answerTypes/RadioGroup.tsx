@@ -16,49 +16,65 @@ interface RadioGroupProps {
   handleDataChange: (
     index: number,
     field: keyof Question,
-    value: string
+    value: string | boolean | number | Choices[]
   ) => void;
 }
 const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
-  const [optionCount, setOptionCount] = useState(3);
-  const [options, setOptions] = useState<Choices[]>([
-    {
-      text: "Option 1",
-      value: "Option 1",
-    },
-    {
-      text: "Option 2",
-      value: "Option 2",
-    },
-  ]);
+  const [choiceCount, setChoiceCount] = useState(3);
 
-  console.log("options: ", options);
+  const addChoice = () => {
+    const choices: any = question.choices;
 
-  const addOption = () => {
-    setOptions([
-      ...options,
-      { text: `Option ${optionCount}`, value: `Option ${optionCount}` },
-    ]);
-    setOptionCount((prevCount) => prevCount + 1);
+    const addedChoices = [
+      ...choices,
+      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
+    ];
+    console.log("Added choice: ", addedChoices);
+    handleDataChange(index, "choices", addedChoices);
+
+    setChoiceCount((prevCount) => prevCount + 1);
   };
 
-  const minusOption = (optionToMinus: any) => {
-    const udatedOption = options.filter(
-      (option: any) => optionToMinus !== option
+  const minusChoice = (choiceToMinus: any) => {
+    const choices: any = question.choices;
+    const minusChoice = choices.filter(
+      (choice: any) => choiceToMinus.text !== choice.text
     );
-    setOptions(udatedOption);
+
+    handleDataChange(index, "choices", minusChoice);
   };
 
-  const editOption = (index: number, field: string, value: string) => {
-    setOptions((prevOptions: any) => {
-      const updatedOptions = [...prevOptions];
-      updatedOptions[index] = {
-        ...updatedOptions[index],
-        [field]: value,
-      };
-      return updatedOptions;
-    });
+  // const editChoice = (index: number, field: string, value: string) => {
+  //   // setchoices((prevchoices: any) => {
+  //   //   const updatedchoices = [...prevchoices];
+  //   //   updatedchoices[index] = {
+  //   //     ...updatedchoices[index],
+  //   //     [field]: value,
+  //   //   };
+  //   //   return updatedchoices;
+  //   // });
+  //   const choices: any = question.choices;
+  //   const updatedChoices: any = [...choices];
+  //   updatedChoices[index] = {
+  //     ...updatedChoices[index],
+  //     [field]: value,
+  //   };
+  //   handleDataChange(index, "choices", updatedChoices);
+  // };
+
+  const editChoice = (index: number, field: string, value: string) => {
+    const choices: any = question.choices;
+    const updatedChoices: any = [...choices];
+
+    updatedChoices[index] = {
+      ...updatedChoices[index],
+      [field]: value,
+    };
+
+    handleDataChange(index, "choices", updatedChoices);
   };
+
+  // console.log("questions string: ", `${JSON.stringify(question)}`);
 
   return (
     <div>
@@ -68,7 +84,6 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
       <div className="mx-4 my-2">
         <Divider />
       </div>
-
       <RadioType
         // label="Add label if needed"
         // isReadOnly
@@ -76,24 +91,28 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
           base: ["p-4"],
         }}
       >
-        {options.map((option: any, index: number) => {
+        {question.choices?.map((choice: any, index: number) => {
           return (
-            <div key={index} className="flex justify-between items-center">
-              <Radio value={option.value} />
+            <div
+              key={`radiogroup-${index}-${JSON.stringify(question)}`}
+              className="flex justify-between items-center"
+            >
+              <Radio value={choice.value} />
               <Input
                 size={"sm"}
                 type="text"
-                value={option.text}
+                value={choice.text}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  editOption(index, "text", e.target.value)
+                  editChoice(index, "text", e.target.value)
                 }
+                // onBlur={(e: any) => editChoice(index, "text", e.target.value)}
                 classNames={{
                   base: ["me-4"],
                   input: ["text-black capitalize font-semibold"],
                 }}
               />
               <Button
-                onClick={() => minusOption(option)}
+                onClick={() => minusChoice(choice)}
                 variant="bordered"
                 color="danger"
                 size="sm"
@@ -109,7 +128,7 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
             isDisabled
             size={"sm"}
             type="text"
-            value={`Option ${optionCount}`}
+            value={`Choice ${choiceCount}`}
             readOnly
             classNames={{
               base: ["me-4"],
@@ -117,7 +136,7 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
             }}
           />
           <Button
-            onClick={addOption}
+            onClick={addChoice}
             variant="bordered"
             color="success"
             size="sm"
