@@ -1,4 +1,5 @@
 "use client";
+
 import React, { ChangeEvent, useState } from "react";
 import {
   RadioGroup as RadioType,
@@ -20,22 +21,34 @@ interface RadioGroupProps {
   ) => void;
 }
 const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
+  const questionIndex = index;
   const [choiceCount, setChoiceCount] = useState(3);
+  const [tempChoices, setTempChoices] = useState<any>(question.choices);
+
+  // console.log("radio tempChoice: ", tempChoices);
+  // console.log("radio original Choice: ", question.choices);
 
   const addChoice = () => {
-    const choices: any = question.choices;
+    setTempChoices([
+      ...tempChoices,
+      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
+    ]);
 
+    const choices: any = question.choices;
     const addedChoices = [
       ...choices,
       { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ];
-    console.log("Added choice: ", addedChoices);
     handleDataChange(index, "choices", addedChoices);
-
     setChoiceCount((prevCount) => prevCount + 1);
   };
 
   const minusChoice = (choiceToMinus: any) => {
+    const udatedChoice = tempChoices.filter(
+      (tempChoice: any) => choiceToMinus !== tempChoice
+    );
+    setTempChoices(udatedChoice);
+
     const choices: any = question.choices;
     const minusChoice = choices.filter(
       (choice: any) => choiceToMinus.text !== choice.text
@@ -44,37 +57,20 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
     handleDataChange(index, "choices", minusChoice);
   };
 
-  // const editChoice = (index: number, field: string, value: string) => {
-  //   // setchoices((prevchoices: any) => {
-  //   //   const updatedchoices = [...prevchoices];
-  //   //   updatedchoices[index] = {
-  //   //     ...updatedchoices[index],
-  //   //     [field]: value,
-  //   //   };
-  //   //   return updatedchoices;
-  //   // });
-  //   const choices: any = question.choices;
-  //   const updatedChoices: any = [...choices];
-  //   updatedChoices[index] = {
-  //     ...updatedChoices[index],
-  //     [field]: value,
-  //   };
-  //   handleDataChange(index, "choices", updatedChoices);
-  // };
-
-  const editChoice = (index: number, field: string, value: string) => {
-    const choices: any = question.choices;
-    const updatedChoices: any = [...choices];
-
-    updatedChoices[index] = {
-      ...updatedChoices[index],
-      [field]: value,
-    };
-
-    handleDataChange(index, "choices", updatedChoices);
+  const editTempChoice = (index: number, field: string, value: string) => {
+    setTempChoices((prevchoices: any) => {
+      const updatedChoices = [...prevchoices];
+      updatedChoices[index] = {
+        ...updatedChoices[index],
+        [field]: value,
+      };
+      return updatedChoices;
+    });
   };
 
-  // console.log("questions string: ", `${JSON.stringify(question)}`);
+  const updateChoiceTextInMainData = () => {
+    handleDataChange(questionIndex, "choices", tempChoices);
+  };
 
   return (
     <div>
@@ -91,28 +87,28 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
           base: ["p-4"],
         }}
       >
-        {question.choices?.map((choice: any, index: number) => {
+        {tempChoices?.map((tempChoice: any, index: number) => {
           return (
             <div
               key={`radiogroup-${index}-${JSON.stringify(question)}`}
               className="flex justify-between items-center"
             >
-              <Radio value={choice.value} />
+              <Radio value={tempChoice.value} />
               <Input
                 size={"sm"}
                 type="text"
-                value={choice.text}
+                value={tempChoice.text}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  editChoice(index, "text", e.target.value)
+                  editTempChoice(index, "text", e.target.value)
                 }
-                // onBlur={(e: any) => editChoice(index, "text", e.target.value)}
+                onBlur={updateChoiceTextInMainData}
                 classNames={{
                   base: ["me-4"],
                   input: ["text-black capitalize font-semibold"],
                 }}
               />
               <Button
-                onClick={() => minusChoice(choice)}
+                onClick={() => minusChoice(tempChoice)}
                 variant="bordered"
                 color="danger"
                 size="sm"

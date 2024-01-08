@@ -150,6 +150,7 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
     ) {
       delete questionToUpdate.choices;
     }
+
     // if (
     //   questionToUpdate.type === "singleinput" &&
     //   (questionToUpdate.inputType !== "number" ||
@@ -244,27 +245,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
       </h1>
       <div className="mx-4 grid grid-cols-1 gap-4 ">
         {questions.map((question, index) => {
-          // if (question.name === undefined) {
-          //   handleDataChange(index, "name", `Question ${questions.length}`);
-          // }
-
-          // console.log("question: ", question.name);
-
-          // if (
-          //   question.type === "singleinput" &&
-          //   question.inputType === undefined
-          // ) {
-          //   handleDataChange(index, "inputType", "text");
-          // }
-          // console.log("question: ", question.inputType);
-          // if (
-          //   question.type === "ratingscale" &&
-          //   question.rateType === undefined
-          // ) {
-          //   handleDataChange(index, "rateType", "number");
-          // }
-          // console.log("question: ", question.rateType);
-
           return (
             <Card
               key={index}
@@ -284,11 +264,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                   label="Question name:"
                   labelPlacement={"outside"}
                   size={"md"}
-                  // value={
-                  //   question.name === undefined
-                  //     ? `Question ${index + 1}`
-                  //     : question.name
-                  // }
                   value={question.name}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     handleDataChange(index, "name", e.target.value)
@@ -315,7 +290,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                     handleDataChange(index, "title", e.target.value)
                   }
                   onClear={() => {
-                    // console.log("Question title cleared");
                     handleDataChange(index, "title", "");
                   }}
                 />
@@ -331,7 +305,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                   <Select
                     label="Choose the answer Type:"
                     className="max-w-xs"
-                    // placeholder="Select an type"
                     selectedKeys={question.type ? [question.type] : undefined}
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                       handleDataChange(index, "type", e.target.value);
@@ -344,12 +317,12 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                       if (question.type === "checkboxes") {
                         handleDataChange(index, "choices", [
                           {
-                            value: "Choice 1",
                             text: "Choice 1",
+                            value: "Choice 1",
                           },
                           {
-                            value: "Choice 2",
                             text: "Choice 2",
+                            value: "Choice 2",
                           },
                         ]);
                         handleDataChange(index, "maxSelectedChoices", 1);
@@ -358,12 +331,12 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                       if (question.type === "radiogroup") {
                         handleDataChange(index, "choices", [
                           {
-                            value: "Choice 1",
                             text: "Choice 1",
+                            value: "Choice 1",
                           },
                           {
-                            value: "Choice 2",
                             text: "Choice 2",
+                            value: "Choice 2",
                           },
                         ]);
                       }
@@ -382,7 +355,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                       <Select
                         label="Select Input Type:"
                         className="max-w-xs"
-                        // placeholder="Select an type"
                         defaultSelectedKeys={["text"]}
                         selectedKeys={
                           question.inputType ? [question.inputType] : undefined
@@ -413,7 +385,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                       <Select
                         label="Select Rate Type:"
                         className="max-w-xs"
-                        // placeholder="Select an type"
                         defaultSelectedKeys={["number"]}
                         selectedKeys={
                           question.rateType ? [question.rateType] : undefined
@@ -444,7 +415,6 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                           "isRequired",
                           !question.isRequired
                         );
-                        // console.log("isRequired: ", !question.isRequired);
                       }}
                     >
                       <Asterisk

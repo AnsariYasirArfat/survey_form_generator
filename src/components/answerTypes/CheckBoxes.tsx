@@ -22,46 +22,55 @@ interface CheckBoxesProps {
 }
 
 const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
-  const [optionCount, setOptionCount] = useState(3);
-  const [minSelectedChoices, setMinSelectedChoices] = useState<number>(1);
-  const [maxSelectedChoices, setMaxSelectedChoices] = useState<number>(1);
-  // console.log("maxSelectedChoices: ", maxSelectedChoices);
-  // console.log("minSelectedChoices: ", minSelectedChoices);
-  const [options, setOptions] = useState<Choices[]>([
-    {
-      value: "Option 1",
-      text: "Option 1",
-    },
-    {
-      value: "Option 2",
-      text: "Option 2",
-    },
-  ]);
+  const questionIndex = index;
+  const [choiceCount, setChoiceCount] = useState(3);
+  const [tempChoices, setTempChoices] = useState<any>(question.choices);
 
-  console.log("options: ", options);
-  const addOption = () => {
-    setOptions([
-      ...options,
-      { value: `Option ${optionCount}`, text: `Option ${optionCount}` },
+  // console.log("checkbox tempChoice: ", tempChoices);
+  // console.log("checkbox original Choice: ", question.choices);
+
+  const addChoice = () => {
+    setTempChoices([
+      ...tempChoices,
+      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ]);
-    setOptionCount((prevCount) => prevCount + 1);
-  };
-  const minusOption = (optionToMinus: any) => {
-    const udatedOption = options.filter(
-      (option: any) => optionToMinus !== option
-    );
-    setOptions(udatedOption);
+
+    const choices: any = question.choices;
+    const addedChoices = [
+      ...choices,
+      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
+    ];
+    handleDataChange(questionIndex, "choices", addedChoices);
+    setChoiceCount((prevCount) => prevCount + 1);
   };
 
-  const editOption = (index: number, field: string, value: string) => {
-    setOptions((prevOptions: any) => {
-      const updatedOptions = [...prevOptions];
-      updatedOptions[index] = {
-        ...updatedOptions[index],
+  const minusChoice = (choiceToMinus: any) => {
+    const udatedChoice = tempChoices.filter(
+      (tempChoice: any) => choiceToMinus !== tempChoice
+    );
+    setTempChoices(udatedChoice);
+
+    const choices: any = question.choices;
+    const minusChoice = choices.filter(
+      (choice: any) => choiceToMinus.text !== choice.text
+    );
+
+    handleDataChange(questionIndex, "choices", minusChoice);
+  };
+
+  const editTempChoice = (index: number, field: string, value: string) => {
+    setTempChoices((prevchoices: any) => {
+      const updatedChoices = [...prevchoices];
+      updatedChoices[index] = {
+        ...updatedChoices[index],
         [field]: value,
       };
-      return updatedOptions;
+      return updatedChoices;
     });
+  };
+
+  const updateChoiceTextInMainData = () => {
+    handleDataChange(questionIndex, "choices", tempChoices);
   };
 
   return (
@@ -80,13 +89,27 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
           placeholder="0.00"
           size="sm"
           min={0}
-          max={options.length}
-          value={`${minSelectedChoices}`}
+          max={tempChoices.length}
+          value={`${question.minSelectedChoices}`}
           onChange={(e) => {
-            setMinSelectedChoices(e.target.valueAsNumber);
-            // console.log(e.target.value);
+            handleDataChange(
+              index,
+              "minSelectedChoices",
+              e.target.valueAsNumber
+            );
+
+            if (
+              question.minSelectedChoices &&
+              question.maxSelectedChoices &&
+              question.minSelectedChoices > question.maxSelectedChoices
+            ) {
+              handleDataChange(
+                index,
+                "maxSelectedChoices",
+                question.minSelectedChoices
+              );
+            }
           }}
-          // onChange={(e) => handleDataChange(index, "step", e.target.value)}
         />
 
         <Input
@@ -94,47 +117,67 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
           label="Max. Select Choice?"
           labelPlacement="outside"
           size="sm"
-          min={minSelectedChoices > maxSelectedChoices ? minSelectedChoices : 0}
-          max={options.length}
+          min={
+            question.minSelectedChoices
+            // question.minSelectedChoices &&
+            // question.maxSelectedChoices &&
+            // question.minSelectedChoices > question.maxSelectedChoices
+            //   ? question.minSelectedChoices
+            //   : 0
+          }
+          max={tempChoices.length}
           value={
-            minSelectedChoices > maxSelectedChoices
-              ? `${minSelectedChoices}`
-              : `${maxSelectedChoices}`
+            /*  question.maxSelectedChoices &&
+            question.minSelectedChoices &&
+            question.minSelectedChoices > question.maxSelectedChoices
+              ? `${question.minSelectedChoices}`
+              : */ `${question.maxSelectedChoices}`
           }
-          onChange={
-            (e) => {
-              setMaxSelectedChoices(e.target.valueAsNumber);
-              // console.log(e.target.value);
-            }
-            // handleDataChange(index, "defaultValue", e.target.value)
-          }
+          // onValueChange={(e) => {
+          //   console.log("on value change: ", e);
+          //   // handleDataChange(
+          //   //   index,
+          //   //   "maxSelectedChoices",
+          //   //   e.target.valueAsNumber
+          //   // );
+          // }}
+          onChange={(e) => {
+            handleDataChange(
+              index,
+              "maxSelectedChoices",
+              /*  question.maxSelectedChoices &&
+                question.minSelectedChoices &&
+                question.minSelectedChoices > question.maxSelectedChoices
+                ? question.minSelectedChoices
+                : */ e.target.valueAsNumber
+            );
+          }}
         />
       </div>
       <CheckboxGroup
-        // label="Add label if needed"
-        // isReadOnly
         classNames={{
           base: ["p-4"],
         }}
       >
-        {options.map((option: any, index: number) => {
+        {tempChoices.map((tempChoice: any, index: number) => {
           return (
             <div key={index} className="flex justify-between items-center">
-              <Checkbox value={option.value} size={"lg"} radius="sm" />
+              <Checkbox value={tempChoice.value} size={"lg"} radius="sm" />
               <Input
                 size={"sm"}
                 type="text"
-                value={option.text}
+                value={tempChoice.text}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  editOption(index, "text", e.target.value)
+                  editTempChoice(index, "text", e.target.value)
                 }
+                onBlur={updateChoiceTextInMainData}
                 classNames={{
                   base: ["me-4"],
                   input: ["text-black capitalize font-semibold"],
                 }}
               />
               <Button
-                onClick={() => minusOption(option)}
+                onClick={() => minusChoice(tempChoice)}
                 variant="bordered"
                 color="danger"
                 size="sm"
@@ -150,7 +193,7 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
             isDisabled
             size={"sm"}
             type="text"
-            value={`Option ${optionCount}`}
+            value={`Choice ${choiceCount}`}
             readOnly
             classNames={{
               base: ["me-4"],
@@ -159,7 +202,7 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
           />
 
           <Button
-            onClick={addOption}
+            onClick={addChoice}
             variant="bordered"
             color="success"
             size="sm"
