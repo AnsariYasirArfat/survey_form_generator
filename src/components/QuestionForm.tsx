@@ -118,38 +118,38 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
     const questionToUpdate = updatedQuestions[index];
     questionToUpdate[field] = value;
     // To Handle subTypes properties, specific to answer type
-    if (
-      questionToUpdate.type !== "singleinput" &&
-      questionToUpdate.inputType !== undefined
-    ) {
-      delete questionToUpdate.inputType;
-    }
+    // if (
+    //   questionToUpdate.type !== "singleinput" &&
+    //   questionToUpdate.inputType !== undefined
+    // ) {
+    //   delete questionToUpdate.inputType;
+    // }
 
-    if (
-      questionToUpdate.type !== "ratingscale" &&
-      (questionToUpdate.rateType !== undefined ||
-        questionToUpdate.rateCount !== undefined)
-    ) {
-      delete questionToUpdate.rateType;
-      delete questionToUpdate.rateCount;
-    }
+    // if (
+    //   questionToUpdate.type !== "ratingscale" &&
+    //   (questionToUpdate.rateType !== undefined ||
+    //     questionToUpdate.rateCount !== undefined)
+    // ) {
+    //   delete questionToUpdate.rateType;
+    //   delete questionToUpdate.rateCount;
+    // }
 
-    if (
-      questionToUpdate.type !== "checkboxes" &&
-      (questionToUpdate.maxSelectedChoices !== undefined ||
-        questionToUpdate.minSelectedChoices !== undefined)
-    ) {
-      delete questionToUpdate.maxSelectedChoices;
-      delete questionToUpdate.minSelectedChoices;
-    }
+    // if (
+    //   questionToUpdate.type !== "checkboxes" &&
+    //   (questionToUpdate.maxSelectedChoices !== undefined ||
+    //     questionToUpdate.minSelectedChoices !== undefined)
+    // ) {
+    //   delete questionToUpdate.maxSelectedChoices;
+    //   delete questionToUpdate.minSelectedChoices;
+    // }
 
-    if (
-      questionToUpdate.type !== "checkboxes" &&
-      questionToUpdate.type !== "radiogroup" &&
-      questionToUpdate.choices !== undefined
-    ) {
-      delete questionToUpdate.choices;
-    }
+    // if (
+    //   questionToUpdate.type !== "checkboxes" &&
+    //   questionToUpdate.type !== "radiogroup" &&
+    //   questionToUpdate.choices !== undefined
+    // ) {
+    //   delete questionToUpdate.choices;
+    // }
 
     // if (
     //   questionToUpdate.type === "singleinput" &&
@@ -180,14 +180,14 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
     //   delete questionToUpdate.min;
     //   delete questionToUpdate.step;
     // }
-    if (
-      (questionToUpdate.type !== "singleinput" ||
-        questionToUpdate.type === "singleinput") &&
-      questionToUpdate.inputType !== "range" &&
-      questionToUpdate.defaultValue !== undefined
-    ) {
-      delete questionToUpdate.defaultValue;
-    }
+    // if (
+    //   (questionToUpdate.type !== "singleinput" ||
+    //     questionToUpdate.type === "singleinput") &&
+    //   questionToUpdate.inputType !== "range" &&
+    //   questionToUpdate.defaultValue !== undefined
+    // ) {
+    //   delete questionToUpdate.defaultValue;
+    // }
     setQuestions(updatedQuestions);
   };
 
@@ -228,7 +228,13 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
         return <Boolean />;
 
       case "ratingscale":
-        return <RatingScale question={question} />;
+        return (
+          <RatingScale
+            question={question}
+            index={index}
+            handleDataChange={handleDataChange}
+          />
+        );
       default:
         return <DefaultAnswer />;
     }
@@ -308,11 +314,44 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                     selectedKeys={question.type ? [question.type] : undefined}
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                       handleDataChange(index, "type", e.target.value);
-                      if (question.type === "singleinput") {
+
+                      //  Single Input default and depende properties handle
+                      if (e.target.value === "singleinput") {
                         handleDataChange(index, "inputType", "text");
+                      } else {
+                        delete question.inputType;
+                        delete question.max;
+                        delete question.min;
+                        delete question.step;
+                        delete question.defaultValue;
                       }
-                      if (question.type === "ratingscale") {
+
+                      //  Rating Scale default and depende properties handle
+                      if (e.target.value === "ratingscale") {
+                        handleDataChange(index, "rateCount", 5);
                         handleDataChange(index, "rateType", "number");
+                      } else {
+                        delete question.rateType;
+                        delete question.rateCount;
+                      }
+                      //  Checkboxes & Radio Group default and depende properties handle
+                      if (question.type === "radiogroup") {
+                        handleDataChange(index, "choices", [
+                          {
+                            text: "Choice 1",
+                            value: "Choice 1",
+                          },
+                          {
+                            text: "Choice 2",
+                            value: "Choice 2",
+                          },
+                        ]);
+                      }
+                      if (
+                        question.type !== "checkboxes" &&
+                        question.type !== "radiogroup"
+                      ) {
+                        delete question.choices;
                       }
                       if (question.type === "checkboxes") {
                         handleDataChange(index, "choices", [
@@ -327,18 +366,9 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                         ]);
                         handleDataChange(index, "maxSelectedChoices", 1);
                         handleDataChange(index, "minSelectedChoices", 1);
-                      }
-                      if (question.type === "radiogroup") {
-                        handleDataChange(index, "choices", [
-                          {
-                            text: "Choice 1",
-                            value: "Choice 1",
-                          },
-                          {
-                            text: "Choice 2",
-                            value: "Choice 2",
-                          },
-                        ]);
+                      } else {
+                        delete question.maxSelectedChoices;
+                        delete question.minSelectedChoices;
                       }
                     }}
                   >
@@ -367,6 +397,12 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                             handleDataChange(index, "defaultValue", 50);
                             handleDataChange(index, "step", 10);
                           }
+                          if (e.target.value !== "range") {
+                            delete question.max;
+                            delete question.min;
+                            delete question.step;
+                            delete question.defaultValue;
+                          }
                         }}
                       >
                         {singleInputTypes.map((inputType) => (
@@ -389,9 +425,9 @@ const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
                         selectedKeys={
                           question.rateType ? [question.rateType] : undefined
                         }
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                          handleDataChange(index, "rateType", e.target.value)
-                        }
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                          handleDataChange(index, "rateType", e.target.value);
+                        }}
                       >
                         {rateTypes.map((rateType) => (
                           <SelectItem key={rateType.type} value={rateType.type}>

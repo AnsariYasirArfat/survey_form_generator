@@ -20,6 +20,7 @@ interface RadioGroupProps {
     value: string | boolean | number | Choices[]
   ) => void;
 }
+
 const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
   const questionIndex = index;
   const [choiceCount, setChoiceCount] = useState(3);
@@ -44,17 +45,19 @@ const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
   };
 
   const minusChoice = (choiceToMinus: any) => {
-    const udatedChoice = tempChoices.filter(
-      (tempChoice: any) => choiceToMinus !== tempChoice
-    );
-    setTempChoices(udatedChoice);
+    if (question.choices!.length > 2) {
+      const udatedChoice = tempChoices.filter(
+        (tempChoice: any) => choiceToMinus !== tempChoice
+      );
+      setTempChoices(udatedChoice);
 
-    const choices: any = question.choices;
-    const minusChoice = choices.filter(
-      (choice: any) => choiceToMinus.text !== choice.text
-    );
+      const choices: any = question.choices;
+      const minusChoice = choices.filter(
+        (choice: any) => choiceToMinus.text !== choice.text
+      );
 
-    handleDataChange(index, "choices", minusChoice);
+      handleDataChange(index, "choices", minusChoice);
+    }
   };
 
   const editTempChoice = (index: number, field: string, value: string) => {

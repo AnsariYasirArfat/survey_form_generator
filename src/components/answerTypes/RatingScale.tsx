@@ -2,31 +2,40 @@ import { Button, Chip, Divider } from "@nextui-org/react";
 import React, { useState } from "react";
 import Style from "../../style_module/startStyle.module.css";
 import { Minus, Plus } from "lucide-react";
-import { Question } from "../QuestionForm";
+import { Choices, Question } from "../QuestionForm";
 
 interface RatingScaleProps {
   question: Question;
+  index: number;
+  handleDataChange: (
+    index: number,
+    field: keyof Question,
+    value: string | boolean | number | Choices[]
+  ) => void;
 }
-const RatingScale = ({ question }: RatingScaleProps) => {
-  // const [isChecked, setIsChecked] = useState(true);
+
+const RatingScale = ({
+  question,
+  index,
+  handleDataChange,
+}: RatingScaleProps) => {
   const [selectedStar, setSelectedStar] = useState<number>(1);
-  const [rateCount, setRateCount] = useState([{}, {}, {}, {}, {}]);
 
   const handleStarClick = (selected: number) => {
     setSelectedStar(selected);
     console.log("Selected star:", selected);
   };
+
   const addOption = () => {
-    if (rateCount.length < 20) {
-      setRateCount([...rateCount, {}]);
+    if (question.rateCount! < 20) {
+      handleDataChange(index, "rateCount", question.rateCount! + 1);
     }
   };
 
   const minusOption = () => {
-    if (rateCount.length > 2) {
-      setRateCount(rateCount.slice(0, -1));
-
-      if (rateCount.length <= selectedStar) {
+    if (question.rateCount! > 2) {
+      handleDataChange(index, "rateCount", question.rateCount! - 1);
+      if (question.rateCount! <= selectedStar) {
         setSelectedStar(1);
       }
     }
@@ -58,7 +67,7 @@ const RatingScale = ({ question }: RatingScaleProps) => {
 
         {question.rateType === "stars" ? (
           <div className={`${Style.stars} gap-2 col-span-5`}>
-            {rateCount.map((star, index) => {
+            {Array.from({ length: question.rateCount! }).map((_, index) => {
               return (
                 <>
                   <input
@@ -68,8 +77,6 @@ const RatingScale = ({ question }: RatingScaleProps) => {
                     value={`${index}`}
                     checked={selectedStar === index + 1}
                     onChange={() => handleStarClick(index + 1)}
-                    // hidden
-                    // style={{ display: "none" }}
                   />
                   <label
                     key={`star-label-${index}-${question.questionId}`}
@@ -92,21 +99,17 @@ const RatingScale = ({ question }: RatingScaleProps) => {
           </div>
         ) : (
           <div className={`${Style.number} gap-2 col-span-5`}>
-            {rateCount.map((star, index) => {
+            {Array.from({ length: question.rateCount! }).map((_, index) => {
               return (
                 <div key={`number-input-${index}-${question.questionId}`}>
                   <input
                     type="radio"
-                    // key={`number-input-${question.questionId}`}
                     id={`number-${index}-${question.questionId}`}
                     value={`${index}`}
                     checked={selectedStar === index + 1}
                     onChange={() => handleStarClick(index + 1)}
-                    // hidden
-                    // style={{ display: "none" }}
                   />
                   <label
-                    // key={`number-label-${question.questionId}`}
                     htmlFor={`number-${index}-${question.questionId}`}
                     title="text"
                     className="p-1"

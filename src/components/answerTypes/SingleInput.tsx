@@ -18,10 +18,6 @@ const SingleInput = ({
   handleDataChange,
 }: SingleinputProps) => {
   const [isSelected, setIsSelected] = useState(false);
-  // const stepInt = parseInt(`${question?.step}`);
-  // const minValue = parseInt(`${question?.min}`);
-  // const maxValue = parseInt(`${question?.max}`);
-  // const defaultValueInt = parseInt(`${question?.defaultValue}`);
 
   return (
     <div>
@@ -45,8 +41,6 @@ const SingleInput = ({
           classNames={{
             base: ["w-full p-4"],
           }}
-          // label={`${question.inputType ? question.inputType : "Text"}`}
-          // isDisabled
         />
       ) : (
         <>
@@ -67,7 +61,6 @@ const SingleInput = ({
               size="sm"
               value={`${question.step}`}
               onChange={(e) => {
-                console.log("step onchange: ", e);
                 handleDataChange(index, "step", e.target.valueAsNumber);
               }}
             />
@@ -102,7 +95,6 @@ const SingleInput = ({
               value={`${question.defaultValue}`}
               onChange={(e) => {
                 handleDataChange(index, "defaultValue", e.target.valueAsNumber);
-                console.log("step default: ", e);
               }}
             />
           </div>

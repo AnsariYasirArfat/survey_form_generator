@@ -45,17 +45,17 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
   };
 
   const minusChoice = (choiceToMinus: any) => {
-    const udatedChoice = tempChoices.filter(
-      (tempChoice: any) => choiceToMinus !== tempChoice
-    );
-    setTempChoices(udatedChoice);
-
-    const choices: any = question.choices;
-    const minusChoice = choices.filter(
-      (choice: any) => choiceToMinus.text !== choice.text
-    );
-
-    handleDataChange(questionIndex, "choices", minusChoice);
+    if (question.choices!.length > 2) {
+      const udatedChoice = tempChoices.filter(
+        (tempChoice: any) => choiceToMinus !== tempChoice
+      );
+      setTempChoices(udatedChoice);
+      const choices: any = question.choices;
+      const minusChoice = choices.filter(
+        (choice: any) => choiceToMinus.text !== choice.text
+      );
+      handleDataChange(questionIndex, "choices", minusChoice);
+    }
   };
 
   const editTempChoice = (index: number, field: string, value: string) => {
@@ -85,7 +85,8 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
         <Input
           type="number"
           label="Min. Select Choice?"
-          labelPlacement="outside"
+          labelPlacement="outside-left"
+          className="justify-center"
           placeholder="0.00"
           size="sm"
           min={0}
@@ -115,41 +116,17 @@ const CheckBoxes = ({ question, index, handleDataChange }: CheckBoxesProps) => {
         <Input
           type="number"
           label="Max. Select Choice?"
-          labelPlacement="outside"
+          labelPlacement="outside-left"
+          className="justify-center"
           size="sm"
-          min={
-            question.minSelectedChoices
-            // question.minSelectedChoices &&
-            // question.maxSelectedChoices &&
-            // question.minSelectedChoices > question.maxSelectedChoices
-            //   ? question.minSelectedChoices
-            //   : 0
-          }
+          min={question.minSelectedChoices}
           max={tempChoices.length}
-          value={
-            /*  question.maxSelectedChoices &&
-            question.minSelectedChoices &&
-            question.minSelectedChoices > question.maxSelectedChoices
-              ? `${question.minSelectedChoices}`
-              : */ `${question.maxSelectedChoices}`
-          }
-          // onValueChange={(e) => {
-          //   console.log("on value change: ", e);
-          //   // handleDataChange(
-          //   //   index,
-          //   //   "maxSelectedChoices",
-          //   //   e.target.valueAsNumber
-          //   // );
-          // }}
+          value={`${question.maxSelectedChoices}`}
           onChange={(e) => {
             handleDataChange(
               index,
               "maxSelectedChoices",
-              /*  question.maxSelectedChoices &&
-                question.minSelectedChoices &&
-                question.minSelectedChoices > question.maxSelectedChoices
-                ? question.minSelectedChoices
-                : */ e.target.valueAsNumber
+              e.target.valueAsNumber
             );
           }}
         />
