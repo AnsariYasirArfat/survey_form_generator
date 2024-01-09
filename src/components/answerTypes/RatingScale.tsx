@@ -2,23 +2,13 @@ import { Button, Chip, Divider } from "@nextui-org/react";
 import React, { useState } from "react";
 import Style from "../../style_module/startStyle.module.css";
 import { Minus, Plus } from "lucide-react";
-import { Choices, Question } from "../QuestionForm";
-
-interface RatingScaleProps {
-  question: Question;
-  index: number;
-  handleDataChange: (
-    index: number,
-    field: keyof Question,
-    value: string | boolean | number | Choices[]
-  ) => void;
-}
+import { AnswerTypeComponentProps } from "@/types/questions";
 
 const RatingScale = ({
   question,
   index,
   handleDataChange,
-}: RatingScaleProps) => {
+}: AnswerTypeComponentProps) => {
   const [selectedStar, setSelectedStar] = useState<number>(1);
 
   const handleStarClick = (selected: number) => {

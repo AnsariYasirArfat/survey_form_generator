@@ -1,22 +1,12 @@
+import { AnswerTypeComponentProps } from "@/types/questions";
 import { Divider, Input, Slider, Switch } from "@nextui-org/react";
 import React, { useState } from "react";
-import { Question } from "../QuestionForm";
-
-interface SingleinputProps {
-  question: Question;
-  index: number;
-  handleDataChange: (
-    index: number,
-    field: keyof Question,
-    value: string | boolean | number
-  ) => void;
-}
 
 const SingleInput = ({
   question,
   index,
   handleDataChange,
-}: SingleinputProps) => {
+}: AnswerTypeComponentProps) => {
   const [isSelected, setIsSelected] = useState(false);
 
   return (

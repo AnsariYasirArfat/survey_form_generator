@@ -3,14 +3,17 @@ import React, { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import QuestionForm from "./QuestionForm";
 import Link from "next/link";
+import { useGlobalContext } from "@/app/Context/store";
 
 const SurveyComposer = () => {
-  const [questions, setQuestions] = useState<any>([]);
-  const [surveyForm, setSurveyForm] = useState<any>({
-    name: "",
-    questions: questions,
-  });
+  // const [questions, setQuestions] = useState<any>([]);
+  // const [surveyForm, setSurveyForm] = useState<any>({
+  //   name: "",
+  //   questions: questions,
+  // });
 
+  const { questions, setQuestions, setSurveyForm, surveyForm } =
+    useGlobalContext();
   return (
     <div className="">
       <div className="flex justify-center items-center">
@@ -19,11 +22,11 @@ const SurveyComposer = () => {
         </h1>
         <Link
           href={{
-            pathname: "/JSON",
-            query: {
-              name: surveyForm.name,
-              questions: JSON.stringify(questions),
-            },
+            pathname: "/json",
+            // query: {
+            //   name: surveyForm.name,
+            //   questions: JSON.stringify(questions),
+            // },
           }}
         >
           <Button radius="sm" size={"sm"} className="font-bold">
@@ -59,7 +62,7 @@ const SurveyComposer = () => {
         />
       </div>
 
-      <QuestionForm questions={questions} setQuestions={setQuestions} />
+      <QuestionForm />
     </div>
   );
 };

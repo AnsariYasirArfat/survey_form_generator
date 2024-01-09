@@ -9,19 +9,13 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Minus, Plus } from "lucide-react";
-import { Choices, Question } from "../QuestionForm";
+import { AnswerTypeComponentProps } from "@/types/questions";
 
-interface RadioGroupProps {
-  question: Question;
-  index: number;
-  handleDataChange: (
-    index: number,
-    field: keyof Question,
-    value: string | boolean | number | Choices[]
-  ) => void;
-}
-
-const RadioGroup = ({ question, index, handleDataChange }: RadioGroupProps) => {
+const RadioGroup = ({
+  question,
+  index,
+  handleDataChange,
+}: AnswerTypeComponentProps) => {
   const questionIndex = index;
   const [choiceCount, setChoiceCount] = useState(3);
   const [tempChoices, setTempChoices] = useState<any>(question.choices);

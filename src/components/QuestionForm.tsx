@@ -28,39 +28,42 @@ import SingleInput from "./answerTypes/SingleInput";
 import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
+import { useGlobalContext } from "@/app/Context/store";
+import { Choices, Question } from "@/types/questions";
 
-export interface Choices {
-  value?: string;
-  text?: string;
-}
+// export interface Choices {
+//   value?: string;
+//   text?: string;
+// }
 
-export interface Question {
-  questionId?: string;
-  name?: string;
-  title?: string;
-  inputType?: string;
-  type?: string;
-  choices?: Choices[];
-  defaultValue?: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  rateType?: string;
-  rateCount?: number;
-  isRequired?: boolean;
-  maxSelectedChoices?: number;
-  minSelectedChoices?: number;
-}
+// export interface Question {
+//   questionId?: string;
+//   name?: string;
+//   title?: string;
+//   inputType?: string;
+//   type?: string;
+//   choices?: Choices[];
+//   defaultValue?: number;
+//   min?: number;
+//   max?: number;
+//   step?: number;
+//   rateType?: string;
+//   rateCount?: number;
+//   isRequired?: boolean;
+//   maxSelectedChoices?: number;
+//   minSelectedChoices?: number;
+// }
 
-export interface QuestionFormProp {
-  questions: Question[];
-  setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
-}
+// export interface QuestionFormProp {
+//   questions: Question[];
+//   setQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
+// }
 
-const QuestionForm = ({ questions, setQuestions }: QuestionFormProp) => {
+const QuestionForm = (/* { questions, setQuestions }: QuestionFormProp */) => {
+  const { questions, setQuestions } = useGlobalContext();
   const [generatedQuestionId, setgeneratedQuestionId] = useState("");
   const [questionCount, setQuestionCount] = useState(1);
-  console.log("Question: ", questions);
+  console.log("Questions: ", questions);
 
   useEffect(() => {
     const targetElement = document.getElementById(`${generatedQuestionId}`);
