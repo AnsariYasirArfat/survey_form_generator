@@ -6,12 +6,6 @@ import Link from "next/link";
 import { useGlobalContext } from "@/app/Context/store";
 
 const SurveyComposer = () => {
-  // const [questions, setQuestions] = useState<any>([]);
-  // const [surveyForm, setSurveyForm] = useState<any>({
-  //   name: "",
-  //   questions: questions,
-  // });
-
   const { questions, setQuestions, setSurveyForm, surveyForm } =
     useGlobalContext();
   return (

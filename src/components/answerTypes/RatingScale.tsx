@@ -5,6 +5,7 @@ import { Minus, Plus } from "lucide-react";
 import { AnswerTypeComponentProps } from "@/types/questions";
 
 const RatingScale = ({
+  adminMode,
   question,
   index,
   handleDataChange,
@@ -33,28 +34,40 @@ const RatingScale = ({
 
   return (
     <div>
-      <h5 className="text-center pt-2 text-base font-medium text-blue-800">
-        Answer type: Rating Scale
-      </h5>
-      <div className="mx-4 my-2">
-        <Divider />
-      </div>
+      {adminMode && (
+        <>
+          <h5 className="text-center pt-2 text-base font-medium text-blue-800">
+            Answer type: Rating Scale
+          </h5>
+          <div className="mx-4 my-2">
+            <Divider />
+          </div>
+        </>
+      )}
       <div className="grid grid-cols-6 justify-center items-center gap-4 p-4">
-        <div className="col-span-1 flex gap-2 justify-center">
-          <Button
-            onClick={minusOption}
-            variant="flat"
-            color="danger"
-            size="sm"
-            className="w-10"
-          >
-            <Minus size={16} />
-          </Button>
-          <Button onClick={addOption} variant="flat" color="success" size="sm">
-            <Plus size={16} />
-          </Button>
-        </div>
-
+        {adminMode && (
+          <>
+            <div className="col-span-1 flex gap-2 justify-center">
+              <Button
+                onClick={minusOption}
+                variant="flat"
+                color="danger"
+                size="sm"
+                className="w-10"
+              >
+                <Minus size={16} />
+              </Button>
+              <Button
+                onClick={addOption}
+                variant="flat"
+                color="success"
+                size="sm"
+              >
+                <Plus size={16} />
+              </Button>
+            </div>
+          </>
+        )}
         {question.rateType === "stars" ? (
           <div className={`${Style.stars} gap-2 col-span-5`}>
             {Array.from({ length: question.rateCount! }).map((_, index) => {

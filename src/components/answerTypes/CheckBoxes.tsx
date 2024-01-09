@@ -12,6 +12,7 @@ import { Minus, Plus } from "lucide-react";
 import { AnswerTypeComponentProps } from "@/types/questions";
 
 const CheckBoxes = ({
+  adminMode,
   question,
   index,
   handleDataChange,
@@ -69,62 +70,67 @@ const CheckBoxes = ({
 
   return (
     <div>
-      <h5 className="text-center pt-2 text-base font-medium text-blue-800">
-        Answer type: Checkbox Group
-      </h5>
-      <div className="mx-4 my-2">
-        <Divider />
-      </div>
-      <div className="w-full grid grid-cols-2 justify-center gap-2 p-4 ">
-        <Input
-          type="number"
-          label="Min. Select Choice?"
-          labelPlacement="outside-left"
-          className="justify-center"
-          placeholder="0.00"
-          size="sm"
-          min={0}
-          max={tempChoices.length}
-          value={`${question.minSelectedChoices}`}
-          onChange={(e) => {
-            handleDataChange(
-              index,
-              "minSelectedChoices",
-              e.target.valueAsNumber
-            );
+      {adminMode && (
+        <>
+          <h5 className="text-center pt-2 text-base font-medium text-blue-800">
+            Answer type: Checkbox Group
+          </h5>
+          <div className="mx-4 my-2">
+            <Divider />
+          </div>
 
-            if (
-              question.minSelectedChoices &&
-              question.maxSelectedChoices &&
-              question.minSelectedChoices > question.maxSelectedChoices
-            ) {
-              handleDataChange(
-                index,
-                "maxSelectedChoices",
-                question.minSelectedChoices
-              );
-            }
-          }}
-        />
+          <div className="w-full grid grid-cols-2 justify-center gap-2 p-4 ">
+            <Input
+              type="number"
+              label="Min. Select Choice?"
+              labelPlacement="outside-left"
+              className="justify-center"
+              placeholder="0.00"
+              size="sm"
+              min={0}
+              max={tempChoices.length}
+              value={`${question.minSelectedChoices}`}
+              onChange={(e) => {
+                handleDataChange(
+                  index,
+                  "minSelectedChoices",
+                  e.target.valueAsNumber
+                );
 
-        <Input
-          type="number"
-          label="Max. Select Choice?"
-          labelPlacement="outside-left"
-          className="justify-center"
-          size="sm"
-          min={question.minSelectedChoices}
-          max={tempChoices.length}
-          value={`${question.maxSelectedChoices}`}
-          onChange={(e) => {
-            handleDataChange(
-              index,
-              "maxSelectedChoices",
-              e.target.valueAsNumber
-            );
-          }}
-        />
-      </div>
+                if (
+                  question.minSelectedChoices &&
+                  question.maxSelectedChoices &&
+                  question.minSelectedChoices > question.maxSelectedChoices
+                ) {
+                  handleDataChange(
+                    index,
+                    "maxSelectedChoices",
+                    question.minSelectedChoices
+                  );
+                }
+              }}
+            />
+
+            <Input
+              type="number"
+              label="Max. Select Choice?"
+              labelPlacement="outside-left"
+              className="justify-center"
+              size="sm"
+              min={question.minSelectedChoices}
+              max={tempChoices.length}
+              value={`${question.maxSelectedChoices}`}
+              onChange={(e) => {
+                handleDataChange(
+                  index,
+                  "maxSelectedChoices",
+                  e.target.valueAsNumber
+                );
+              }}
+            />
+          </div>
+        </>
+      )}
       <CheckboxGroup
         classNames={{
           base: ["p-4"],
@@ -133,8 +139,17 @@ const CheckBoxes = ({
         {tempChoices.map((tempChoice: any, index: number) => {
           return (
             <div key={index} className="flex justify-between items-center">
-              <Checkbox value={tempChoice.value} size={"lg"} radius="sm" />
+              <Checkbox
+                classNames={{
+                  wrapper: [`${adminMode && "border-slate-400 border-2"}`],
+                }}
+                isDisabled={adminMode}
+                value={tempChoice.value}
+                size={"lg"}
+                radius="sm"
+              />
               <Input
+                readOnly={!adminMode}
                 size={"sm"}
                 type="text"
                 value={tempChoice.text}
@@ -147,40 +162,44 @@ const CheckBoxes = ({
                   input: ["text-black capitalize font-semibold"],
                 }}
               />
-              <Button
-                onClick={() => minusChoice(tempChoice)}
-                variant="bordered"
-                color="danger"
-                size="sm"
-              >
-                <Minus size={16} />
-              </Button>
+              {adminMode && (
+                <Button
+                  onClick={() => minusChoice(tempChoice)}
+                  variant="bordered"
+                  color="danger"
+                  size="sm"
+                >
+                  <Minus size={16} />
+                </Button>
+              )}
             </div>
           );
         })}
-        <div className="flex justify-between items-center">
-          <Checkbox value={"add"} isDisabled size={"lg"} radius="sm" />
-          <Input
-            isDisabled
-            size={"sm"}
-            type="text"
-            value={`Choice ${choiceCount}`}
-            readOnly
-            classNames={{
-              base: ["me-4"],
-              input: ["text-black capitalize font-semibold"],
-            }}
-          />
+        {adminMode && (
+          <div className="flex justify-between items-center">
+            <Checkbox value={"add"} isDisabled size={"lg"} radius="sm" />
+            <Input
+              isDisabled
+              size={"sm"}
+              type="text"
+              value={`Choice ${choiceCount}`}
+              readOnly
+              classNames={{
+                base: ["me-4"],
+                input: ["text-black capitalize font-semibold"],
+              }}
+            />
 
-          <Button
-            onClick={addChoice}
-            variant="bordered"
-            color="success"
-            size="sm"
-          >
-            <Plus size={16} />
-          </Button>
-        </div>
+            <Button
+              onClick={addChoice}
+              variant="bordered"
+              color="success"
+              size="sm"
+            >
+              <Plus size={16} />
+            </Button>
+          </div>
+        )}
       </CheckboxGroup>
     </div>
   );

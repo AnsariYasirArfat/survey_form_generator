@@ -12,6 +12,7 @@ import { Minus, Plus } from "lucide-react";
 import { AnswerTypeComponentProps } from "@/types/questions";
 
 const RadioGroup = ({
+  adminMode,
   question,
   index,
   handleDataChange,
@@ -71,12 +72,16 @@ const RadioGroup = ({
 
   return (
     <div>
-      <h5 className="text-center pt-2 text-base font-medium text-blue-800">
-        Answer type: Radio Group
-      </h5>
-      <div className="mx-4 my-2">
-        <Divider />
-      </div>
+      {adminMode && (
+        <>
+          <h5 className="text-center pt-2 text-base font-medium text-blue-800">
+            Answer type: Radio Group
+          </h5>
+          <div className="mx-4 my-2">
+            <Divider />
+          </div>{" "}
+        </>
+      )}
       <RadioType
         // label="Add label if needed"
         // isReadOnly
@@ -90,8 +95,16 @@ const RadioGroup = ({
               key={`radiogroup-${index}-${JSON.stringify(question)}`}
               className="flex justify-between items-center"
             >
-              <Radio value={tempChoice.value} />
+              <Radio
+                classNames={{
+                  wrapper: [`${adminMode && "border-slate-400 border-2"}`],
+                }}
+                isDisabled={adminMode}
+                value={tempChoice.value}
+                size={"lg"}
+              />
               <Input
+                readOnly={!adminMode}
                 size={"sm"}
                 type="text"
                 value={tempChoice.text}
@@ -104,39 +117,43 @@ const RadioGroup = ({
                   input: ["text-black capitalize font-semibold"],
                 }}
               />
-              <Button
-                onClick={() => minusChoice(tempChoice)}
-                variant="bordered"
-                color="danger"
-                size="sm"
-              >
-                <Minus size={16} />
-              </Button>
+              {adminMode && (
+                <Button
+                  onClick={() => minusChoice(tempChoice)}
+                  variant="bordered"
+                  color="danger"
+                  size="sm"
+                >
+                  <Minus size={16} />
+                </Button>
+              )}
             </div>
           );
         })}
-        <div className="flex justify-between items-center">
-          <Radio value={"add"} isDisabled />
-          <Input
-            isDisabled
-            size={"sm"}
-            type="text"
-            value={`Choice ${choiceCount}`}
-            readOnly
-            classNames={{
-              base: ["me-4"],
-              input: ["text-black capitalize font-semibold"],
-            }}
-          />
-          <Button
-            onClick={addChoice}
-            variant="bordered"
-            color="success"
-            size="sm"
-          >
-            <Plus size={16} />
-          </Button>
-        </div>
+        {adminMode && (
+          <div className="flex justify-between items-center">
+            <Radio value={"add"} isDisabled />
+            <Input
+              isDisabled
+              size={"sm"}
+              type="text"
+              value={`Choice ${choiceCount}`}
+              readOnly
+              classNames={{
+                base: ["me-4"],
+                input: ["text-black capitalize font-semibold"],
+              }}
+            />
+            <Button
+              onClick={addChoice}
+              variant="bordered"
+              color="success"
+              size="sm"
+            >
+              <Plus size={16} />
+            </Button>
+          </div>
+        )}
       </RadioType>
     </div>
   );
