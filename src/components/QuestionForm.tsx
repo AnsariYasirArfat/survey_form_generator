@@ -58,6 +58,8 @@ const QuestionForm = () => {
         questionId: generatedId,
         name: `Question ${questionCount}`,
         title: `Question ${questionCount}: Title...`,
+        type: "singleinput",
+        inputType: "text",
         isRequired: false,
       },
     ]);
@@ -89,8 +91,8 @@ const QuestionForm = () => {
     field: keyof Question,
     value: string | boolean | number | Choices[]
   ) => {
-    const updatedQuestions: any = [...questions];
-    const questionToUpdate = updatedQuestions[index];
+    const updatedQuestions: Question[] = [...questions];
+    const questionToUpdate: any = updatedQuestions[index];
     questionToUpdate[field] = value;
     setQuestions(updatedQuestions);
   };

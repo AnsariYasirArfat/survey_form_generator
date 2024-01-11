@@ -66,3 +66,49 @@ export const rateTypes = [
     type: "stars",
   },
 ];
+
+export const comparisonOperators = [
+  {
+    label: "Empty",
+    type: "empty",
+  },
+  {
+    label: "Not Empty",
+    type: "notempty",
+  },
+  {
+    label: "Equals",
+    type: "=",
+  },
+  {
+    label: "Not Equals",
+    type: "<>",
+  },
+  {
+    label: "Greater than",
+    type: ">",
+  },
+  {
+    label: "Less than",
+    type: "<",
+  },
+  {
+    label: "Greater than or Equal to",
+    type: ">=",
+  },
+  {
+    label: "Less than or Equal to",
+    type: "<=",
+  },
+];
+
+export const logicalOperators = [
+  {
+    label: "AND",
+    type: "and",
+  },
+  {
+    label: "OR",
+    type: "or",
+  },
+];

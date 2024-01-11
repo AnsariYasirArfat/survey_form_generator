@@ -6,8 +6,7 @@ import Link from "next/link";
 import { useGlobalContext } from "@/app/Context/store";
 
 const SurveyComposer = () => {
-  const { questions, setQuestions, setSurveyForm, surveyForm } =
-    useGlobalContext();
+  const { setSurveyForm, surveyForm } = useGlobalContext();
   return (
     <div className="">
       <div className="flex justify-center items-center">

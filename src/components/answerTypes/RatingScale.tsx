@@ -75,15 +75,15 @@ const RatingScale = ({
                 <>
                   <input
                     type="radio"
-                    key={`star-input-${index}-${question.questionId}`}
-                    id={`star-${index}-${question.questionId}`}
+                    key={`star-input-${index}-${question.questionId}-${adminMode}`}
+                    id={`star-${index}-${question.questionId}-${adminMode}`}
                     value={`${index}`}
                     checked={selectedStar === index + 1}
                     onChange={() => handleStarClick(index + 1)}
                   />
                   <label
-                    key={`star-label-${index}-${question.questionId}`}
-                    htmlFor={`star-${index}-${question.questionId}`}
+                    key={`star-label-${index}-${question.questionId}-${adminMode}`}
+                    htmlFor={`star-${index}-${question.questionId}-${adminMode}`}
                     title="text"
                     className="p-1"
                   >
@@ -104,16 +104,18 @@ const RatingScale = ({
           <div className={`${Style.number} gap-2 col-span-5`}>
             {Array.from({ length: question.rateCount! }).map((_, index) => {
               return (
-                <div key={`number-input-${index}-${question.questionId}`}>
+                <div
+                  key={`number-input-${index}-${question.questionId}-${adminMode}`}
+                >
                   <input
                     type="radio"
-                    id={`number-${index}-${question.questionId}`}
+                    id={`number-${index}-${question.questionId}-${adminMode}`}
                     value={`${index}`}
                     checked={selectedStar === index + 1}
                     onChange={() => handleStarClick(index + 1)}
                   />
                   <label
-                    htmlFor={`number-${index}-${question.questionId}`}
+                    htmlFor={`number-${index}-${question.questionId}-${adminMode}`}
                     title="text"
                     className="p-1"
                   >

@@ -1,3 +1,14 @@
+import { Dispatch, SetStateAction } from "react";
+
+export interface GlobalContextProps {
+  questions: Question[];
+  setQuestions: Dispatch<SetStateAction<Question[]>>;
+  surveyForm: SurveyForm;
+  setSurveyForm: Dispatch<SetStateAction<SurveyForm>>;
+  logicConditionsData: LogicConditonData[];
+  setLogicConditionsData: Dispatch<SetStateAction<any>>;
+}
+
 export interface Choices {
   value?: string;
   text?: string;
@@ -35,4 +46,17 @@ export interface AnswerTypeComponentProps {
     field: keyof Question,
     value: string | boolean | number | Choices[]
   ) => void;
+}
+
+export interface ConditionalLogicEditorProps
+  extends Omit<AnswerTypeComponentProps, "adminMode" | "question"> {}
+
+export interface LogicConditonData {
+  logicDataId: string;
+  currentQuestionId: string | undefined;
+  selectQuestId: string | undefined;
+  selectedQuestion: Question | undefined;
+  comparisonOperator: string | undefined;
+  logicOperator: string | undefined;
+  answerValue: string | undefined;
 }

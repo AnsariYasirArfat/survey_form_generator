@@ -1,21 +1,24 @@
 "use client";
 
-import { Question, SurveyForm } from "@/types/questions";
 import {
-  useContext,
-  useState,
-  createContext,
-  Dispatch,
-  SetStateAction,
-} from "react";
+  GlobalContextProps,
+  LogicConditonData,
+  Question,
+  SurveyForm,
+} from "@/types/questions";
+import { useContext, useState, createContext } from "react";
 
-const GlobalContext = createContext({
-  questions: [] as Question[],
-  setQuestions: {} as Dispatch<SetStateAction<Question[]>>,
-  surveyForm: {} as SurveyForm,
-  setSurveyForm: {} as Dispatch<SetStateAction<SurveyForm>>,
+const GlobalContext = createContext<GlobalContextProps>({
+  questions: [],
+  setQuestions: () => {},
+  surveyForm: {
+    name: "",
+    questions: [],
+  },
+  setSurveyForm: () => {},
+  logicConditionsData: [],
+  setLogicConditionsData: () => {},
 });
-
 export const GlobalContextProvider = ({ children }: any) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [surveyForm, setSurveyForm] = useState<SurveyForm>({
@@ -23,9 +26,19 @@ export const GlobalContextProvider = ({ children }: any) => {
     questions: questions,
   });
 
+  const [logicConditionsData, setLogicConditionsData] = useState<
+    LogicConditonData[]
+  >([]);
   return (
     <GlobalContext.Provider
-      value={{ questions, setQuestions, surveyForm, setSurveyForm }}
+      value={{
+        questions,
+        setQuestions,
+        surveyForm,
+        setSurveyForm,
+        logicConditionsData,
+        setLogicConditionsData,
+      }}
     >
       {children}
     </GlobalContext.Provider>
