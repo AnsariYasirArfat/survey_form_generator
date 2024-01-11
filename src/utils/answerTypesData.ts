@@ -85,6 +85,14 @@ export const comparisonOperators = [
     type: "<>",
   },
   {
+    label: "Contain",
+    type: "Contain",
+  },
+  {
+    label: "Not contain",
+    type: "notcontain",
+  },
+  {
     label: "Greater than",
     type: ">",
   },

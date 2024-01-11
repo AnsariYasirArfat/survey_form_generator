@@ -39,12 +39,18 @@ export interface SurveyForm {
 
 export interface AnswerTypeComponentProps {
   adminMode: boolean;
-  question: Question;
+  question?: Question;
+  logic?: LogicConditonData;
   index: number;
-  handleDataChange: (
+  handleDataChange?: (
     index: number,
     field: keyof Question,
     value: string | boolean | number | Choices[]
+  ) => void;
+  handleLogicConditions?: (
+    index: number,
+    field: keyof LogicConditonData,
+    value: string | Question
   ) => void;
 }
 

@@ -192,15 +192,15 @@ const ConditionalLogicEditor = ({
     });
   };
 
-  const userAnswerField = (question: Question, index: number) => {
-    switch (question.type) {
+  const userAnswerField = (logic: LogicConditonData, index: number) => {
+    switch (logic.selectedQuestion!.type) {
       case "singleinput":
         return (
           <SingleInput
             adminMode={false}
-            question={question}
             index={index}
-            handleDataChange={handleDataChange}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
           />
         );
 
@@ -211,9 +211,9 @@ const ConditionalLogicEditor = ({
         return (
           <RadioGroup
             adminMode={false}
-            question={question}
             index={index}
-            handleDataChange={handleDataChange}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
           />
         );
 
@@ -221,9 +221,9 @@ const ConditionalLogicEditor = ({
         return (
           <CheckBoxes
             adminMode={false}
-            question={question}
             index={index}
-            handleDataChange={handleDataChange}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
           />
         );
 
@@ -234,9 +234,9 @@ const ConditionalLogicEditor = ({
         return (
           <RatingScale
             adminMode={false}
-            question={question}
             index={index}
-            handleDataChange={handleDataChange}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
           />
         );
 
@@ -444,10 +444,9 @@ const ConditionalLogicEditor = ({
 
                           <CardBody className="p-3">
                             <div className="rounded-md bg-blue-100">
-                              {userAnswerField(logic.selectedQuestion, index)}
+                              {userAnswerField(logic, index)}
                             </div>
                           </CardBody>
-                          <CardFooter className="grid grid-cols-3 gap-4"></CardFooter>
                         </Card>
                       ) : (
                         <Card className="w-full bg-blue-300 ">

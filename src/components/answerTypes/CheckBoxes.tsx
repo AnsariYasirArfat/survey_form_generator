@@ -19,10 +19,10 @@ const CheckBoxes = ({
 }: AnswerTypeComponentProps) => {
   const questionIndex = index;
   const [choiceCount, setChoiceCount] = useState(3);
-  const [tempChoices, setTempChoices] = useState<any>(question.choices);
+  const [tempChoices, setTempChoices] = useState<any>(question!.choices);
 
   // console.log("checkbox tempChoice: ", tempChoices);
-  // console.log("checkbox original Choice: ", question.choices);
+  // console.log("checkbox original Choice: ", question!.choices);
 
   const addChoice = () => {
     setTempChoices([
@@ -30,26 +30,26 @@ const CheckBoxes = ({
       { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ]);
 
-    const choices: any = question.choices;
+    const choices: any = question!.choices;
     const addedChoices = [
       ...choices,
       { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ];
-    handleDataChange(questionIndex, "choices", addedChoices);
+    handleDataChange!(questionIndex, "choices", addedChoices);
     setChoiceCount((prevCount) => prevCount + 1);
   };
 
   const minusChoice = (choiceToMinus: any) => {
-    if (question.choices!.length > 2) {
+    if (question!.choices!.length > 2) {
       const udatedChoice = tempChoices.filter(
         (tempChoice: any) => choiceToMinus !== tempChoice
       );
       setTempChoices(udatedChoice);
-      const choices: any = question.choices;
+      const choices: any = question!.choices;
       const minusChoice = choices.filter(
         (choice: any) => choiceToMinus.text !== choice.text
       );
-      handleDataChange(questionIndex, "choices", minusChoice);
+      handleDataChange!(questionIndex, "choices", minusChoice);
     }
   };
 
@@ -65,7 +65,7 @@ const CheckBoxes = ({
   };
 
   const updateChoiceTextInMainData = () => {
-    handleDataChange(questionIndex, "choices", tempChoices);
+    handleDataChange!(questionIndex, "choices", tempChoices);
   };
 
   return (
@@ -89,23 +89,23 @@ const CheckBoxes = ({
               size="sm"
               min={0}
               max={tempChoices.length}
-              value={`${question.minSelectedChoices}`}
+              value={`${question!.minSelectedChoices}`}
               onChange={(e) => {
-                handleDataChange(
+                handleDataChange!(
                   index,
                   "minSelectedChoices",
                   e.target.valueAsNumber
                 );
 
                 if (
-                  question.minSelectedChoices &&
-                  question.maxSelectedChoices &&
-                  question.minSelectedChoices > question.maxSelectedChoices
+                  question!.minSelectedChoices &&
+                  question!.maxSelectedChoices &&
+                  question!.minSelectedChoices > question!.maxSelectedChoices
                 ) {
-                  handleDataChange(
+                  handleDataChange!(
                     index,
                     "maxSelectedChoices",
-                    question.minSelectedChoices
+                    question!.minSelectedChoices
                   );
                 }
               }}
@@ -117,11 +117,11 @@ const CheckBoxes = ({
               labelPlacement="outside-left"
               className="justify-center"
               size="sm"
-              min={question.minSelectedChoices}
+              min={question!.minSelectedChoices}
               max={tempChoices.length}
-              value={`${question.maxSelectedChoices}`}
+              value={`${question!.maxSelectedChoices}`}
               onChange={(e) => {
-                handleDataChange(
+                handleDataChange!(
                   index,
                   "maxSelectedChoices",
                   e.target.valueAsNumber
