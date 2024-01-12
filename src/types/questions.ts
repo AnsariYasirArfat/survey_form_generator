@@ -39,18 +39,19 @@ export interface SurveyForm {
 
 export interface AnswerTypeComponentProps {
   adminMode: boolean;
-  question?: Question;
-  logic?: LogicConditonData;
   index: number;
+  question?: Question;
   handleDataChange?: (
     index: number,
     field: keyof Question,
-    value: string | boolean | number | Choices[]
+    value: string | number | Choices[]
   ) => void;
+
+  logic?: LogicConditonData;
   handleLogicConditions?: (
     index: number,
     field: keyof LogicConditonData,
-    value: string | Question
+    value: string | Question | boolean | number | undefined
   ) => void;
 }
 
@@ -64,5 +65,8 @@ export interface LogicConditonData {
   selectedQuestion: Question | undefined;
   comparisonOperator: string | undefined;
   logicOperator: string | undefined;
-  answerValue: string | undefined;
+  answerValue: any;
 }
+// export interface AnswerValue {
+//   answerValue: string | boolean | undefined;
+// }

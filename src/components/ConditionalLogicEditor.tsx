@@ -165,7 +165,7 @@ const ConditionalLogicEditor = ({
   const handleLogicConditions = (
     index: number,
     field: keyof LogicConditonData,
-    value: string | Question
+    value: string | Question | boolean | number | undefined
   ) => {
     // update in local logic array
     // setLogicToCurrentQuestions(
@@ -205,7 +205,14 @@ const ConditionalLogicEditor = ({
         );
 
       case "textarea":
-        return <LongText adminMode={false} />;
+        return (
+          <LongText
+            adminMode={false}
+            index={index}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
+          />
+        );
 
       case "radiogroup":
         return (
@@ -228,7 +235,14 @@ const ConditionalLogicEditor = ({
         );
 
       case "boolean":
-        return <Boolean adminMode={false} />;
+        return (
+          <Boolean
+            adminMode={false}
+            index={index}
+            logic={logic}
+            handleLogicConditions={handleLogicConditions}
+          />
+        );
 
       case "ratingscale":
         return (
