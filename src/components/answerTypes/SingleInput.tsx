@@ -167,6 +167,12 @@ const SingleInput = ({
   handleDataChange,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
+  let questionIndex: number | undefined, logicIndex: number | undefined;
+  if (adminMode) {
+    questionIndex = index;
+  } else if (logic && !adminMode) {
+    logicIndex = index;
+  }
   const [isSelected, setIsSelected] = useState(false);
   const [answerValue, setAnswerValue] = useState(logic?.answerValue || "");
 
@@ -216,7 +222,11 @@ const SingleInput = ({
                 size="sm"
                 value={`${question!.step}`}
                 onChange={(e) => {
-                  handleDataChange!(index, "step", e.target.valueAsNumber);
+                  handleDataChange!(
+                    questionIndex!,
+                    "step",
+                    e.target.valueAsNumber
+                  );
                 }}
               />
               <Input
@@ -227,7 +237,11 @@ const SingleInput = ({
                 size="sm"
                 value={`${question!.min}`}
                 onChange={(e) =>
-                  handleDataChange!(index, "min", e.target.valueAsNumber)
+                  handleDataChange!(
+                    questionIndex!,
+                    "min",
+                    e.target.valueAsNumber
+                  )
                 }
               />
               <Input
@@ -238,7 +252,11 @@ const SingleInput = ({
                 size="sm"
                 value={`${question!.max}`}
                 onChange={(e) =>
-                  handleDataChange!(index, "max", e.target.valueAsNumber)
+                  handleDataChange!(
+                    questionIndex!,
+                    "max",
+                    e.target.valueAsNumber
+                  )
                 }
               />
               <Input
@@ -250,7 +268,7 @@ const SingleInput = ({
                 value={`${question!.defaultValue}`}
                 onChange={(e) => {
                   handleDataChange!(
-                    index,
+                    questionIndex!,
                     "defaultValue",
                     e.target.valueAsNumber
                   );
@@ -288,9 +306,9 @@ const SingleInput = ({
             }}
             onBlur={() => {
               if (answerValue) {
-                handleLogicConditions!(index, "answerValue", answerValue);
+                handleLogicConditions!(logicIndex!, "answerValue", answerValue);
               } else {
-                handleLogicConditions!(index, "answerValue", undefined);
+                handleLogicConditions!(logicIndex!, "answerValue", undefined);
               }
             }}
             classNames={{
@@ -306,7 +324,7 @@ const SingleInput = ({
             value={answerValue}
             onChange={setAnswerValue}
             onBlur={() => {
-              handleLogicConditions!(index, "answerValue", answerValue);
+              handleLogicConditions!(logicIndex!, "answerValue", answerValue);
             }}
             step={logic?.selectedQuestion!.step}
             showSteps={true}

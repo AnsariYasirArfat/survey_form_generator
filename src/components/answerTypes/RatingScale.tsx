@@ -158,19 +158,19 @@ const RatingScale = ({
     if (adminMode) {
       console.log("Selected star:", selected);
     } else {
-      handleLogicConditions!(index, "answerValue", selected);
+      handleLogicConditions!(index!, "answerValue", selected);
     }
   };
 
   const addOption = () => {
     if (question!.rateCount! < 20) {
-      handleDataChange!(index, "rateCount", question!.rateCount! + 1);
+      handleDataChange!(index!, "rateCount", question!.rateCount! + 1);
     }
   };
 
   const minusOption = () => {
     if (question!.rateCount! > 2) {
-      handleDataChange!(index, "rateCount", question!.rateCount! - 1);
+      handleDataChange!(index!, "rateCount", question!.rateCount! - 1);
       if (question!.rateCount! <= selectedStar) {
         setSelectedStar(1);
       }

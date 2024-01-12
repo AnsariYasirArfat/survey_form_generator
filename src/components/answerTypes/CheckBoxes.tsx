@@ -230,7 +230,12 @@ const CheckBoxes = ({
   logic,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
-  const questionIndex = index;
+  let questionIndex: number | undefined, logicIndex: number | undefined;
+  if (adminMode) {
+    questionIndex = index;
+  } else if (logic && !adminMode) {
+    logicIndex = index;
+  }
   const [choiceCount, setChoiceCount] = useState(3);
   const [tempChoices, setTempChoices] = useState<any>(
     question && question!.choices
@@ -247,7 +252,7 @@ const CheckBoxes = ({
       ...choices,
       { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ];
-    handleDataChange!(questionIndex, "choices", addedChoices);
+    handleDataChange!(questionIndex!, "choices", addedChoices);
     setChoiceCount((prevCount) => prevCount + 1);
   };
 
@@ -261,7 +266,7 @@ const CheckBoxes = ({
       const minusChoice = choices.filter(
         (choice: any) => choiceToMinus.text !== choice.text
       );
-      handleDataChange!(questionIndex, "choices", minusChoice);
+      handleDataChange!(questionIndex!, "choices", minusChoice);
     }
   };
 
@@ -277,7 +282,7 @@ const CheckBoxes = ({
   };
 
   const updateChoiceTextInMainData = () => {
-    handleDataChange!(questionIndex, "choices", tempChoices);
+    handleDataChange!(questionIndex!, "choices", tempChoices);
   };
   const renderAdminMode = () => {
     return (
@@ -302,7 +307,7 @@ const CheckBoxes = ({
             value={`${question!.minSelectedChoices}`}
             onChange={(e) => {
               handleDataChange!(
-                index,
+                questionIndex!,
                 "minSelectedChoices",
                 e.target.valueAsNumber
               );
@@ -313,7 +318,7 @@ const CheckBoxes = ({
                 question!.minSelectedChoices > question!.maxSelectedChoices
               ) {
                 handleDataChange!(
-                  index,
+                  questionIndex!,
                   "maxSelectedChoices",
                   question!.minSelectedChoices
                 );
@@ -332,7 +337,7 @@ const CheckBoxes = ({
             value={`${question!.maxSelectedChoices}`}
             onChange={(e) => {
               handleDataChange!(
-                index,
+                questionIndex!,
                 "maxSelectedChoices",
                 e.target.valueAsNumber
               );
@@ -422,9 +427,9 @@ const CheckBoxes = ({
           onValueChange={setSelected}
           onBlur={() => {
             if (selected.length > 0) {
-              handleLogicConditions!(index, "answerValue", selected);
+              handleLogicConditions!(logicIndex!, "answerValue", selected);
             } else {
-              handleLogicConditions!(index, "answerValue", undefined);
+              handleLogicConditions!(logicIndex!, "answerValue", undefined);
             }
           }}
           classNames={{

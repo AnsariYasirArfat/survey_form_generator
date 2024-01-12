@@ -117,7 +117,7 @@ const Boolean = ({
               value={"no"}
               onChange={() => setIsChecked(false)}
               onClick={() =>
-                handleLogicConditions!(index, "answerValue", false)
+                handleLogicConditions!(index!, "answerValue", false)
               }
             />
             <span className={`${Style.name}`}>No</span>
@@ -128,7 +128,9 @@ const Boolean = ({
               checked={isChecked === undefined ? undefined : isChecked}
               value={"yes"}
               onChange={() => setIsChecked(true)}
-              onClick={() => handleLogicConditions!(index, "answerValue", true)}
+              onClick={() =>
+                handleLogicConditions!(index!, "answerValue", true)
+              }
             />
             <span className={`${Style.name}`}>Yes</span>
           </label>

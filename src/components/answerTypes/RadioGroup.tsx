@@ -176,7 +176,12 @@ const RadioChoices = ({
   logic,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
-  const questionIndex = index;
+  let questionIndex: number | undefined, logicIndex: number | undefined;
+  if (adminMode) {
+    questionIndex = index;
+  } else if (logic && !adminMode) {
+    logicIndex = index;
+  }
   const [choiceCount, setChoiceCount] = useState(3);
   const [tempChoices, setTempChoices] = useState<any>(
     question && question!.choices
@@ -194,7 +199,7 @@ const RadioChoices = ({
       ...choices,
       { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
     ];
-    handleDataChange!(questionIndex, "choices", addedChoices);
+    handleDataChange!(questionIndex!, "choices", addedChoices);
     setChoiceCount((prevCount) => prevCount + 1);
   };
 
@@ -208,7 +213,7 @@ const RadioChoices = ({
       const minusChoice = choices.filter(
         (choice: any) => choiceToMinus.text !== choice.text
       );
-      handleDataChange!(questionIndex, "choices", minusChoice);
+      handleDataChange!(questionIndex!, "choices", minusChoice);
     }
   };
 
@@ -224,7 +229,7 @@ const RadioChoices = ({
   };
 
   const updateChoiceTextInMainData = () => {
-    handleDataChange!(questionIndex, "choices", tempChoices);
+    handleDataChange!(questionIndex!, "choices", tempChoices);
   };
 
   const renderAdminMode = () => {
@@ -316,9 +321,9 @@ const RadioChoices = ({
           onValueChange={setSelected}
           onBlur={() => {
             if (selected) {
-              handleLogicConditions!(index, "answerValue", selected);
+              handleLogicConditions!(logicIndex!, "answerValue", selected);
             } else {
-              handleLogicConditions!(index, "answerValue", undefined);
+              handleLogicConditions!(logicIndex!, "answerValue", undefined);
             }
           }}
           classNames={{

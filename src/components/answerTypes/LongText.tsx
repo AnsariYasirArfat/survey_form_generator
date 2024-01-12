@@ -74,9 +74,9 @@ const LongText = ({
           }}
           onBlur={() => {
             if (answerValue) {
-              handleLogicConditions!(index, "answerValue", answerValue);
+              handleLogicConditions!(index!, "answerValue", answerValue);
             } else {
-              handleLogicConditions!(index, "answerValue", undefined);
+              handleLogicConditions!(index!, "answerValue", undefined);
             }
           }}
           classNames={{
