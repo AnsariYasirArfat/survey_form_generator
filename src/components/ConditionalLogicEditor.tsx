@@ -69,8 +69,8 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
         currentQuestionId: currentQuestion.questionId,
         selectQuestId: undefined,
         selectedQuestion: undefined,
-        comparisonOperator: "=",
-        logicOperator: logicToCurrentQuestions.length > 0 ? "and" : undefined,
+        comparisonOperator: undefined,
+        logicOperator: undefined,
         answerValue: undefined,
       },
     ]);
@@ -316,6 +316,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                         <div className="col-span-2">
                           {index > 0 && (
                             <Select
+                              isDisabled={logic.selectQuestId ? false : true}
                               label="Logic Operator:"
                               defaultSelectedKeys={["and"]}
                               selectedKeys={
@@ -370,6 +371,23 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                   question!
                                 );
                               }
+                              if (e.target.value) {
+                                handleLogicConditions(
+                                  index,
+                                  "comparisonOperator",
+                                  "="
+                                );
+                              }
+                              if (
+                                e.target.value &&
+                                logicToCurrentQuestions.length > 0
+                              ) {
+                                handleLogicConditions(
+                                  index,
+                                  "logicOperator",
+                                  "and"
+                                );
+                              }
                             }}
                           >
                             {questionList!.map((question, index) => (
@@ -388,6 +406,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                           }`}
                         >
                           <Select
+                            isDisabled={logic.selectQuestId ? false : true}
                             label="Comparison Operator:"
                             defaultSelectedKeys={["="]}
                             selectedKeys={
