@@ -5,7 +5,7 @@ export interface GlobalContextProps {
   setQuestions: Dispatch<SetStateAction<Question[]>>;
   surveyForm: SurveyForm;
   setSurveyForm: Dispatch<SetStateAction<SurveyForm>>;
-  logicConditionsData: LogicConditonData[];
+  logicConditionsData: LogicConditionData[];
   setLogicConditionsData: Dispatch<SetStateAction<any>>;
 }
 
@@ -47,18 +47,18 @@ export interface AnswerTypeComponentProps {
     value: string | number | Choices[]
   ) => void;
 
-  logic?: LogicConditonData;
+  logic?: LogicConditionData;
   handleLogicConditions?: (
     index: number,
-    field: keyof LogicConditonData,
+    field: keyof LogicConditionData,
     value: string | Question | boolean | number | undefined
   ) => void;
 }
 
-export interface ConditionalLogicEditorProps
-  extends Omit<AnswerTypeComponentProps, "adminMode" | "question"> {}
+// export interface ConditionalLogicEditorProps
+//   extends Omit<AnswerTypeComponentProps, "adminMode" | "question"> {}
 
-export interface LogicConditonData {
+export interface LogicConditionData {
   logicDataId: string;
   currentQuestionId: string | undefined;
   selectQuestId: string | undefined;

@@ -17,15 +17,10 @@ import {
   CardHeader,
   Input,
   CardBody,
-  CardFooter,
 } from "@nextui-org/react";
 import { Network, Plus, Trash2 } from "lucide-react";
 import { useGlobalContext } from "@/app/Context/store";
-import {
-  ConditionalLogicEditorProps,
-  LogicConditonData,
-  Question,
-} from "@/types/questions";
+import { LogicConditionData, Question } from "@/types/questions";
 import SingleInput from "./answerTypes/SingleInput";
 import LongText from "./answerTypes/LongText";
 import RadioGroup from "./answerTypes/RadioGroup";
@@ -35,10 +30,7 @@ import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 import { comparisonOperators, logicalOperators } from "@/utils/answerTypesData";
 
-const ConditionalLogicEditor = ({
-  index,
-  handleDataChange,
-}: ConditionalLogicEditorProps) => {
+const ConditionalLogicEditor = ({ index }: { index: number }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { questions, logicConditionsData, setLogicConditionsData } =
     useGlobalContext();
@@ -46,7 +38,7 @@ const ConditionalLogicEditor = ({
   const currentQuestion = questions[index!];
 
   const [logicToCurrentQuestions, setLogicToCurrentQuestions] = useState<
-    LogicConditonData[]
+    LogicConditionData[]
   >([]);
 
   useEffect(() => {
@@ -70,7 +62,7 @@ const ConditionalLogicEditor = ({
   }, [currentQuestion, questions]);
 
   const addMoreConditions = () => {
-    setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) => [
+    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) => [
       ...prevLogicConditionsData,
       {
         logicDataId: uuidv4(),
@@ -85,7 +77,7 @@ const ConditionalLogicEditor = ({
   };
 
   const deleteLogicCondition = (
-    logicToDelete: LogicConditonData,
+    logicToDelete: LogicConditionData,
     localIndex: number
   ) => {
     if (logicToCurrentQuestions.length > 1 && localIndex === 0) {
@@ -94,21 +86,23 @@ const ConditionalLogicEditor = ({
         logicToCurrentQuestions
       );
 
-      setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) => {
-        const logicDataIdToUpdate = logicToCurrentQuestions[1].logicDataId;
-        const updatedArray = prevLogicConditionsData.map((item) => {
-          if (item.logicDataId === logicDataIdToUpdate) {
-            // Update the corresponding object
-            return { ...item, logicOperator: undefined };
-          }
-          return item;
-        });
-        console.log(`I am here on `, updatedArray);
-        return updatedArray;
-      });
+      setLogicConditionsData(
+        (prevLogicConditionsData: LogicConditionData[]) => {
+          const logicDataIdToUpdate = logicToCurrentQuestions[1].logicDataId;
+          const updatedArray = prevLogicConditionsData.map((item) => {
+            if (item.logicDataId === logicDataIdToUpdate) {
+              // Update the corresponding object
+              return { ...item, logicOperator: undefined };
+            }
+            return item;
+          });
+          console.log(`I am here on `, updatedArray);
+          return updatedArray;
+        }
+      );
 
       // Second Option to update logicOperator to undefined
-      // setLogicToCurrentQuestions((prev: LogicConditonData[]) => {
+      // setLogicToCurrentQuestions((prev: LogicConditionData[]) => {
       //   const updatedArray = [...prev];
       //   const logicToUpdate = updatedArray[1];
       //   logicToUpdate["logicOperator"] = undefined;
@@ -116,18 +110,18 @@ const ConditionalLogicEditor = ({
       //   return updatedArray;
       // });
     }
-    setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) =>
+    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
       prevLogicConditionsData.filter(
-        (logic: LogicConditonData) =>
+        (logic: LogicConditionData) =>
           logicToDelete.logicDataId !== logic.logicDataId
       )
     );
   };
 
   const handleClearAllLogicData = () => {
-    setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) =>
+    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
       prevLogicConditionsData.filter(
-        (logic: LogicConditonData) =>
+        (logic: LogicConditionData) =>
           currentQuestion.questionId !== logic.currentQuestionId
       )
     );
@@ -135,7 +129,7 @@ const ConditionalLogicEditor = ({
 
   // useEffect(() => {
   //   if (logicToCurrentQuestions.length > 0) {
-  //     setLogicToCurrentQuestions((prev: LogicConditonData[]) => {
+  //     setLogicToCurrentQuestions((prev: LogicConditionData[]) => {
   //       const updatedArray = [...prev];
   //       const logicToUpdate = updatedArray[0];
   //       logicToUpdate["logicOperator"] = undefined;
@@ -147,7 +141,7 @@ const ConditionalLogicEditor = ({
 
   // useEffect(() => {
   //   if (logicToCurrentQuestions.length > 0) {
-  //     setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) => {
+  //     setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) => {
   //       const logicDataIdToUpdate = logicToCurrentQuestions[0].logicDataId;
   //       const updatedArray = prevLogicConditionsData.map((item) => {
   //         if (item.logicDataId === logicDataIdToUpdate) {
@@ -164,13 +158,13 @@ const ConditionalLogicEditor = ({
 
   const handleLogicConditions = (
     index: number,
-    field: keyof LogicConditonData,
+    field: keyof LogicConditionData,
     value: string | Question | boolean | number | undefined
   ) => {
     // update in local logic array
     // setLogicToCurrentQuestions(
-    //   (prevLogicConditionsData: LogicConditonData[]) => {
-    //     const updateLogicData: LogicConditonData[] = [
+    //   (prevLogicConditionsData: LogicConditionData[]) => {
+    //     const updateLogicData: LogicConditionData[] = [
     //       ...prevLogicConditionsData,
     //     ];
     //     const logicToUpdate: any = updateLogicData[index];
@@ -180,7 +174,7 @@ const ConditionalLogicEditor = ({
     // );
 
     // Update in Main logic array
-    setLogicConditionsData((prevLogicConditionsData: LogicConditonData[]) => {
+    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) => {
       const logicDataIdToUpdate = logicToCurrentQuestions[index].logicDataId;
       const updateLogicData = prevLogicConditionsData.map((logic) => {
         if (logic.logicDataId === logicDataIdToUpdate) {
@@ -192,7 +186,7 @@ const ConditionalLogicEditor = ({
     });
   };
 
-  const userAnswerField = (logic: LogicConditonData, index: number) => {
+  const userAnswerField = (logic: LogicConditionData, index: number) => {
     switch (logic.selectedQuestion!.type) {
       case "singleinput":
         return (
@@ -300,14 +294,15 @@ const ConditionalLogicEditor = ({
                   </span>
                   Visible, if...?
                 </h1>
+
                 <Button
-                  color="danger"
+                  isDisabled={logicToCurrentQuestions.length > 0 ? false : true}
                   variant="shadow"
-                  onPress={onClose}
+                  color="danger"
+                  onPress={handleClearAllLogicData}
                   radius="sm"
-                  size="sm"
                 >
-                  Cancel
+                  Clear All
                 </Button>
               </ModalHeader>
               <ModalBody className={`overflow-auto  gap-4`}>
@@ -508,15 +503,14 @@ const ConditionalLogicEditor = ({
                     ? `Add More Conditions`
                     : `Add Condition`}
                 </Button>
-
                 <Button
-                  isDisabled={logicToCurrentQuestions.length > 0 ? false : true}
                   color="danger"
                   variant="flat"
-                  onPress={handleClearAllLogicData}
+                  onPress={onClose}
                   radius="sm"
+                  // size="sm"
                 >
-                  Clear All
+                  Cancel
                 </Button>
                 <Button
                   isDisabled={logicToCurrentQuestions.length > 0 ? false : true}

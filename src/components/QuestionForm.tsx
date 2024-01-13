@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  Divider,
   Input,
   Button,
   Select,
@@ -29,10 +28,15 @@ import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 import { useGlobalContext } from "@/app/Context/store";
-import { Choices, Question } from "@/types/questions";
+import { Choices, LogicConditionData, Question } from "@/types/questions";
 
 const QuestionForm = () => {
-  const { questions, setQuestions } = useGlobalContext();
+  const {
+    questions,
+    setQuestions,
+    logicConditionsData,
+    setLogicConditionsData,
+  } = useGlobalContext();
   const [generatedQuestionId, setgeneratedQuestionId] = useState("");
   const [questionCount, setQuestionCount] = useState(1);
 
@@ -66,10 +70,32 @@ const QuestionForm = () => {
     setQuestionCount((prevCount) => prevCount + 1);
   };
 
-  const deleteQuestions = (questionToDelete: Question) => {
-    const updatedQuestions = questions.filter(
-      (question: Question) => questionToDelete !== question
+  const deleteQuestions = (
+    questionToDelete: Question,
+    questionIndexToDelete: number
+  ) => {
+    if (questions.length > 1 && questionIndexToDelete === 0) {
+      const clearLogicForFirstQuestionId = questions[1].questionId;
+      setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
+        prevLogicConditionsData.filter(
+          (logic: LogicConditionData) =>
+            clearLogicForFirstQuestionId !== logic.currentQuestionId
+        )
+      );
+    }
+    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
+      prevLogicConditionsData.filter(
+        (logic: LogicConditionData) =>
+          questionToDelete.questionId !== logic?.selectedQuestion?.questionId &&
+          questionToDelete.questionId !== logic?.currentQuestionId
+      )
     );
+    // Question Delete
+    const updatedQuestions = questions.filter(
+      (question: Question) =>
+        questionToDelete.questionId !== question.questionId
+    );
+    console.log("updated questions after delete: ", updatedQuestions);
     setQuestions(updatedQuestions);
   };
 
@@ -256,6 +282,17 @@ const QuestionForm = () => {
                     onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                       handleDataChange(index, "type", e.target.value);
 
+                      if (questions.length > 1) {
+                        setLogicConditionsData(
+                          (prevLogicConditionsData: LogicConditionData[]) =>
+                            prevLogicConditionsData.filter(
+                              (logic: LogicConditionData) =>
+                                question.questionId !==
+                                logic?.selectedQuestion?.questionId
+                            )
+                        );
+                      }
+
                       //  Single Input default and depende properties handle
                       if (e.target.value === "singleinput") {
                         handleDataChange(index, "inputType", "text");
@@ -332,6 +369,22 @@ const QuestionForm = () => {
                         }
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                           handleDataChange(index, "inputType", e.target.value);
+
+                          if (
+                            questions.length > 1 &&
+                            question &&
+                            question.type === "singleinput"
+                          ) {
+                            setLogicConditionsData(
+                              (prevLogicConditionsData: LogicConditionData[]) =>
+                                prevLogicConditionsData.filter(
+                                  (logic: LogicConditionData) =>
+                                    question.questionId !==
+                                    logic?.selectedQuestion?.questionId
+                                )
+                            );
+                          }
+
                           if (e.target.value === "range") {
                             handleDataChange(index, "max", 100);
                             handleDataChange(index, "min", 0);
@@ -368,6 +421,20 @@ const QuestionForm = () => {
                         }
                         onChange={(e: ChangeEvent<HTMLSelectElement>) => {
                           handleDataChange(index, "rateType", e.target.value);
+                          if (
+                            questions.length > 1 &&
+                            question &&
+                            question.type === "ratingscale"
+                          ) {
+                            setLogicConditionsData(
+                              (prevLogicConditionsData: LogicConditionData[]) =>
+                                prevLogicConditionsData.filter(
+                                  (logic: LogicConditionData) =>
+                                    question.questionId !==
+                                    logic?.selectedQuestion?.questionId
+                                )
+                            );
+                          }
                         }}
                       >
                         {rateTypes.map((rateType) => (
@@ -380,12 +447,7 @@ const QuestionForm = () => {
                   )}
                 </div>
                 <div className="flex justify-end h-full items-end gap-2">
-                  <ConditionalLogicEditor
-                    index={index}
-                    // adminMode={true}
-                    // question={question}
-                    handleDataChange={handleDataChange}
-                  />
+                  <ConditionalLogicEditor index={index} />
 
                   <Tooltip content="Required">
                     <Button
@@ -419,7 +481,7 @@ const QuestionForm = () => {
                       radius="sm"
                       size={"sm"}
                       color={"danger"}
-                      onClick={() => deleteQuestions(question)}
+                      onClick={() => deleteQuestions(question, index)}
                     >
                       <Trash2 size={"16"} />
                     </Button>

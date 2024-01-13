@@ -2,7 +2,7 @@
 
 import {
   GlobalContextProps,
-  LogicConditonData,
+  LogicConditionData,
   Question,
   SurveyForm,
 } from "@/types/questions";
@@ -27,7 +27,7 @@ export const GlobalContextProvider = ({ children }: any) => {
   });
 
   const [logicConditionsData, setLogicConditionsData] = useState<
-    LogicConditonData[]
+    LogicConditionData[]
   >([]);
   return (
     <GlobalContext.Provider
