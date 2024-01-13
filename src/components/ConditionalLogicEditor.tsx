@@ -43,7 +43,7 @@ const ConditionalLogicEditor = ({
   const { questions, logicConditionsData, setLogicConditionsData } =
     useGlobalContext();
   const [questionList, setQuestionList] = useState<Question[]>([]);
-  const currentQuestion = questions[index];
+  const currentQuestion = questions[index!];
 
   const [logicToCurrentQuestions, setLogicToCurrentQuestions] = useState<
     LogicConditonData[]
