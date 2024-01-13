@@ -93,6 +93,14 @@ export const comparisonOperators = [
     type: "notcontain",
   },
   {
+    label: "All of",
+    type: "allof",
+  },
+  {
+    label: "Any of",
+    type: "anyof",
+  },
+  {
     label: "Greater than",
     type: ">",
   },

@@ -220,7 +220,7 @@ import {
   Input,
 } from "@nextui-org/react";
 import { Minus, Plus } from "lucide-react";
-import { AnswerTypeComponentProps } from "@/types/questions";
+import { AnswerTypeComponentProps, Choices } from "@/types/questions";
 
 const CheckBoxes = ({
   adminMode,
@@ -241,50 +241,50 @@ const CheckBoxes = ({
     question && question!.choices
   );
   const [selected, setSelected] = useState(logic?.answerValue || []);
-  const addChoice = () => {
-    setTempChoices([
-      ...tempChoices,
-      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
-    ]);
 
-    const choices: any = question!.choices;
-    const addedChoices = [
-      ...choices,
-      { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
-    ];
-    handleDataChange!(questionIndex!, "choices", addedChoices);
-    setChoiceCount((prevCount) => prevCount + 1);
-  };
-
-  const minusChoice = (choiceToMinus: any) => {
-    if (question!.choices!.length > 2) {
-      const updatedChoice = tempChoices.filter(
-        (tempChoice: any) => choiceToMinus !== tempChoice
-      );
-      setTempChoices(updatedChoice);
-      const choices: any = question!.choices;
-      const minusChoice = choices.filter(
-        (choice: any) => choiceToMinus.text !== choice.text
-      );
-      handleDataChange!(questionIndex!, "choices", minusChoice);
-    }
-  };
-
-  const editTempChoice = (index: number, field: string, value: string) => {
-    setTempChoices((prevChoices: any) => {
-      const updatedChoices = [...prevChoices];
-      updatedChoices[index] = {
-        ...updatedChoices[index],
-        [field]: value,
-      };
-      return updatedChoices;
-    });
-  };
-
-  const updateChoiceTextInMainData = () => {
-    handleDataChange!(questionIndex!, "choices", tempChoices);
-  };
   const renderAdminMode = () => {
+    const addChoice = () => {
+      setTempChoices([
+        ...tempChoices,
+        { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
+      ]);
+
+      const choices: any = question!.choices;
+      const addedChoices = [
+        ...choices,
+        { text: `Choice ${choiceCount}`, value: `Choice ${choiceCount}` },
+      ];
+      handleDataChange!(questionIndex!, "choices", addedChoices);
+      setChoiceCount((prevCount) => prevCount + 1);
+    };
+
+    const minusChoice = (choiceToMinus: any) => {
+      if (question!.choices!.length > 2) {
+        const updatedChoice = tempChoices.filter(
+          (tempChoice: any) => choiceToMinus !== tempChoice
+        );
+        setTempChoices(updatedChoice);
+        const choices: any = question!.choices;
+        const minusChoice = choices.filter(
+          (choice: any) => choiceToMinus.text !== choice.text
+        );
+        handleDataChange!(questionIndex!, "choices", minusChoice);
+      }
+    };
+
+    const editTempChoice = (index: number, field: string, value: string) => {
+      setTempChoices((prevChoices: any) => {
+        const updatedChoices = [...prevChoices];
+        updatedChoices[index] = {
+          ...updatedChoices[index],
+          [field]: value,
+        };
+        return updatedChoices;
+      });
+    };
+    const updateChoiceTextInMainData = () => {
+      handleDataChange!(questionIndex!, "choices", tempChoices);
+    };
     return (
       <>
         <h5 className="text-center pt-2 text-base font-medium text-blue-800">
@@ -420,6 +420,19 @@ const CheckBoxes = ({
   };
 
   const renderUserMode = () => {
+    const handleDisbleOnMaxlimit = (choice: Choices) => {
+      let isDisabled;
+      if (selected && selected.length > 0) {
+        isDisabled =
+          !selected.some(
+            (selectChoice: string) => selectChoice === choice.value
+          ) && logic!.selectedQuestion!.maxSelectedChoices === selected.length;
+      } else {
+        isDisabled = false;
+      }
+
+      return isDisabled;
+    };
     return (
       <>
         <CheckboxGroup
@@ -437,13 +450,18 @@ const CheckBoxes = ({
           }}
         >
           {logic?.selectedQuestion?.choices!.map(
-            (choice: any, choiceIndex: number) => {
+            (choice: Choices, choiceIndex: number) => {
               return (
                 <div
                   key={choiceIndex}
                   className="flex justify-between items-center"
                 >
-                  <Checkbox value={choice.value} size={"lg"} radius="sm" />
+                  <Checkbox
+                    isDisabled={handleDisbleOnMaxlimit(choice)}
+                    value={choice.value}
+                    size={"lg"}
+                    radius="sm"
+                  />
                   <Input
                     readOnly
                     size={"sm"}
