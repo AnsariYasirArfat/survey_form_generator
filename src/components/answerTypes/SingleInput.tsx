@@ -175,6 +175,7 @@ const SingleInput = ({
   }
   const [isSelected, setIsSelected] = useState(false);
   const [answerValue, setAnswerValue] = useState(logic?.answerValue || "");
+  const [rangValue, setRangValue] = useState(logic?.answerValue || 0);
 
   const renderAdminMode = () => {
     return (
@@ -294,6 +295,8 @@ const SingleInput = ({
   };
 
   const renderUserMode = () => {
+    const isInvalid = !logic?.answerValue;
+
     return (
       <>
         {logic?.selectedQuestion?.inputType !== "range" && (
@@ -314,17 +317,24 @@ const SingleInput = ({
             classNames={{
               base: ["w-full p-4"],
             }}
+            isInvalid={isInvalid}
+            color={isInvalid ? "danger" : "default"}
+            errorMessage={isInvalid && "Please defined answer"}
           />
         )}
         {logic?.selectedQuestion?.inputType === "range" && (
           <Slider
             size="md"
-            color="primary"
+            // color="primary"
             label={"Range"}
-            value={answerValue}
-            onChange={setAnswerValue}
+            value={rangValue}
+            onChange={setRangValue}
             onBlur={() => {
-              handleLogicConditions!(logicIndex!, "answerValue", answerValue);
+              if (rangValue > 0) {
+                handleLogicConditions!(logicIndex!, "answerValue", rangValue);
+              } else {
+                handleLogicConditions!(logicIndex!, "answerValue", 0);
+              }
             }}
             step={logic?.selectedQuestion!.step}
             showSteps={true}
@@ -332,6 +342,9 @@ const SingleInput = ({
             maxValue={logic?.selectedQuestion!.max}
             defaultValue={logic?.selectedQuestion!.defaultValue}
             className="w-full p-4"
+            // isInvalid={isInvalid}
+            color={isInvalid ? "danger" : "primary"}
+            // errorMessage={isInvalid && "Please defined answer"}
           />
         )}
       </>

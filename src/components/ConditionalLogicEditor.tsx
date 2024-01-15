@@ -46,10 +46,11 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
     const currentQuestionLogicData = logicConditionsData.filter((logic) => {
       return currentQuestion.questionId === logic.currentQuestionId;
     });
-    // console.log(
-    //   `currentQuestionLogicData=> ${currentQuestion.name}: `,
-    //   currentQuestionLogicData
-    // );
+    console.log("All Logic data: ", logicConditionsData);
+    console.log(
+      `Current ${currentQuestion.name} Logic Data : `,
+      currentQuestionLogicData
+    );
     setLogicToCurrentQuestions(currentQuestionLogicData);
   }, [currentQuestion, logicConditionsData]);
 
@@ -217,6 +218,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
       //     ("notcontain" || "<=") !== operator.type && "allof" !== operator.type
       //   );
       // });
+      // const array = comparisonOperators.filter((operator) => !["notcontain", "<=", "allof"].includes(operator.type));
       // console.log("comparison operator", array);
       return ["allof", "anyof", ">", ">=", "<", "<=", "contain", "notcontain"];
     }
@@ -229,6 +231,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
     if (type === "ratingscale") {
       return ["allof", "anyof", "contain", "notcontain"];
     }
+  };
+
+  const handleVisibleIf = () => {
+    console.log("apply");
   };
 
   const userAnswerField = (logic: LogicConditionData, index: number) => {
@@ -316,16 +322,19 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
         onOpenChange={onOpenChange}
         size={"4xl"}
         isDismissable={false}
+        scrollBehavior={"inside"}
         classNames={{
-          base: [
-            `overflow-auto ${
-              logicToCurrentQuestions.length < 1
-                ? "h-[30vh]"
-                : logicToCurrentQuestions.length < 2
-                ? "h-[78vh]"
-                : "h-[90vh]"
-            }`,
-          ],
+          // base: [
+          //   `overflow-auto ${
+          //     logicToCurrentQuestions.length < 1
+          //       ? "h-[30vh]"
+          //       : logicToCurrentQuestions.length < 2
+          //       ? "h-[78vh]"
+          //       : "h-[90vh]"
+          //   }`,
+          // ],
+          backdrop:
+            "bg-gradient-to-t from-zinc-900/60 to-zinc-900/60 backdrop-opacity-20",
         }}
       >
         <ModalContent>
@@ -350,7 +359,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   Clear All
                 </Button>
               </ModalHeader>
-              <ModalBody className={`overflow-auto  gap-4`}>
+              <ModalBody className={`gap-4`}>
                 {logicToCurrentQuestions.map((logic, index) => {
                   return (
                     <div
@@ -401,12 +410,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                 : undefined
                             }
                             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                              handleLogicConditions(
-                                index,
-                                "selectQuestId",
-                                e.target.value
-                              );
                               if (e.target.value) {
+                                handleLogicConditions(
+                                  index,
+                                  "selectQuestId",
+                                  e.target.value
+                                );
                                 const question = questions.find(
                                   (ques) => ques.questionId === e.target.value
                                 );
@@ -414,6 +423,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                   index,
                                   "selectedQuestion",
                                   question!
+                                );
+                              } else {
+                                handleLogicConditions(
+                                  index,
+                                  "selectQuestId",
+                                  undefined
                                 );
                               }
                               if (e.target.value) {
@@ -468,6 +483,16 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                 "comparisonOperator",
                                 e.target.value
                               );
+                              if (
+                                e.target.value === "empty" ||
+                                e.target.value === "notempty"
+                              ) {
+                                handleLogicConditions(
+                                  index,
+                                  "answerValue",
+                                  undefined
+                                );
+                              }
                             }}
                           >
                             {comparisonOperators.map((operator: any) => (
@@ -580,11 +605,29 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   Cancel
                 </Button>
                 <Button
-                  isDisabled={logicToCurrentQuestions.length > 0 ? false : true}
+                  isDisabled={
+                    logicToCurrentQuestions.length > 0 &&
+                    logicToCurrentQuestions.every((logic) => {
+                      if (logic.selectQuestId !== undefined) {
+                        if (
+                          logic.comparisonOperator !== "empty" &&
+                          logic.comparisonOperator !== "notempty"
+                        ) {
+                          return logic.answerValue !== undefined;
+                        } else {
+                          return true;
+                        }
+                      }
+                      return false;
+                    })
+                      ? false
+                      : true
+                  }
                   color="primary"
                   onPress={onClose}
                   variant="shadow"
                   radius="sm"
+                  onClick={handleVisibleIf}
                 >
                   Apply
                 </Button>

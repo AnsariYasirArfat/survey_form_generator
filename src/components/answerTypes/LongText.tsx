@@ -64,6 +64,7 @@ const LongText = ({
   };
 
   const renderUserMode = () => {
+    const isInvalid = !logic?.answerValue;
     return (
       <>
         <Textarea
@@ -82,6 +83,9 @@ const LongText = ({
           classNames={{
             base: ["w-full p-4"],
           }}
+          isInvalid={isInvalid}
+          color={isInvalid ? "danger" : "default"}
+          errorMessage={isInvalid && "Please defined answer"}
         />
       </>
     );

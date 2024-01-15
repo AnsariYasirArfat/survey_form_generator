@@ -12,6 +12,7 @@ import {
   Select,
   SelectItem,
   Tooltip,
+  Chip,
 } from "@nextui-org/react";
 import { Asterisk, CopyPlus, Plus, Trash2 } from "lucide-react";
 import {
@@ -189,11 +190,21 @@ const QuestionForm = () => {
               isFooterBlurred
               className="w-full bg-blue-300 "
             >
-              <CardHeader className="grid grid-cols-4 gap-3">
+              <CardHeader className="grid grid-cols-12 gap-3">
+                <Chip
+                  color="primary"
+                  size="lg"
+                  radius="sm"
+                  variant="shadow"
+                  className="place-self-center"
+                >
+                  {`No. ${index + 1}`}
+                </Chip>
                 <Input
                   isRequired={question.isRequired}
                   type="text"
                   classNames={{
+                    base: ["col-span-3"],
                     input: ["text-black capitalize font-semibold"],
                     description: ["text-black"],
                     label: [""],
@@ -232,7 +243,7 @@ const QuestionForm = () => {
                   isClearable
                   type="text"
                   classNames={{
-                    base: ["col-span-3"],
+                    base: ["col-span-8"],
                     input: ["text-black capitalize font-semibold"],
                     description: ["text-black"],
                   }}
