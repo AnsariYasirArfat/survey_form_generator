@@ -514,11 +514,15 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                             />
                           </CardHeader>
 
-                          <CardBody className="p-3">
-                            <div className="rounded-md bg-blue-100">
-                              {userAnswerField(logic, index)}
-                            </div>
-                          </CardBody>
+                          {logic.comparisonOperator &&
+                            logic.comparisonOperator !== "empty" &&
+                            logic.comparisonOperator !== "notempty" && (
+                              <CardBody className="p-3">
+                                <div className="rounded-md bg-blue-100">
+                                  {userAnswerField(logic, index)}
+                                </div>
+                              </CardBody>
+                            )}
                         </Card>
                       ) : (
                         <Card className="w-full bg-blue-300 ">
