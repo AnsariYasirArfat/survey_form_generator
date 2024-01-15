@@ -1,12 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import QuestionForm from "./QuestionForm";
 import Link from "next/link";
 import { useGlobalContext } from "@/app/Context/store";
 
 const SurveyComposer = () => {
-  const { setSurveyForm, surveyForm } = useGlobalContext();
+  const { questions, surveyForm, setSurveyForm } = useGlobalContext();
+  const [surveyName, setSurveyName] = useState(surveyForm.name || "");
+  useEffect(() => {
+    setSurveyForm((prev) => ({
+      ...prev,
+      questions: questions,
+    }));
+  }, [questions, setSurveyForm]);
+  console.log("SurveyForm: ", surveyForm);
+
   return (
     <div className="">
       <div className="flex justify-center items-center">
@@ -35,14 +44,19 @@ const SurveyComposer = () => {
           label="Provide a name for your survey:"
           labelPlacement={"outside"}
           size={"lg"}
-          value={surveyForm.name}
-          onChange={(e) =>
+          value={surveyName}
+          onChange={(e) => {
+            setSurveyName(e.target.value);
+          }}
+          onBlur={(e) =>
             setSurveyForm((prev: any) => ({
               ...prev,
-              name: e.target.value,
+              name: surveyName,
             }))
           }
           onClear={() => {
+            setSurveyName("");
+
             console.log("Survey form's name cleared");
             setSurveyForm((prev: any) => ({
               ...prev,

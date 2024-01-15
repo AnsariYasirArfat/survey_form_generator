@@ -31,16 +31,10 @@ import { useGlobalContext } from "@/app/Context/store";
 import { Choices, LogicConditionData, Question } from "@/types/questions";
 
 const QuestionForm = () => {
-  const {
-    questions,
-    setQuestions,
-    logicConditionsData,
-    setLogicConditionsData,
-  } = useGlobalContext();
+  const { questions, setQuestions, setLogicConditionsData } =
+    useGlobalContext();
   const [generatedQuestionId, setgeneratedQuestionId] = useState("");
   const [questionCount, setQuestionCount] = useState(1);
-
-  console.log("Questions: ", questions);
 
   useEffect(() => {
     const targetElement = document.getElementById(`${generatedQuestionId}`);

@@ -35,6 +35,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   const { questions, logicConditionsData, setLogicConditionsData } =
     useGlobalContext();
   const [questionList, setQuestionList] = useState<Question[]>([]);
+  // const [filteredComparison, setFilteredComparison] = useState<any>([]);
   const currentQuestion = questions[index!];
 
   const [logicToCurrentQuestions, setLogicToCurrentQuestions] = useState<
@@ -42,24 +43,38 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   >([]);
 
   useEffect(() => {
-    console.log("logic Conditions Data: ", logicConditionsData);
-
     const currentQuestionLogicData = logicConditionsData.filter((logic) => {
       return currentQuestion.questionId === logic.currentQuestionId;
     });
-    console.log(
-      `currentQuestionLogicData=> ${currentQuestion.name}: `,
-      currentQuestionLogicData
-    );
+    // console.log(
+    //   `currentQuestionLogicData=> ${currentQuestion.name}: `,
+    //   currentQuestionLogicData
+    // );
     setLogicToCurrentQuestions(currentQuestionLogicData);
   }, [currentQuestion, logicConditionsData]);
 
   useEffect(() => {
-    const questionList: Question[] = questions.filter(
-      (question: Question) => currentQuestion !== question
+    const idToAvoide: LogicConditionData[] =
+      logicConditionsData?.filter(
+        (logicData: LogicConditionData) =>
+          currentQuestion.questionId === logicData.selectQuestId
+      ) || [];
+
+    const finalQuestionList: Question[] = questions.filter(
+      (question: Question) =>
+        currentQuestion !== question &&
+        idToAvoide.every(
+          (logic: LogicConditionData) =>
+            logic.currentQuestionId !== question.questionId
+        )
     );
-    setQuestionList(questionList);
-  }, [currentQuestion, questions]);
+
+    // console.log(
+    //   `${currentQuestion.name}: logic quesitonlist: `,
+    //   finalQuestionList
+    // );
+    setQuestionList(finalQuestionList);
+  }, [currentQuestion, logicConditionsData, questions]);
 
   const addMoreConditions = () => {
     setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) => [
@@ -81,10 +96,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
     localIndex: number
   ) => {
     if (logicToCurrentQuestions.length > 1 && localIndex === 0) {
-      console.log(
-        "logic local data before any delete: ",
-        logicToCurrentQuestions
-      );
+      // console.log(
+      //   "logic local data before any delete: ",
+      //   logicToCurrentQuestions
+      // );
 
       setLogicConditionsData(
         (prevLogicConditionsData: LogicConditionData[]) => {
@@ -96,7 +111,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
             }
             return item;
           });
-          console.log(`I am here on `, updatedArray);
+          // console.log(`I am here on `, updatedArray);
           return updatedArray;
         }
       );
@@ -184,6 +199,36 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
       });
       return updateLogicData;
     });
+  };
+
+  const handleComparisonArray = (question: Question) => {
+    const type = question?.type;
+    const inputType = question?.inputType;
+    if (type === "singleinput" || type === "textarea") {
+      if ((inputType && inputType === "range") || inputType === "number") {
+        return ["allof", "anyof", "contain", "notcontain"];
+      } else {
+        return ["allof", "anyof", ">", ">=", "<", "<="];
+      }
+    }
+    if (type === "radiogroup") {
+      // const array = comparisonOperators.filter((operator) => {
+      //   return (
+      //     ("notcontain" || "<=") !== operator.type && "allof" !== operator.type
+      //   );
+      // });
+      // console.log("comparison operator", array);
+      return ["allof", "anyof", ">", ">=", "<", "<=", "contain", "notcontain"];
+    }
+    if (type === "checkboxes") {
+      return [">", ">=", "<", "<=", "contain", "notcontain"];
+    }
+    if (type === "boolean") {
+      return ["allof", "anyof", ">", ">=", "<", "<=", "contain", "notcontain"];
+    }
+    if (type === "ratingscale") {
+      return ["allof", "anyof", "contain", "notcontain"];
+    }
   };
 
   const userAnswerField = (logic: LogicConditionData, index: number) => {
@@ -390,7 +435,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                               }
                             }}
                           >
-                            {questionList!.map((question, index) => (
+                            {questionList.map((question, index) => (
                               <SelectItem
                                 key={`${question.questionId}`}
                                 value={question.questionId}
@@ -409,16 +454,15 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                             isDisabled={logic.selectQuestId ? false : true}
                             label="Comparison Operator:"
                             defaultSelectedKeys={["="]}
+                            disabledKeys={handleComparisonArray(
+                              logic.selectedQuestion!
+                            )}
                             selectedKeys={
                               logic.comparisonOperator
                                 ? [logic.comparisonOperator]
                                 : undefined
                             }
                             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                              console.log(
-                                "comparison operator: ",
-                                e.target.value
-                              );
                               handleLogicConditions(
                                 index,
                                 "comparisonOperator",
@@ -426,7 +470,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                               );
                             }}
                           >
-                            {comparisonOperators.map((operator, index) => (
+                            {comparisonOperators.map((operator: any) => (
                               <SelectItem
                                 key={`${operator.type}`}
                                 value={operator.type}

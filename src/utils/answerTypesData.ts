@@ -16,7 +16,7 @@ export const answerTypesData = [
     type: "checkboxes",
   },
   {
-    label: "Yes / No",
+    label: "Yes / No (Boolean)",
     type: "boolean",
   },
   {
@@ -86,7 +86,7 @@ export const comparisonOperators = [
   },
   {
     label: "Contain",
-    type: "Contain",
+    type: "contain",
   },
   {
     label: "Not contain",
