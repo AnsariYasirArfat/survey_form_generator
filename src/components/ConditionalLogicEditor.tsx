@@ -17,6 +17,8 @@ import {
   CardHeader,
   Input,
   CardBody,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { Network, Plus, Trash2 } from "lucide-react";
 import { useGlobalContext } from "@/app/Context/store";
@@ -175,7 +177,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   const handleLogicConditions = (
     index: number,
     field: keyof LogicConditionData,
-    value: string | Question | boolean | number | undefined
+    value: string | Question | boolean | number | string[] | undefined
   ) => {
     // update in local logic array
     // setLogicToCurrentQuestions(
@@ -320,7 +322,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
         isOpen={isOpen}
         hideCloseButton
         onOpenChange={onOpenChange}
-        size={"4xl"}
+        size={"5xl"}
         isDismissable={false}
         scrollBehavior={"inside"}
         classNames={{
@@ -334,7 +336,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
           //   }`,
           // ],
           backdrop:
-            "bg-gradient-to-t from-zinc-900/60 to-zinc-900/60 backdrop-opacity-20",
+            "bg-gradient-to-t from-zinc-900/70 to-zinc-900/70 backdrop-opacity-20",
         }}
       >
         <ModalContent>
@@ -369,32 +371,38 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                       <div className="grid grid-cols-12 gap-1 mb-2">
                         <div className="col-span-2">
                           {index > 0 && (
-                            <Select
+                            <Autocomplete
+                              placeholder="Select operator"
+                              isClearable={false}
                               isDisabled={logic.selectQuestId ? false : true}
                               label="Logic Operator:"
-                              defaultSelectedKeys={["and"]}
-                              selectedKeys={
-                                logic.logicOperator
-                                  ? [logic.logicOperator]
-                                  : undefined
-                              }
-                              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                                handleLogicConditions(
-                                  index,
-                                  "logicOperator",
-                                  e.target.value
-                                )
-                              }
+                              // defaultSelectedKeys={["and"]}
+                              selectedKey={`${logic.logicOperator!}`}
+                              onSelectionChange={(e) => {
+                                if (e) {
+                                  handleLogicConditions(
+                                    index,
+                                    "logicOperator",
+                                    e
+                                  );
+                                } else {
+                                  handleLogicConditions(
+                                    index,
+                                    "logicOperator",
+                                    undefined
+                                  );
+                                }
+                              }}
                             >
                               {logicalOperators.map((operator, index) => (
-                                <SelectItem
+                                <AutocompleteItem
                                   key={`${operator.type}`}
                                   value={operator.type}
                                 >
                                   {`${operator.label}`}
-                                </SelectItem>
+                                </AutocompleteItem>
                               ))}
-                            </Select>
+                            </Autocomplete>
                           )}
                         </div>
                         <div
@@ -402,27 +410,36 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                             index > 0 ? "col-span-5" : "col-span-5"
                           } `}
                         >
-                          <Select
+                          <Autocomplete
                             label="Select a question:"
-                            selectedKeys={
-                              logic.selectQuestId
-                                ? [logic.selectQuestId]
-                                : undefined
-                            }
-                            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                              if (e.target.value) {
+                            defaultItems={questionList}
+                            // defaultSelectedKeys={""}
+                            // selectedKeys={
+                            //   logic.selectQuestId
+                            //     ? [logic.selectQuestId!]
+                            //     : undefined
+                            // }
+
+                            selectedKey={`${logic.selectQuestId!}`}
+                            onSelectionChange={(e) => {
+                              if (e) {
                                 handleLogicConditions(
                                   index,
                                   "selectQuestId",
-                                  e.target.value
+                                  e
                                 );
                                 const question = questions.find(
-                                  (ques) => ques.questionId === e.target.value
+                                  (ques) => ques.questionId === e
                                 );
                                 handleLogicConditions(
                                   index,
                                   "selectedQuestion",
                                   question!
+                                );
+                                handleLogicConditions(
+                                  index,
+                                  "answerValue",
+                                  undefined
                                 );
                               } else {
                                 handleLogicConditions(
@@ -430,18 +447,35 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                   "selectQuestId",
                                   undefined
                                 );
+                                handleLogicConditions(
+                                  index,
+                                  "selectedQuestion",
+                                  undefined
+                                );
+                                handleLogicConditions(
+                                  index,
+                                  "answerValue",
+                                  undefined
+                                );
+                                handleLogicConditions(
+                                  index,
+                                  "logicOperator",
+                                  undefined
+                                );
+                                handleLogicConditions(
+                                  index,
+                                  "comparisonOperator",
+                                  undefined
+                                );
                               }
-                              if (e.target.value) {
+                              if (e) {
                                 handleLogicConditions(
                                   index,
                                   "comparisonOperator",
                                   "="
                                 );
                               }
-                              if (
-                                e.target.value &&
-                                logicToCurrentQuestions.length > 0
-                              ) {
+                              if (e && logicToCurrentQuestions.length > 1) {
                                 handleLogicConditions(
                                   index,
                                   "logicOperator",
@@ -451,42 +485,41 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                             }}
                           >
                             {questionList.map((question, index) => (
-                              <SelectItem
+                              <AutocompleteItem
                                 key={`${question.questionId}`}
                                 value={question.questionId}
                               >
                                 {`${question.name}: ${question.title}`}
-                              </SelectItem>
+                              </AutocompleteItem>
                             ))}
-                          </Select>
+                          </Autocomplete>
                         </div>
                         <div
                           className={`${
                             index > 0 ? "col-span-4" : "col-span-4"
                           }`}
                         >
-                          <Select
+                          <Autocomplete
                             isDisabled={logic.selectQuestId ? false : true}
                             label="Comparison Operator:"
-                            defaultSelectedKeys={["="]}
+                            // defaultSelectedKeys={["="]}
+                            isClearable={false}
                             disabledKeys={handleComparisonArray(
                               logic.selectedQuestion!
                             )}
-                            selectedKeys={
-                              logic.comparisonOperator
-                                ? [logic.comparisonOperator]
-                                : undefined
-                            }
-                            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                            // selectedKeys={
+                            //   logic.comparisonOperator
+                            //     ? [logic.comparisonOperator]
+                            //     : undefined
+                            // }
+                            selectedKey={`${logic.comparisonOperator!}`}
+                            onSelectionChange={(e) => {
                               handleLogicConditions(
                                 index,
                                 "comparisonOperator",
-                                e.target.value
+                                e
                               );
-                              if (
-                                e.target.value === "empty" ||
-                                e.target.value === "notempty"
-                              ) {
+                              if (e === "empty" || e === "notempty") {
                                 handleLogicConditions(
                                   index,
                                   "answerValue",
@@ -496,14 +529,14 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                             }}
                           >
                             {comparisonOperators.map((operator: any) => (
-                              <SelectItem
+                              <AutocompleteItem
                                 key={`${operator.type}`}
                                 value={operator.type}
                               >
                                 {`${operator.label}`}
-                              </SelectItem>
+                              </AutocompleteItem>
                             ))}
-                          </Select>
+                          </Autocomplete>
                         </div>
                         <div className="col-span-1">
                           <Button

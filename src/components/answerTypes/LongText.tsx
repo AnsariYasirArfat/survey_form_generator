@@ -1,38 +1,6 @@
-// import { Divider, Textarea } from "@nextui-org/react";
-// import React from "react";
-
-// const LongText = ({ adminMode }: { adminMode: boolean }) => {
-//   return (
-//     <div>
-//       {adminMode && (
-//         <>
-//           <h5 className="text-center pt-2 text-base font-medium text-blue-800">
-//             Answer type: Long text
-//           </h5>
-//           <div className="mx-4 my-2">
-//             <Divider />
-//           </div>
-//         </>
-//       )}
-
-//       <Textarea
-//         readOnly={adminMode}
-//         placeholder="Write your answer..."
-//         classNames={{
-//           base: ["w-full p-4 "],
-//         }}
-//       />
-//     </div>
-//   );
-// };
-
-// export default LongText;
-
-// LongText.tsx
-
 import { AnswerTypeComponentProps } from "@/types/questions";
 import { Divider, Textarea } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const LongText = ({
   adminMode,
@@ -41,6 +9,10 @@ const LongText = ({
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
   const [answerValue, setAnswerValue] = useState(logic?.answerValue || "");
+
+  useEffect(() => {
+    setAnswerValue("");
+  }, [logic?.selectQuestId]);
 
   const renderAdminMode = () => {
     return (
@@ -64,7 +36,7 @@ const LongText = ({
   };
 
   const renderUserMode = () => {
-    const isInvalid = !logic?.answerValue;
+    const isInvalid = logic?.answerValue === undefined;
     return (
       <>
         <Textarea
@@ -74,7 +46,7 @@ const LongText = ({
             setAnswerValue(e.target.value);
           }}
           onBlur={() => {
-            if (answerValue) {
+            if (answerValue.trim()) {
               handleLogicConditions!(index!, "answerValue", answerValue);
             } else {
               handleLogicConditions!(index!, "answerValue", undefined);

@@ -51,7 +51,7 @@ export interface AnswerTypeComponentProps {
   handleLogicConditions?: (
     index: number,
     field: keyof LogicConditionData,
-    value: string | Question | boolean | number | undefined
+    value: string | Question | boolean | number | string[] | undefined
   ) => void;
 }
 
