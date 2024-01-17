@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import {
@@ -11,8 +11,6 @@ import {
   Button,
   useDisclosure,
   Tooltip,
-  Select,
-  SelectItem,
   Card,
   CardHeader,
   Input,
@@ -22,7 +20,7 @@ import {
 } from "@nextui-org/react";
 import { Network, Plus, Trash2 } from "lucide-react";
 import { useGlobalContext } from "@/app/Context/store";
-import { LogicConditionData, Question } from "@/types/questions";
+import { LogicConditionData, Question, VisibleIf } from "@/types/questions";
 import SingleInput from "./answerTypes/SingleInput";
 import LongText from "./answerTypes/LongText";
 import RadioGroup from "./answerTypes/RadioGroup";
@@ -34,10 +32,14 @@ import { comparisonOperators, logicalOperators } from "@/utils/answerTypesData";
 
 const ConditionalLogicEditor = ({ index }: { index: number }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { questions, logicConditionsData, setLogicConditionsData } =
-    useGlobalContext();
+
+  const {
+    questions,
+    setQuestions,
+    logicConditionsData,
+    setLogicConditionsData,
+  } = useGlobalContext();
   const [questionList, setQuestionList] = useState<Question[]>([]);
-  // const [filteredComparison, setFilteredComparison] = useState<any>([]);
   const currentQuestion = questions[index!];
 
   const [logicToCurrentQuestions, setLogicToCurrentQuestions] = useState<
@@ -236,7 +238,21 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   };
 
   const handleVisibleIf = () => {
-    console.log("apply");
+    const visibleIfData: VisibleIf[] = logicToCurrentQuestions.map((logic) => ({
+      logicOperator: logic.logicOperator,
+      questionName: logic.selectedQuestion?.name,
+      comparisonOperator: logic.comparisonOperator,
+      answerValue: logic.answerValue,
+    }));
+
+    // const updatedQuestions: Question[] = [...questions];
+    // const questionToUpdate: any = updatedQuestions[index];
+    // currentQuestion["visibleIf"] = visibleIfData;
+    setQuestions((prevQuestions: any) => {
+      prevQuestions[index]["visibleIf"] = visibleIfData;
+      return [...prevQuestions];
+    });
+    console.log("Logic added: ", visibleIfData);
   };
 
   const userAnswerField = (logic: LogicConditionData, index: number) => {
@@ -365,6 +381,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                 {logicToCurrentQuestions.map((logic, index) => {
                   return (
                     <div
+                      id={logic.logicDataId}
                       key={`${logic}-${index}`}
                       className="p-4 rounded-xl bg-blue-200"
                     >
@@ -441,6 +458,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                   "answerValue",
                                   undefined
                                 );
+
+                                handleLogicConditions(
+                                  0,
+                                  "logicOperator",
+                                  undefined
+                                );
                               } else {
                                 handleLogicConditions(
                                   index,
@@ -472,14 +495,22 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                 handleLogicConditions(
                                   index,
                                   "comparisonOperator",
-                                  "="
+                                  logic.comparisonOperator
+                                    ? logic.comparisonOperator
+                                    : "="
                                 );
                               }
-                              if (e && logicToCurrentQuestions.length > 1) {
+                              if (
+                                e &&
+                                logicToCurrentQuestions.length > 1 &&
+                                index > 0
+                              ) {
                                 handleLogicConditions(
                                   index,
                                   "logicOperator",
-                                  "and"
+                                  logic.logicOperator
+                                    ? logic.logicOperator
+                                    : "and"
                                 );
                               }
                             }}

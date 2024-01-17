@@ -9,8 +9,6 @@ import {
   CardFooter,
   Input,
   Button,
-  Select,
-  SelectItem,
   Tooltip,
   Chip,
   AutocompleteItem,
@@ -36,7 +34,7 @@ import { Choices, LogicConditionData, Question } from "@/types/questions";
 const QuestionForm = () => {
   const { questions, setQuestions, setLogicConditionsData } =
     useGlobalContext();
-  const [generatedQuestionId, setgeneratedQuestionId] = useState("");
+  const [generatedQuestionId, setGeneratedQuestionId] = useState("");
   const [questionCount, setQuestionCount] = useState(1);
 
   useEffect(() => {
@@ -51,10 +49,10 @@ const QuestionForm = () => {
 
   const addQuestions = () => {
     const generatedId = uuidv4();
-    setgeneratedQuestionId(generatedId);
+    setGeneratedQuestionId(generatedId);
 
-    setQuestions([
-      ...questions,
+    setQuestions((prevQuestions) => [
+      ...prevQuestions,
       {
         questionId: generatedId,
         name: `Question ${questionCount}`,
@@ -87,25 +85,47 @@ const QuestionForm = () => {
           questionToDelete.questionId !== logic?.currentQuestionId
       )
     );
-    // Question Delete
-    const updatedQuestions = questions.filter(
-      (question: Question) =>
-        questionToDelete.questionId !== question.questionId
+
+    // const updatedQuestions = questions.filter(
+    //   (question: Question) =>
+    //     questionToDelete.questionId !== question.questionId
+    // );
+    // console.log("updated questions after delete: ", updatedQuestions);
+    // setQuestions(updatedQuestions);
+
+    // Delete the question
+    setQuestions((prevQuestions) =>
+      prevQuestions.filter(
+        (question: Question) =>
+          questionToDelete.questionId !== question.questionId
+      )
     );
-    console.log("updated questions after delete: ", updatedQuestions);
-    setQuestions(updatedQuestions);
   };
 
   const duplicateQuestions = (questionToDuplicate: Question) => {
+    // const generatedId = uuidv4();
+    // const questionToAdd = { ...questionToDuplicate };
+    // questionToAdd.questionId = generatedId;
+    // questionToAdd.name = `Question ${questionCount}`;
+
+    // const allQuestion = [...questions, questionToAdd];
+
+    // setQuestions(allQuestion);
+    // setGeneratedQuestionId(generatedId);
+    // setQuestionCount((prevCount) => prevCount + 1);
+
     const generatedId = uuidv4();
-    const questionToAdd = { ...questionToDuplicate };
-    questionToAdd.questionId = generatedId;
-    questionToAdd.name = `Question ${questionCount}`;
+    setGeneratedQuestionId(generatedId);
 
-    const allQuestion = [...questions, questionToAdd];
+    setQuestions((prevQuestions) => [
+      ...prevQuestions,
+      {
+        ...questionToDuplicate,
+        questionId: generatedId,
+        name: `Question ${questionCount}`,
+      },
+    ]);
 
-    setQuestions(allQuestion);
-    setgeneratedQuestionId(generatedId);
     setQuestionCount((prevCount) => prevCount + 1);
   };
 
@@ -118,6 +138,11 @@ const QuestionForm = () => {
     const questionToUpdate: any = updatedQuestions[index];
     questionToUpdate[field] = value;
     setQuestions(updatedQuestions);
+
+    // setQuestions((prevQuestions:any) => {
+    //   prevQuestions[index][field] = value;
+    //   return [...prevQuestions];
+    // });
   };
 
   const adminAnswerField = (question: Question, index: number) => {

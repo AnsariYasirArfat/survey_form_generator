@@ -93,44 +93,45 @@ const RadioChoices = ({
             base: ["p-4"],
           }}
         >
-          {tempChoices.map((tempChoice: any, choiceIndex: number) => {
-            return (
-              <div
-                key={choiceIndex}
-                className="flex justify-between items-center"
-              >
-                <Radio
-                  classNames={{
-                    wrapper: [`${adminMode && "border-slate-400 border-2"}`],
-                  }}
-                  isDisabled
-                  value={tempChoice.value}
-                  size={"lg"}
-                />
-                <Input
-                  size={"sm"}
-                  type="text"
-                  value={tempChoice.text}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    editTempChoice(choiceIndex, "text", e.target.value)
-                  }
-                  onBlur={updateChoiceTextInMainData}
-                  classNames={{
-                    base: ["me-4"],
-                    input: ["text-black capitalize font-semibold"],
-                  }}
-                />
-                <Button
-                  onClick={() => minusChoice(tempChoice)}
-                  variant="bordered"
-                  color="danger"
-                  size="sm"
+          {tempChoices &&
+            tempChoices.map((tempChoice: any, choiceIndex: number) => {
+              return (
+                <div
+                  key={choiceIndex}
+                  className="flex justify-between items-center"
                 >
-                  <Minus size={16} />
-                </Button>
-              </div>
-            );
-          })}
+                  <Radio
+                    classNames={{
+                      wrapper: [`${adminMode && "border-slate-400 border-2"}`],
+                    }}
+                    isDisabled
+                    value={tempChoice.value}
+                    size={"lg"}
+                  />
+                  <Input
+                    size={"sm"}
+                    type="text"
+                    value={tempChoice.text}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      editTempChoice(choiceIndex, "text", e.target.value)
+                    }
+                    onBlur={updateChoiceTextInMainData}
+                    classNames={{
+                      base: ["me-4"],
+                      input: ["text-black capitalize font-semibold"],
+                    }}
+                  />
+                  <Button
+                    onClick={() => minusChoice(tempChoice)}
+                    variant="bordered"
+                    color="danger"
+                    size="sm"
+                  >
+                    <Minus size={16} />
+                  </Button>
+                </div>
+              );
+            })}
 
           <div className="flex justify-between items-center ">
             <Radio value={"add"} isDisabled size={"lg"} />

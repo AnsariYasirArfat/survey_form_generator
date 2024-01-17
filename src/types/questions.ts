@@ -14,6 +14,13 @@ export interface Choices {
   text?: string;
 }
 
+export interface VisibleIf {
+  logicOperator?: string;
+  questionName?: string;
+  comparisonOperator?: string;
+  answerValue?: any;
+}
+
 export interface Question {
   questionId?: string;
   name?: string;
@@ -30,6 +37,7 @@ export interface Question {
   isRequired?: boolean;
   maxSelectedChoices?: number;
   minSelectedChoices?: number;
+  visibleIf?: VisibleIf;
 }
 
 export interface SurveyForm {
