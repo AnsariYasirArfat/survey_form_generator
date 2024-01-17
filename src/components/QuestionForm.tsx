@@ -13,6 +13,8 @@ import {
   SelectItem,
   Tooltip,
   Chip,
+  AutocompleteItem,
+  Autocomplete,
 } from "@nextui-org/react";
 import { Asterisk, CopyPlus, Plus, Trash2 } from "lucide-react";
 import {
@@ -280,12 +282,14 @@ const QuestionForm = () => {
               </CardBody>
               <CardFooter className="grid grid-cols-3 gap-4">
                 <div className="w-full">
-                  <Select
-                    label="Choose the answer Type:"
+                  <Autocomplete
+                    label="Choose the answer type:"
                     className="max-w-xs"
-                    selectedKeys={question.type ? [question.type] : undefined}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                      handleDataChange(index, "type", e.target.value);
+                    defaultItems={answerTypesData}
+                    selectedKey={`${question.type!}`}
+                    isClearable={false}
+                    onSelectionChange={(e) => {
+                      handleDataChange(index, "type", e);
 
                       if (questions.length > 1) {
                         setLogicConditionsData(
@@ -299,7 +303,7 @@ const QuestionForm = () => {
                       }
 
                       //  Single Input default and depende properties handle
-                      if (e.target.value === "singleinput") {
+                      if (e === "singleinput") {
                         handleDataChange(index, "inputType", "text");
                       } else {
                         delete question.inputType;
@@ -310,7 +314,7 @@ const QuestionForm = () => {
                       }
 
                       //  Rating Scale default and depende properties handle
-                      if (e.target.value === "ratingscale") {
+                      if (e === "ratingscale") {
                         handleDataChange(index, "rateCount", 5);
                         handleDataChange(index, "rateType", "number");
                       } else {
@@ -356,24 +360,26 @@ const QuestionForm = () => {
                     }}
                   >
                     {answerTypesData.map((answerType) => (
-                      <SelectItem key={answerType.type} value={answerType.type}>
+                      <AutocompleteItem
+                        key={answerType.type}
+                        value={answerType.type}
+                      >
                         {answerType.label}
-                      </SelectItem>
+                      </AutocompleteItem>
                     ))}
-                  </Select>
+                  </Autocomplete>
                 </div>
                 <div className="h-full w-full">
                   {question && question.type === "singleinput" && (
                     <div className="w-full">
-                      <Select
+                      <Autocomplete
                         label="Select Input Type:"
                         className="max-w-xs"
-                        defaultSelectedKeys={["text"]}
-                        selectedKeys={
-                          question.inputType ? [question.inputType] : undefined
-                        }
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                          handleDataChange(index, "inputType", e.target.value);
+                        defaultItems={singleInputTypes}
+                        selectedKey={`${question.inputType!}`}
+                        isClearable={false}
+                        onSelectionChange={(e) => {
+                          handleDataChange(index, "inputType", e);
 
                           if (
                             questions.length > 1 &&
@@ -390,13 +396,13 @@ const QuestionForm = () => {
                             );
                           }
 
-                          if (e.target.value === "range") {
+                          if (e === "range") {
                             handleDataChange(index, "max", 100);
                             handleDataChange(index, "min", 0);
                             handleDataChange(index, "defaultValue", 50);
                             handleDataChange(index, "step", 10);
                           }
-                          if (e.target.value !== "range") {
+                          if (e !== "range") {
                             delete question.max;
                             delete question.min;
                             delete question.step;
@@ -405,27 +411,26 @@ const QuestionForm = () => {
                         }}
                       >
                         {singleInputTypes.map((inputType) => (
-                          <SelectItem
+                          <AutocompleteItem
                             key={inputType.type}
                             value={inputType.type}
                           >
                             {inputType.label}
-                          </SelectItem>
+                          </AutocompleteItem>
                         ))}
-                      </Select>
+                      </Autocomplete>
                     </div>
                   )}
                   {question && question.type === "ratingscale" && (
                     <div className="w-full">
-                      <Select
+                      <Autocomplete
                         label="Select Rate Type:"
                         className="max-w-xs"
-                        defaultSelectedKeys={["number"]}
-                        selectedKeys={
-                          question.rateType ? [question.rateType] : undefined
-                        }
-                        onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                          handleDataChange(index, "rateType", e.target.value);
+                        defaultItems={rateTypes}
+                        selectedKey={`${question.rateType!}`}
+                        isClearable={false}
+                        onSelectionChange={(e) => {
+                          handleDataChange(index, "rateType", e);
                           if (
                             questions.length > 1 &&
                             question &&
@@ -443,11 +448,14 @@ const QuestionForm = () => {
                         }}
                       >
                         {rateTypes.map((rateType) => (
-                          <SelectItem key={rateType.type} value={rateType.type}>
+                          <AutocompleteItem
+                            key={rateType.type}
+                            value={rateType.type}
+                          >
                             {rateType.label}
-                          </SelectItem>
+                          </AutocompleteItem>
                         ))}
-                      </Select>
+                      </Autocomplete>
                     </div>
                   )}
                 </div>
