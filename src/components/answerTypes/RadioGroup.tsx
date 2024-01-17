@@ -23,11 +23,17 @@ const RadioChoices = ({
   const [tempChoices, setTempChoices] = useState<any>(
     question && question!.choices
   );
-  const [selected, setSelected] = useState(logic?.answerValue || "");
+  const [selected, setSelected] = useState(
+    logic?.answerValue ? logic.answerValue : ""
+  );
 
   useEffect(() => {
-    setSelected("");
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setSelected(logic?.answerValue);
+    } else {
+      setSelected("");
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
 
   const renderAdminMode = () => {
     const addChoice = () => {

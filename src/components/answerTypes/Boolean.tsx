@@ -9,11 +9,19 @@ const Boolean = ({
   logic,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
-  const [isChecked, setIsChecked] = useState(logic?.answerValue || undefined);
+  const [isChecked, setIsChecked] = useState(logic?.answerValue);
+
+  // useEffect(() => {
+  //   logic?.answerValue;
+  // }, [logic?.answerValue]);
 
   useEffect(() => {
-    setIsChecked(false);
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setIsChecked(logic?.answerValue);
+    } else {
+      setIsChecked(undefined);
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
   const renderAdminMode = () => {
     return (
       <>
@@ -48,7 +56,8 @@ const Boolean = ({
       </>
     );
   };
-  console.log(isChecked);
+
+  // console.log(isChecked);
   const renderUserMode = () => {
     const isInvalid = logic?.answerValue === undefined;
     return (
@@ -76,7 +85,13 @@ const Boolean = ({
                 handleLogicConditions!(index!, "answerValue", false)
               }
             />
-            <span className={`${Style.name}`}>No</span>
+            <span
+              className={`${Style.name} ${
+                logic?.answerValue === undefined && "!bg-[#eee]"
+              }`}
+            >
+              No
+            </span>
           </label>
           <label className={`${Style.radio}`}>
             <input
@@ -88,7 +103,13 @@ const Boolean = ({
                 handleLogicConditions!(index!, "answerValue", true)
               }
             />
-            <span className={`${Style.name}`}>Yes</span>
+            <span
+              className={`${Style.name}  ${
+                logic?.answerValue === undefined && "!bg-[#eee]"
+              }`}
+            >
+              Yes
+            </span>
           </label>
         </div>
       </div>

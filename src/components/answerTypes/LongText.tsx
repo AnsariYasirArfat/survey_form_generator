@@ -8,11 +8,15 @@ const LongText = ({
   logic,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
-  const [answerValue, setAnswerValue] = useState(logic?.answerValue || "");
+  const [answerValue, setAnswerValue] = useState(logic?.answerValue);
 
   useEffect(() => {
-    setAnswerValue("");
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setAnswerValue(logic?.answerValue);
+    } else {
+      setAnswerValue("");
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
 
   const renderAdminMode = () => {
     return (

@@ -14,10 +14,20 @@ const RatingScale = ({
   logic,
   handleLogicConditions,
 }: AnswerTypeComponentProps) => {
-  const [selectedStar, setSelectedStar] = useState<number>(adminMode ? 1 : 0);
+  const [selectedStar, setSelectedStar] = useState<any>(adminMode ? 1 : 0);
+
+  // useEffect(() => {
+  //   setSelectedStar(logic?.answerValue);
+  // }, [logic?.answerValue]);
+
   useEffect(() => {
-    setSelectedStar(0);
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setSelectedStar(logic?.answerValue);
+    } else {
+      setSelectedStar(undefined);
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
+
   const handleStarClick = (selected: number) => {
     setSelectedStar(selected);
     if (adminMode) {

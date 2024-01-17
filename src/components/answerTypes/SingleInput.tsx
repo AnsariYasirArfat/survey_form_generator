@@ -18,11 +18,19 @@ const SingleInput = ({
   }
   const [isSelected, setIsSelected] = useState(false);
   const [answerValue, setAnswerValue] = useState(logic?.answerValue);
-  const [rangValue, setRangValue] = useState(logic?.answerValue || 0);
+  const [rangValue, setRangValue] = useState(
+    logic?.answerValue ? logic.answerValue : null
+  );
+
   useEffect(() => {
-    setAnswerValue("");
-    setRangValue(null);
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setAnswerValue(logic?.answerValue);
+      setRangValue(logic?.answerValue);
+    } else {
+      setAnswerValue("");
+      setRangValue(null);
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
 
   const renderAdminMode = () => {
     return (
@@ -166,6 +174,7 @@ const SingleInput = ({
                 handleLogicConditions!(logicIndex!, "answerValue", answerValue);
               } else if (
                 logic?.selectedQuestion?.inputType !== "number" &&
+                answerValue &&
                 answerValue.trim()
               ) {
                 handleLogicConditions!(logicIndex!, "answerValue", answerValue);
@@ -196,7 +205,7 @@ const SingleInput = ({
               showSteps={true}
               minValue={logic?.selectedQuestion!.min}
               maxValue={logic?.selectedQuestion!.max}
-              defaultValue={logic?.selectedQuestion!.defaultValue}
+              // defaultValue={logic?.selectedQuestion!.defaultValue}
               className="w-full"
             />
             {

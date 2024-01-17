@@ -29,11 +29,28 @@ const CheckBoxes = ({
   const [tempChoices, setTempChoices] = useState<any>(
     question && question!.choices
   );
-  const [selected, setSelected] = useState(logic?.answerValue || []);
+  const [selected, setSelected] = useState(logic?.answerValue);
 
   useEffect(() => {
-    setSelected([]);
-  }, [logic?.selectQuestId]);
+    if (logic?.answerValue !== undefined) {
+      setSelected(logic?.answerValue);
+    } else {
+      setSelected([]);
+    }
+  }, [logic?.answerValue, logic?.selectQuestId]);
+
+  useEffect(() => {
+    const isValuePresent =
+      question &&
+      question!.choices!.some(
+        (choice: any) => choice.value === `Choice ${choiceCount}`
+      );
+
+    console.log("isValuePresent: ", isValuePresent);
+    if (isValuePresent) {
+      setChoiceCount((prevCount) => prevCount + 1);
+    }
+  }, [choiceCount, question]);
 
   const renderAdminMode = () => {
     const addChoice = () => {
@@ -246,16 +263,18 @@ const CheckBoxes = ({
       return isDisabled;
     };
     const isInvalid = () => {
-      if (selected && selected.lenght > minLimit) {
+      if (selected && selected.length > minLimit) {
         return false;
       } else {
         return logic?.answerValue === undefined;
       }
     };
 
-    console.log("selected: ", selected);
+    console.log(`selected: ${logic?.selectedQuestion?.name}`, selected);
     return (
-      <>
+      <div
+      // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}`}
+      >
         <div className="w-full grid grid-cols-4 justify-center gap-2 pt-4">
           <div className="justify-self-center self-center col-span-2">
             <p
@@ -270,12 +289,12 @@ const CheckBoxes = ({
                   ? `Please select at least ${
                       minLimit === 0 ? 1 : minLimit
                     } choice${minLimit > 1 ? "s" : ""}.`
-                  : logic?.answerValue.length >= maxLimit
+                  : logic?.answerValue?.length >= maxLimit
                   ? `Maximum limit of ${maxLimit} choice${
                       maxLimit > 1 ? "s" : ""
                     } exceeded.`
-                  : `${logic?.answerValue.length} choice${
-                      logic?.answerValue.length !== 1 ? "s" : ""
+                  : `${logic?.answerValue?.length} choice${
+                      logic?.answerValue?.length !== 1 ? "s" : ""
                     } within ${minLimit}-${maxLimit} limit.`
               }`}
             </p>
@@ -299,6 +318,7 @@ const CheckBoxes = ({
           />
         </div>
         <CheckboxGroup
+          // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkboxGroup`}
           value={selected}
           onValueChange={(selected) => {
             setSelected(selected);
@@ -312,10 +332,12 @@ const CheckBoxes = ({
           }}
           isInvalid={isInvalid()}
           // onBlur={() => {
-          //   if (selected.length >= minLimit && selected.length > 0) {
-          //     handleLogicConditions!(logicIndex!, "answerValue", selected);
-          //   } else {
+          //   if (selected.length < 1) {
           //     handleLogicConditions!(logicIndex!, "answerValue", undefined);
+          //   } else if (selected.length < minLimit) {
+          //     handleLogicConditions!(logicIndex!, "answerValue", undefined);
+          //   } else if (selected.length >= minLimit) {
+          //     handleLogicConditions!(logicIndex!, "answerValue", selected);
           //   }
           // }}
           classNames={{
@@ -331,6 +353,7 @@ const CheckBoxes = ({
                   className="flex justify-between items-center"
                 >
                   <Checkbox
+                    // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkbox-${choiceIndex}`}
                     isDisabled={handleDisbleOnMaxlimit(choice)}
                     value={choice.value}
                     size={"lg"}
@@ -346,7 +369,7 @@ const CheckBoxes = ({
             }
           )}
         </CheckboxGroup>
-      </>
+      </div>
     );
   };
   return <div>{adminMode ? renderAdminMode() : renderUserMode()}</div>;
