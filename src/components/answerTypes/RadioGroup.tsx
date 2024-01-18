@@ -177,13 +177,6 @@ const RadioChoices = ({
           }}
           label={`${isInvalid ? "Please defined Choice." : ""}`}
           isInvalid={isInvalid}
-          // onBlur={() => {
-          //   if (selected) {
-          //     handleLogicConditions!(logicIndex!, "answerValue", selected);
-          //   } else {
-          //     handleLogicConditions!(logicIndex!, "answerValue", undefined);
-          //   }
-          // }}
           classNames={{
             base: ["p-4"],
             label: [`${isInvalid && "text-rose-500 font-semibold"}`],

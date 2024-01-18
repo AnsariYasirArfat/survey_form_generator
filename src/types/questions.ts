@@ -5,8 +5,6 @@ export interface GlobalContextProps {
   setQuestions: Dispatch<SetStateAction<Question[]>>;
   surveyForm: SurveyForm;
   setSurveyForm: Dispatch<SetStateAction<SurveyForm>>;
-  logicConditionsData: LogicConditionData[];
-  setLogicConditionsData: Dispatch<SetStateAction<any>>;
 }
 
 export interface Choices {
@@ -15,9 +13,11 @@ export interface Choices {
 }
 
 export interface VisibleIf {
-  logicOperator?: string;
-  questionName?: string;
-  comparisonOperator?: string;
+  logicDataId: string;
+  logicOperator?: string | undefined;
+  selectQuestId?: string | undefined;
+  selectedQuestion?: any;
+  comparisonOperator?: string | undefined;
   answerValue?: any;
 }
 
@@ -37,7 +37,7 @@ export interface Question {
   isRequired?: boolean;
   maxSelectedChoices?: number;
   minSelectedChoices?: number;
-  visibleIf?: VisibleIf;
+  visibleIf?: VisibleIf[];
 }
 
 export interface SurveyForm {
@@ -55,10 +55,10 @@ export interface AnswerTypeComponentProps {
     value: string | number | Choices[]
   ) => void;
 
-  logic?: LogicConditionData;
+  logic?: VisibleIf;
   handleLogicConditions?: (
     index: number,
-    field: keyof LogicConditionData,
+    field: keyof VisibleIf,
     value: string | Question | boolean | number | string[] | undefined
   ) => void;
 }
@@ -66,15 +66,15 @@ export interface AnswerTypeComponentProps {
 // export interface ConditionalLogicEditorProps
 //   extends Omit<AnswerTypeComponentProps, "adminMode" | "question"> {}
 
-export interface LogicConditionData {
-  logicDataId: string;
-  currentQuestionId: string | undefined;
-  selectQuestId: string | undefined;
-  selectedQuestion: Question | undefined;
-  comparisonOperator: string | undefined;
-  logicOperator: string | undefined;
-  answerValue: any;
-}
+// export interface LogicConditionData {
+//   logicDataId: string;
+//   currentQuestionId: string | undefined;
+//   selectQuestId: string | undefined;
+//   selectedQuestion: Question | undefined;
+//   comparisonOperator: string | undefined;
+//   logicOperator: string | undefined;
+//   answerValue: any;
+// }
 // export interface AnswerValue {
 //   answerValue: string | boolean | undefined;
 // }

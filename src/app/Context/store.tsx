@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  GlobalContextProps,
-  LogicConditionData,
-  Question,
-  SurveyForm,
-} from "@/types/questions";
+import { GlobalContextProps, Question, SurveyForm } from "@/types/questions";
 import { useContext, useState, createContext } from "react";
 
 const GlobalContext = createContext<GlobalContextProps>({
@@ -16,8 +11,6 @@ const GlobalContext = createContext<GlobalContextProps>({
     questions: [],
   },
   setSurveyForm: () => {},
-  logicConditionsData: [],
-  setLogicConditionsData: () => {},
 });
 export const GlobalContextProvider = ({ children }: any) => {
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -26,9 +19,6 @@ export const GlobalContextProvider = ({ children }: any) => {
     questions: questions,
   });
 
-  const [logicConditionsData, setLogicConditionsData] = useState<
-    LogicConditionData[]
-  >([]);
   return (
     <GlobalContext.Provider
       value={{
@@ -36,8 +26,6 @@ export const GlobalContextProvider = ({ children }: any) => {
         setQuestions,
         surveyForm,
         setSurveyForm,
-        logicConditionsData,
-        setLogicConditionsData,
       }}
     >
       {children}

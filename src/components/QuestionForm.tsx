@@ -29,11 +29,10 @@ import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 import { useGlobalContext } from "@/app/Context/store";
-import { Choices, LogicConditionData, Question } from "@/types/questions";
+import { Choices, Question, VisibleIf } from "@/types/questions";
 
 const QuestionForm = () => {
-  const { questions, setQuestions, setLogicConditionsData } =
-    useGlobalContext();
+  const { questions, setQuestions } = useGlobalContext();
   const [generatedQuestionId, setGeneratedQuestionId] = useState("");
   const [questionCount, setQuestionCount] = useState(1);
 
@@ -69,29 +68,22 @@ const QuestionForm = () => {
     questionToDelete: Question,
     questionIndexToDelete: number
   ) => {
-    if (questions.length > 1 && questionIndexToDelete === 0) {
-      const clearLogicForFirstQuestionId = questions[1].questionId;
-      setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
-        prevLogicConditionsData.filter(
-          (logic: LogicConditionData) =>
-            clearLogicForFirstQuestionId !== logic.currentQuestionId
-        )
-      );
-    }
-    setLogicConditionsData((prevLogicConditionsData: LogicConditionData[]) =>
-      prevLogicConditionsData.filter(
-        (logic: LogicConditionData) =>
-          questionToDelete.questionId !== logic?.selectedQuestion?.questionId &&
-          questionToDelete.questionId !== logic?.currentQuestionId
-      )
-    );
-
-    // const updatedQuestions = questions.filter(
-    //   (question: Question) =>
-    //     questionToDelete.questionId !== question.questionId
+    // if (questions.length > 1 && questionIndexToDelete === 0) {
+    //   const clearLogicForFirstQuestionId = questions[1].questionId;
+    //   setLogicConditionsData((prevLogicConditionsData: VisibleIf[]) =>
+    //     prevLogicConditionsData.filter(
+    //       (logic: VisibleIf) =>
+    //         clearLogicForFirstQuestionId !== logic.currentQuestionId
+    //     )
+    //   );
+    // }
+    // setLogicConditionsData((prevLogicConditionsData: VisibleIf[]) =>
+    //   prevLogicConditionsData.filter(
+    //     (logic: VisibleIf) =>
+    //       questionToDelete.questionId !== logic?.selectedQuestion?.questionId &&
+    //       questionToDelete.questionId !== logic?.currentQuestionId
+    //   )
     // );
-    // console.log("updated questions after delete: ", updatedQuestions);
-    // setQuestions(updatedQuestions);
 
     // Delete the question
     setQuestions((prevQuestions) =>
@@ -316,16 +308,16 @@ const QuestionForm = () => {
                     onSelectionChange={(e) => {
                       handleDataChange(index, "type", e);
 
-                      if (questions.length > 1) {
-                        setLogicConditionsData(
-                          (prevLogicConditionsData: LogicConditionData[]) =>
-                            prevLogicConditionsData.filter(
-                              (logic: LogicConditionData) =>
-                                question.questionId !==
-                                logic?.selectedQuestion?.questionId
-                            )
-                        );
-                      }
+                      // if (questions.length > 1) {
+                      //   setLogicConditionsData(
+                      //     (prevLogicConditionsData: VisibleIf[]) =>
+                      //       prevLogicConditionsData.filter(
+                      //         (logic: VisibleIf) =>
+                      //           question.questionId !==
+                      //           logic?.selectedQuestion?.questionId
+                      //       )
+                      //   );
+                      // }
 
                       //  Single Input default and depende properties handle
                       if (e === "singleinput") {
@@ -406,20 +398,20 @@ const QuestionForm = () => {
                         onSelectionChange={(e) => {
                           handleDataChange(index, "inputType", e);
 
-                          if (
-                            questions.length > 1 &&
-                            question &&
-                            question.type === "singleinput"
-                          ) {
-                            setLogicConditionsData(
-                              (prevLogicConditionsData: LogicConditionData[]) =>
-                                prevLogicConditionsData.filter(
-                                  (logic: LogicConditionData) =>
-                                    question.questionId !==
-                                    logic?.selectedQuestion?.questionId
-                                )
-                            );
-                          }
+                          // if (
+                          //   questions.length > 1 &&
+                          //   question &&
+                          //   question.type === "singleinput"
+                          // ) {
+                          //   setLogicConditionsData(
+                          //     (prevLogicConditionsData: VisibleIf[]) =>
+                          //       prevLogicConditionsData.filter(
+                          //         (logic: VisibleIf) =>
+                          //           question.questionId !==
+                          //           logic?.selectedQuestion?.questionId
+                          //       )
+                          //   );
+                          // }
 
                           if (e === "range") {
                             handleDataChange(index, "max", 100);
@@ -456,20 +448,20 @@ const QuestionForm = () => {
                         isClearable={false}
                         onSelectionChange={(e) => {
                           handleDataChange(index, "rateType", e);
-                          if (
-                            questions.length > 1 &&
-                            question &&
-                            question.type === "ratingscale"
-                          ) {
-                            setLogicConditionsData(
-                              (prevLogicConditionsData: LogicConditionData[]) =>
-                                prevLogicConditionsData.filter(
-                                  (logic: LogicConditionData) =>
-                                    question.questionId !==
-                                    logic?.selectedQuestion?.questionId
-                                )
-                            );
-                          }
+                          // if (
+                          //   questions.length > 1 &&
+                          //   question &&
+                          //   question.type === "ratingscale"
+                          // ) {
+                          //   setLogicConditionsData(
+                          //     (prevLogicConditionsData: VisibleIf[]) =>
+                          //       prevLogicConditionsData.filter(
+                          //         (logic: VisibleIf) =>
+                          //           question.questionId !==
+                          //           logic?.selectedQuestion?.questionId
+                          //       )
+                          //   );
+                          // }
                         }}
                       >
                         {rateTypes.map((rateType) => (
