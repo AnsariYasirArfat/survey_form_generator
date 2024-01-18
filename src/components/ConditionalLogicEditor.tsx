@@ -51,10 +51,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
       return currentQuestion.questionId === logic.currentQuestionId;
     });
     console.log("All Logic data: ", logicConditionsData);
-    console.log(
-      `Current ${currentQuestion.name} Logic Data : `,
-      currentQuestionLogicData
-    );
+    // console.log(
+    //   `Current ${currentQuestion.name} Logic Data : `,
+    //   currentQuestionLogicData
+    // );
     setLogicToCurrentQuestions(currentQuestionLogicData);
   }, [currentQuestion, logicConditionsData]);
 
@@ -252,7 +252,25 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
       prevQuestions[index]["visibleIf"] = visibleIfData;
       return [...prevQuestions];
     });
-    console.log("Logic added: ", visibleIfData);
+    // console.log("Logic added: ", visibleIfData);
+  };
+
+  const handleCancelLogic = () => {
+    // if (logicToCurrentQuestions && logicToCurrentQuestions.length > 0) {
+    //   console.log("Before clearing logic data:", logicConditionsData);
+    //   handleClearAllLogicData();
+    //   console.log("After clearing logic data:", logicConditionsData);
+    //   setLogicConditionsData(
+    //     (prevLogicConditionsData: LogicConditionData[]) => [
+    //       ...prevLogicConditionsData,
+    //       ...prevLogicToCurrentQuestions,
+    //     ]
+    //   );
+    //   // console.log(
+    //   //   "Reverted to previous logic => onCancel: ",
+    //   //   logicToCurrentQuestions
+    //   // );
+    // }
   };
 
   const userAnswerField = (logic: LogicConditionData, index: number) => {
@@ -665,6 +683,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   onPress={onClose}
                   radius="sm"
                   // size="sm"
+                  onClick={handleCancelLogic}
                 >
                   Cancel
                 </Button>
