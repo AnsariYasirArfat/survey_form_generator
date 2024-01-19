@@ -1,4 +1,4 @@
-import { Card, CardBody, Divider, Textarea } from "@nextui-org/react";
+import { Card, CardBody, Divider } from "@nextui-org/react";
 import React from "react";
 
 const DefaultAnswer = () => {

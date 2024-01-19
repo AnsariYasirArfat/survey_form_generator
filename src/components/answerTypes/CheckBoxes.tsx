@@ -331,15 +331,6 @@ const CheckBoxes = ({
             }
           }}
           isInvalid={isInvalid()}
-          // onBlur={() => {
-          //   if (selected.length < 1) {
-          //     handleLogicConditions!(logicIndex!, "answerValue", undefined);
-          //   } else if (selected.length < minLimit) {
-          //     handleLogicConditions!(logicIndex!, "answerValue", undefined);
-          //   } else if (selected.length >= minLimit) {
-          //     handleLogicConditions!(logicIndex!, "answerValue", selected);
-          //   }
-          // }}
           classNames={{
             base: ["p-4"],
             label: [`${isInvalid() && "text-rose-500 font-semibold"}`],

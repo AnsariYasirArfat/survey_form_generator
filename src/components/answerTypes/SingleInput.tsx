@@ -205,20 +205,13 @@ const SingleInput = ({
               showSteps={true}
               minValue={logic?.selectedQuestion!.min}
               maxValue={logic?.selectedQuestion!.max}
-              // defaultValue={logic?.selectedQuestion!.defaultValue}
               className="w-full"
             />
-            {
-              isInvalid && (
-                <p className="text-rose-500 font-semibold">
-                  Please define the range.
-                </p>
-              ) /* : (
-              <p className="text-green-500 font-semibold">
-                Range defined successfully.
+            {isInvalid && (
+              <p className="text-rose-500 font-semibold">
+                Please define the range.
               </p>
-            ) */
-            }
+            )}
           </div>
         )}
       </>

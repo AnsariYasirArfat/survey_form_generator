@@ -30,6 +30,7 @@ import CheckBoxes from "./answerTypes/CheckBoxes";
 import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
+import ClearAllLogicModel from "./models/ClearAllLogicModel";
 import { comparisonOperators, logicalOperators } from "@/utils/answerTypesData";
 
 const ConditionalLogicEditor = ({ index }: { index: number }) => {
@@ -177,10 +178,6 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
         answerValue: logic.answerValue,
       })
     );
-
-    // const updatedQuestions: Question[] = [...questions];
-    // const questionToUpdate: any = updatedQuestions[index];
-    // currentQuestion["visibleIf"] = visibleIfData;
     setQuestions((prevQuestions: any) => {
       prevQuestions[index]["visibleIf"] = visibleIfData;
       return [...prevQuestions];
@@ -189,26 +186,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   };
 
   const handleCancelLogic = () => {
-    // setLogicToCurrentQuestions(
-    //   currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
-    // );
     setLogicToCurrentQuestions([]);
-
-    // if (logicToCurrentQuestions && logicToCurrentQuestions.length > 0) {
-    //   console.log("Before clearing logic data:", logicConditionsData);
-    //   handleClearAllLogicData();
-    //   console.log("After clearing logic data:", logicConditionsData);
-    //   setLogicConditionsData(
-    //     (prevLogicConditionsData: VisibleIf[]) => [
-    //       ...prevLogicConditionsData,
-    //       ...prevLogicToCurrentQuestions,
-    //     ]
-    //   );
-    //   // console.log(
-    //   //   "Reverted to previous logic => onCancel: ",
-    //   //   logicToCurrentQuestions
-    //   // );
-    // }
   };
 
   const userAnswerField = (logic: VisibleIf, index: number) => {
@@ -289,7 +267,6 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
           radius="sm"
           size={"sm"}
           color={currentQuestion.visibleIf ? "success" : "default"}
-          // className="bg-blue-900"
         >
           <Network size={"16"} />
         </Button>
@@ -302,15 +279,6 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
         isDismissable={false}
         scrollBehavior={"inside"}
         classNames={{
-          // base: [
-          //   `overflow-auto ${
-          //     logicToCurrentQuestions.length < 1
-          //       ? "h-[30vh]"
-          //       : logicToCurrentQuestions.length < 2
-          //       ? "h-[78vh]"
-          //       : "h-[90vh]"
-          //   }`,
-          // ],
           backdrop:
             "bg-gradient-to-t from-zinc-900/70 to-zinc-900/70 backdrop-opacity-20",
         }}
@@ -326,24 +294,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   </span>
                   Visible, if...?
                 </h1>
-
-                <Button
-                  isDisabled={
-                    logicToCurrentQuestions &&
-                    logicToCurrentQuestions.length > 0
-                      ? false
-                      : true
-                  }
-                  variant="shadow"
-                  color="danger"
-                  onPress={handleClearAllLogicData}
-                  radius="sm"
-                  size="sm"
-                  className="col-span-2 justify-self-end"
-                >
-                  <Eraser size={"16"} />
-                  Clear All
-                </Button>
+                <ClearAllLogicModel
+                  handleClearAllLogicData={handleClearAllLogicData}
+                  logicToCurrentQuestions={logicToCurrentQuestions}
+                />
               </ModalHeader>
               <ModalBody className={`gap-4`}>
                 {logicToCurrentQuestions &&
@@ -365,7 +319,6 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                                     logic.selectQuestId ? false : true
                                   }
                                   label="Logic Operator:"
-                                  // defaultSelectedKeys={["and"]}
                                   selectedKey={`${logic.logicOperator!}`}
                                   onSelectionChange={(e) => {
                                     if (e) {
@@ -506,16 +459,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                               <Autocomplete
                                 isDisabled={logic.selectQuestId ? false : true}
                                 label="Comparison Operator:"
-                                // defaultSelectedKeys={["="]}
                                 isClearable={false}
                                 disabledKeys={handleComparisonArray(
                                   logic.selectedQuestion!
                                 )}
-                                // selectedKeys={
-                                //   logic.comparisonOperator
-                                //     ? [logic.comparisonOperator]
-                                //     : undefined
-                                // }
                                 selectedKey={`${logic.comparisonOperator!}`}
                                 onSelectionChange={(e) => {
                                   handleLogicConditions(
@@ -640,7 +587,6 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   variant="flat"
                   onPress={onClose}
                   radius="sm"
-                  // size="sm"
                   onClick={handleCancelLogic}
                 >
                   Cancel

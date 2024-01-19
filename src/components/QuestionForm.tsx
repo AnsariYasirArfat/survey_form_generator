@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Card,
@@ -14,7 +14,7 @@ import {
   AutocompleteItem,
   Autocomplete,
 } from "@nextui-org/react";
-import { Asterisk, CopyPlus, Network, Plus, Trash2 } from "lucide-react";
+import { Asterisk, CopyPlus, Network, Plus } from "lucide-react";
 import {
   answerTypesData,
   rateTypes,
@@ -30,7 +30,7 @@ import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 import { useGlobalContext } from "@/app/Context/store";
 import { Choices, Question, VisibleIf } from "@/types/questions";
-
+import DeleteQuestionModel from "./models/DeleteQuestionModel";
 const QuestionForm = () => {
   const { questions, setQuestions } = useGlobalContext();
   const [generatedQuestionId, setGeneratedQuestionId] = useState("");
@@ -55,7 +55,7 @@ const QuestionForm = () => {
       {
         questionId: generatedId,
         name: `Question ${questionCount}`,
-        title: `Question ${questionCount}: Title...`,
+        title: `Title for question ${questionCount}`,
         type: "singleinput",
         inputType: "text",
         isRequired: false,
@@ -68,22 +68,27 @@ const QuestionForm = () => {
     questionToDelete: Question,
     questionIndexToDelete: number
   ) => {
-    // if (questions.length > 1 && questionIndexToDelete === 0) {
-    //   const clearLogicForFirstQuestionId = questions[1].questionId;
-    //   setLogicConditionsData((prevLogicConditionsData: VisibleIf[]) =>
-    //     prevLogicConditionsData.filter(
-    //       (logic: VisibleIf) =>
-    //         clearLogicForFirstQuestionId !== logic.currentQuestionId
-    //     )
-    //   );
-    // }
-    // setLogicConditionsData((prevLogicConditionsData: VisibleIf[]) =>
-    //   prevLogicConditionsData.filter(
-    //     (logic: VisibleIf) =>
-    //       questionToDelete.questionId !== logic?.selectedQuestion?.questionId &&
-    //       questionToDelete.questionId !== logic?.currentQuestionId
-    //   )
-    // );
+    if (questions.length > 1 && questionIndexToDelete === 0) {
+      setQuestions((prevQuestions: Question[]) => {
+        delete prevQuestions[1]["visibleIf"];
+        return [...prevQuestions];
+      });
+    }
+
+    setQuestions((prevQuestions: Question[]) => {
+      const removedDeletedQuestionLogic = prevQuestions.map((question) => {
+        if (question.visibleIf) {
+          question.visibleIf = question.visibleIf.filter(
+            (logic) =>
+              logic.selectQuestId !==
+              prevQuestions[questionIndexToDelete].questionId
+          );
+        }
+        return question;
+      });
+
+      return [...removedDeletedQuestionLogic];
+    });
 
     // Delete the question
     setQuestions((prevQuestions) =>
@@ -95,17 +100,6 @@ const QuestionForm = () => {
   };
 
   const duplicateQuestions = (questionToDuplicate: Question) => {
-    // const generatedId = uuidv4();
-    // const questionToAdd = { ...questionToDuplicate };
-    // questionToAdd.questionId = generatedId;
-    // questionToAdd.name = `Question ${questionCount}`;
-
-    // const allQuestion = [...questions, questionToAdd];
-
-    // setQuestions(allQuestion);
-    // setGeneratedQuestionId(generatedId);
-    // setQuestionCount((prevCount) => prevCount + 1);
-
     const generatedId = uuidv4();
     setGeneratedQuestionId(generatedId);
 
@@ -130,15 +124,9 @@ const QuestionForm = () => {
     const questionToUpdate: any = updatedQuestions[index];
     questionToUpdate[field] = value;
     setQuestions(updatedQuestions);
-
-    // setQuestions((prevQuestions:any) => {
-    //   prevQuestions[index][field] = value;
-    //   return [...prevQuestions];
-    // });
   };
 
   const adminAnswerField = (question: Question, index: number) => {
-    // console.log(question);
     switch (question.type) {
       case "singleinput":
         return (
@@ -224,7 +212,7 @@ const QuestionForm = () => {
                   type="text"
                   classNames={{
                     base: ["col-span-3"],
-                    input: ["text-black capitalize font-semibold"],
+                    input: ["text-black  font-semibold"],
                     description: ["text-black"],
                     label: [""],
                   }}
@@ -232,7 +220,6 @@ const QuestionForm = () => {
                   labelPlacement={"outside"}
                   size={"md"}
                   isInvalid={question.name ? false : true}
-                  // color={!question.name? "danger" : "success"}
                   errorMessage={
                     !question.name && "Please Provide Question Name"
                   }
@@ -263,7 +250,7 @@ const QuestionForm = () => {
                   type="text"
                   classNames={{
                     base: ["col-span-8"],
-                    input: ["text-black capitalize font-semibold"],
+                    input: ["text-black  font-semibold"],
                     description: ["text-black"],
                   }}
                   isInvalid={question.title ? false : true}
@@ -282,7 +269,7 @@ const QuestionForm = () => {
                       handleDataChange(
                         index,
                         "title",
-                        `${question.name}: Title...`
+                        `Title for ${question.name.toLowerCase()}`
                       );
                     }
                   }}
@@ -297,8 +284,8 @@ const QuestionForm = () => {
                   {adminAnswerField(question, index)}
                 </div>
               </CardBody>
-              <CardFooter className="grid grid-cols-3 gap-4">
-                <div className="w-full">
+              <CardFooter className="grid grid-cols-12 gap-4">
+                <div className="w-full col-span-3">
                   <Autocomplete
                     label="Choose the answer type:"
                     className="max-w-xs"
@@ -308,18 +295,26 @@ const QuestionForm = () => {
                     onSelectionChange={(e) => {
                       handleDataChange(index, "type", e);
 
-                      // if (questions.length > 1) {
-                      //   setLogicConditionsData(
-                      //     (prevLogicConditionsData: VisibleIf[]) =>
-                      //       prevLogicConditionsData.filter(
-                      //         (logic: VisibleIf) =>
-                      //           question.questionId !==
-                      //           logic?.selectedQuestion?.questionId
-                      //       )
-                      //   );
-                      // }
+                      if (questions.length > 1) {
+                        setQuestions((prevQuestions: Question[]) =>
+                          prevQuestions.map((question) => {
+                            if (question.visibleIf) {
+                              const visibleIfUpdate = question.visibleIf.filter(
+                                (logic) =>
+                                  logic.selectQuestId !==
+                                  questions[index].questionId
+                              );
+                              question.visibleIf =
+                                visibleIfUpdate.length > 0
+                                  ? visibleIfUpdate
+                                  : undefined;
+                            }
+                            return question;
+                          })
+                        );
+                      }
 
-                      //  Single Input default and depende properties handle
+                      //  Single Input default and dependent properties handle
                       if (e === "singleinput") {
                         handleDataChange(index, "inputType", "text");
                       } else {
@@ -330,7 +325,7 @@ const QuestionForm = () => {
                         delete question.defaultValue;
                       }
 
-                      //  Rating Scale default and depende properties handle
+                      //  Rating Scale default and dependent properties handle
                       if (e === "ratingscale") {
                         handleDataChange(index, "rateCount", 5);
                         handleDataChange(index, "rateType", "number");
@@ -338,7 +333,7 @@ const QuestionForm = () => {
                         delete question.rateType;
                         delete question.rateCount;
                       }
-                      //  Checkboxes & Radio Group default and depende properties handle
+                      //  Checkboxes & Radio Group default and dependent properties handle
                       if (question.type === "radiogroup") {
                         handleDataChange(index, "choices", [
                           {
@@ -386,7 +381,7 @@ const QuestionForm = () => {
                     ))}
                   </Autocomplete>
                 </div>
-                <div className="h-full w-full">
+                <div className="h-full w-full  col-span-3">
                   {question && question.type === "singleinput" && (
                     <div className="w-full">
                       <Autocomplete
@@ -398,20 +393,29 @@ const QuestionForm = () => {
                         onSelectionChange={(e) => {
                           handleDataChange(index, "inputType", e);
 
-                          // if (
-                          //   questions.length > 1 &&
-                          //   question &&
-                          //   question.type === "singleinput"
-                          // ) {
-                          //   setLogicConditionsData(
-                          //     (prevLogicConditionsData: VisibleIf[]) =>
-                          //       prevLogicConditionsData.filter(
-                          //         (logic: VisibleIf) =>
-                          //           question.questionId !==
-                          //           logic?.selectedQuestion?.questionId
-                          //       )
-                          //   );
-                          // }
+                          if (
+                            questions.length > 1 &&
+                            question &&
+                            question.type === "singleinput"
+                          ) {
+                            setQuestions((prevQuestions: Question[]) =>
+                              prevQuestions.map((question) => {
+                                if (question.visibleIf) {
+                                  const visibleIfUpdate =
+                                    question.visibleIf.filter(
+                                      (logic) =>
+                                        logic.selectQuestId !==
+                                        questions[index].questionId
+                                    );
+                                  question.visibleIf =
+                                    visibleIfUpdate.length > 0
+                                      ? visibleIfUpdate
+                                      : undefined;
+                                }
+                                return question;
+                              })
+                            );
+                          }
 
                           if (e === "range") {
                             handleDataChange(index, "max", 100);
@@ -448,20 +452,29 @@ const QuestionForm = () => {
                         isClearable={false}
                         onSelectionChange={(e) => {
                           handleDataChange(index, "rateType", e);
-                          // if (
-                          //   questions.length > 1 &&
-                          //   question &&
-                          //   question.type === "ratingscale"
-                          // ) {
-                          //   setLogicConditionsData(
-                          //     (prevLogicConditionsData: VisibleIf[]) =>
-                          //       prevLogicConditionsData.filter(
-                          //         (logic: VisibleIf) =>
-                          //           question.questionId !==
-                          //           logic?.selectedQuestion?.questionId
-                          //       )
-                          //   );
-                          // }
+                          if (
+                            questions.length > 1 &&
+                            question &&
+                            question.type === "ratingscale"
+                          ) {
+                            setQuestions((prevQuestions: Question[]) =>
+                              prevQuestions.map((question) => {
+                                if (question.visibleIf) {
+                                  const visibleIfUpdate =
+                                    question.visibleIf.filter(
+                                      (logic) =>
+                                        logic.selectQuestId !==
+                                        questions[index].questionId
+                                    );
+                                  question.visibleIf =
+                                    visibleIfUpdate.length > 0
+                                      ? visibleIfUpdate
+                                      : undefined;
+                                }
+                                return question;
+                              })
+                            );
+                          }
                         }}
                       >
                         {rateTypes.map((rateType) => (
@@ -476,7 +489,8 @@ const QuestionForm = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex justify-end h-full items-end gap-2">
+                <div className=" col-span-3"></div>
+                <div className=" col-span-3 flex justify-end h-full items-end gap-2">
                   {index === 0 ? (
                     <Tooltip>
                       <Button
@@ -517,16 +531,12 @@ const QuestionForm = () => {
                       <CopyPlus size={"16"} />
                     </Button>
                   </Tooltip>
-                  <Tooltip content="Delete" color={"danger"}>
-                    <Button
-                      radius="sm"
-                      size={"sm"}
-                      color={"danger"}
-                      onClick={() => deleteQuestions(question, index)}
-                    >
-                      <Trash2 size={"16"} />
-                    </Button>
-                  </Tooltip>
+
+                  <DeleteQuestionModel
+                    deleteQuestions={deleteQuestions}
+                    question={question}
+                    index={index}
+                  />
                 </div>
               </CardFooter>
             </Card>

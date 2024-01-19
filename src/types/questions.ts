@@ -62,19 +62,3 @@ export interface AnswerTypeComponentProps {
     value: string | Question | boolean | number | string[] | undefined
   ) => void;
 }
-
-// export interface ConditionalLogicEditorProps
-//   extends Omit<AnswerTypeComponentProps, "adminMode" | "question"> {}
-
-// export interface LogicConditionData {
-//   logicDataId: string;
-//   currentQuestionId: string | undefined;
-//   selectQuestId: string | undefined;
-//   selectedQuestion: Question | undefined;
-//   comparisonOperator: string | undefined;
-//   logicOperator: string | undefined;
-//   answerValue: any;
-// }
-// export interface AnswerValue {
-//   answerValue: string | boolean | undefined;
-// }

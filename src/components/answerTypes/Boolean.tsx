@@ -11,10 +11,6 @@ const Boolean = ({
 }: AnswerTypeComponentProps) => {
   const [isChecked, setIsChecked] = useState(logic?.answerValue);
 
-  // useEffect(() => {
-  //   logic?.answerValue;
-  // }, [logic?.answerValue]);
-
   useEffect(() => {
     if (logic?.answerValue !== undefined) {
       setIsChecked(logic?.answerValue);
@@ -57,7 +53,6 @@ const Boolean = ({
     );
   };
 
-  // console.log(isChecked);
   const renderUserMode = () => {
     const isInvalid = logic?.answerValue === undefined;
     return (

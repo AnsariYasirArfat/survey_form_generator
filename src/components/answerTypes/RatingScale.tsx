@@ -16,10 +16,6 @@ const RatingScale = ({
 }: AnswerTypeComponentProps) => {
   const [selectedStar, setSelectedStar] = useState<any>(adminMode ? 1 : 0);
 
-  // useEffect(() => {
-  //   setSelectedStar(logic?.answerValue);
-  // }, [logic?.answerValue]);
-
   useEffect(() => {
     if (logic?.answerValue !== undefined) {
       setSelectedStar(logic?.answerValue);
