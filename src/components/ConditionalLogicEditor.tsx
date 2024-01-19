@@ -1,4 +1,4 @@
-// Hey i am on visibleIf branch
+// Hey I am on visibleIf branch
 
 "use client";
 import React, { useEffect, useState } from "react";
@@ -34,22 +34,23 @@ import { comparisonOperators, logicalOperators } from "@/utils/answerTypesData";
 
 const ConditionalLogicEditor = ({ index }: { index: number }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
   const { questions, setQuestions } = useGlobalContext();
 
   const [questionList, setQuestionList] = useState<Question[]>([]);
   const currentQuestion = questions[index!];
+  console.log(`${currentQuestion.name} isOpen: `, isOpen);
 
   const [logicToCurrentQuestions, setLogicToCurrentQuestions] = useState<any>(
     []
   );
   console.log("logicToCurrentQuestions: ", logicToCurrentQuestions);
+
   useEffect(() => {
     console.log("currentQuestion.visibleIf: ", currentQuestion.visibleIf);
     setLogicToCurrentQuestions(
-      currentQuestion.visibleIf ? currentQuestion.visibleIf : []
+      currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
     );
-  }, [currentQuestion]);
+  }, [currentQuestion, isOpen]);
 
   useEffect(() => {
     const questionToAvoid = questions.filter((question) => {
@@ -118,7 +119,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   ) => {
     setLogicToCurrentQuestions((prevLogicConditionsData: VisibleIf[]) => {
       const updateLogicData: VisibleIf[] = [...prevLogicConditionsData];
-      const logicToUpdate = prevLogicConditionsData[index];
+      const logicToUpdate = updateLogicData[index];
       logicToUpdate[field] = value;
       return updateLogicData;
     });
@@ -156,24 +157,32 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   };
 
   const handleVisibleIf = () => {
-    // const visibleIfData: VisibleIf[] = logicToCurrentQuestions.map((logic) => ({
-    //   logicOperator: logic.logicOperator,
-    //   questionName: logic.selectedQuestion?.name,
-    //   comparisonOperator: logic.comparisonOperator,
-    //   answerValue: logic.answerValue,
-    // }));
+    const visibleIfData: VisibleIf[] = logicToCurrentQuestions.map(
+      (logic: VisibleIf) => ({
+        logicDataId: logic.logicDataId,
+        logicOperator: logic.logicOperator,
+        selectQuestId: logic.selectQuestId,
+        selectedQuestion: logic.selectedQuestion,
+        comparisonOperator: logic.comparisonOperator,
+        answerValue: logic.answerValue,
+      })
+    );
 
     // const updatedQuestions: Question[] = [...questions];
     // const questionToUpdate: any = updatedQuestions[index];
     // currentQuestion["visibleIf"] = visibleIfData;
     setQuestions((prevQuestions: any) => {
-      prevQuestions[index]["visibleIf"] = logicToCurrentQuestions;
+      prevQuestions[index]["visibleIf"] = visibleIfData;
       return [...prevQuestions];
     });
+    setLogicToCurrentQuestions([]);
   };
 
   const handleCancelLogic = () => {
-    setLogicToCurrentQuestions([]);
+    setLogicToCurrentQuestions(
+      currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
+    );
+    // setLogicToCurrentQuestions([]);
 
     // if (logicToCurrentQuestions && logicToCurrentQuestions.length > 0) {
     //   console.log("Before clearing logic data:", logicConditionsData);
