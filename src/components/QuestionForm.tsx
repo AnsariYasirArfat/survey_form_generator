@@ -14,7 +14,7 @@ import {
   AutocompleteItem,
   Autocomplete,
 } from "@nextui-org/react";
-import { Asterisk, CopyPlus, Plus, Trash2 } from "lucide-react";
+import { Asterisk, CopyPlus, Network, Plus, Trash2 } from "lucide-react";
 import {
   answerTypesData,
   rateTypes,
@@ -477,8 +477,19 @@ const QuestionForm = () => {
                   )}
                 </div>
                 <div className="flex justify-end h-full items-end gap-2">
-                  <ConditionalLogicEditor index={index} />
-
+                  {index === 0 ? (
+                    <Tooltip>
+                      <Button
+                        isDisabled={index === 0 ? true : false}
+                        radius="sm"
+                        size={"sm"}
+                      >
+                        <Network size={"16"} />
+                      </Button>
+                    </Tooltip>
+                  ) : (
+                    <ConditionalLogicEditor index={index} />
+                  )}
                   <Tooltip content="Required">
                     <Button
                       radius="sm"

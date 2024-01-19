@@ -20,7 +20,7 @@ import {
   Autocomplete,
   AutocompleteItem,
 } from "@nextui-org/react";
-import { Network, Plus, Trash2 } from "lucide-react";
+import { Eraser, Network, Plus, Trash2 } from "lucide-react";
 import { useGlobalContext } from "@/app/Context/store";
 import { Question, VisibleIf } from "@/types/questions";
 import SingleInput from "./answerTypes/SingleInput";
@@ -46,31 +46,37 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   console.log("logicToCurrentQuestions: ", logicToCurrentQuestions);
 
   useEffect(() => {
-    console.log("currentQuestion.visibleIf: ", currentQuestion.visibleIf);
-    setLogicToCurrentQuestions(
-      currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
-    );
+    if (isOpen && currentQuestion.visibleIf) {
+      console.log("currentQuestion.visibleIf: ", currentQuestion.visibleIf);
+      const localLogicState = JSON.parse(
+        JSON.stringify(currentQuestion.visibleIf)
+      );
+      setLogicToCurrentQuestions(localLogicState);
+    }
   }, [currentQuestion, isOpen]);
 
   useEffect(() => {
-    const questionToAvoid = questions.filter((question) => {
-      if (question.visibleIf) {
-        question.visibleIf.some(
-          (logic) => logic.selectQuestId !== currentQuestion.questionId
-        );
-      }
-    });
+    if (isOpen) {
+      const removeCurrentQuestion: Question[] = questions.filter(
+        (question: Question) => currentQuestion !== question
+      );
+      const questionsToAvoid = removeCurrentQuestion.filter((question) => {
+        if (question.visibleIf) {
+          return !question.visibleIf.some(
+            (logic) => logic.selectQuestId === currentQuestion.questionId
+          );
+        }
+        return true;
+      });
 
-    console.log(`${currentQuestion.name}:questionToAvoid: `, questionToAvoid);
+      console.log(
+        `${currentQuestion.name}:questionToAvoid: `,
+        questionsToAvoid
+      );
 
-    const finalQuestionList: Question[] = questions.filter(
-      (question: Question) => currentQuestion !== question
-    );
-
-    setQuestionList(finalQuestionList);
-  }, [currentQuestion, questions]);
-
-  // console.log(`${currentQuestion.name}: logic quesitonlist: `, questionList);
+      setQuestionList(questionsToAvoid);
+    }
+  }, [currentQuestion, isOpen, questions]);
 
   const addMoreConditions = () => {
     if (logicToCurrentQuestions) {
@@ -110,6 +116,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
 
   const handleClearAllLogicData = () => {
     setLogicToCurrentQuestions([]);
+    setQuestions((prevQuestions: any) => {
+      prevQuestions[index]["visibleIf"] = undefined;
+      return [...prevQuestions];
+    });
   };
 
   const handleLogicConditions = (
@@ -179,10 +189,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
   };
 
   const handleCancelLogic = () => {
-    setLogicToCurrentQuestions(
-      currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
-    );
-    // setLogicToCurrentQuestions([]);
+    // setLogicToCurrentQuestions(
+    //   currentQuestion.visibleIf ? [...currentQuestion.visibleIf] : []
+    // );
+    setLogicToCurrentQuestions([]);
 
     // if (logicToCurrentQuestions && logicToCurrentQuestions.length > 0) {
     //   console.log("Before clearing logic data:", logicConditionsData);
@@ -270,12 +280,16 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
 
   return (
     <>
-      <Tooltip content="Logic">
+      <Tooltip
+        content={currentQuestion.visibleIf ? "Update Logic" : "Apply Logic"}
+      >
         <Button
           isDisabled={index === 0 ? true : false}
           onPress={onOpen}
           radius="sm"
           size={"sm"}
+          color={currentQuestion.visibleIf ? "success" : "default"}
+          // className="bg-blue-900"
         >
           <Network size={"16"} />
         </Button>
@@ -305,7 +319,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
           {(onClose) => (
             <>
               <ModalHeader className="grid grid-cols-12 justify-center text-xl font-bold text-slate-600">
-                <h1 className="col-span-11 text-center">
+                <h1 className="col-span-10 text-center">
                   Make
                   <span className="text-blue-400">
                     {` ${currentQuestion["name"]} `}
@@ -324,7 +338,10 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   color="danger"
                   onPress={handleClearAllLogicData}
                   radius="sm"
+                  size="sm"
+                  className="col-span-2 justify-self-end"
                 >
+                  <Eraser size={"16"} />
                   Clear All
                 </Button>
               </ModalHeader>
@@ -604,13 +621,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                     }
                   )}
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="!grid !grid-cols-12">
                 <Button
                   onClick={addMoreConditions}
-                  className="w-full font-semibold text-base"
+                  className="w-full font-semibold text-base col-span-8"
                   color="primary"
                   radius="sm"
-                  // variant="shadow"
                   variant="ghost"
                 >
                   <Plus size={20} />
@@ -619,6 +635,7 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                     : `Add Condition`}
                 </Button>
                 <Button
+                  className="col-span-2"
                   color="danger"
                   variant="flat"
                   onPress={onClose}
@@ -629,6 +646,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                   Cancel
                 </Button>
                 <Button
+                  className="col-span-2"
+                  color="primary"
+                  onPress={onClose}
+                  variant="shadow"
+                  radius="sm"
+                  onClick={handleVisibleIf}
                   isDisabled={
                     logicToCurrentQuestions &&
                     logicToCurrentQuestions.length > 0 &&
@@ -648,13 +671,8 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                       ? false
                       : true
                   }
-                  color="primary"
-                  onPress={onClose}
-                  variant="shadow"
-                  radius="sm"
-                  onClick={handleVisibleIf}
                 >
-                  Apply
+                  {currentQuestion.visibleIf ? "Update Logic" : "Apply Logic"}
                 </Button>
               </ModalFooter>
             </>
