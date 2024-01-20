@@ -29,7 +29,7 @@ import Boolean from "./answerTypes/Boolean";
 import RatingScale from "./answerTypes/RatingScale";
 import DefaultAnswer from "./answerTypes/DefaultUI";
 import { useGlobalContext } from "@/app/Context/store";
-import { Choices, Question, VisibleIf } from "@/types/questions";
+import { Choices, Question } from "@/types/questions";
 import DeleteQuestionModel from "./models/DeleteQuestionModel";
 const QuestionForm = () => {
   const { questions, setQuestions } = useGlobalContext();
@@ -181,14 +181,7 @@ const QuestionForm = () => {
 
   return (
     <div>
-      <h1 className="font-bold text-xl text-center text-blue-400 my-2">
-        {questions.length === 0
-          ? "Create Survey Questions"
-          : questions.length === 1
-          ? "Survey Question"
-          : "Survey Questions"}
-      </h1>
-      <div className="mx-4 grid grid-cols-1 gap-4 ">
+      <div className="grid grid-cols-1 gap-4 ">
         {questions.map((question, index) => {
           return (
             <Card
@@ -203,7 +196,7 @@ const QuestionForm = () => {
                   size="lg"
                   radius="sm"
                   variant="shadow"
-                  className="place-self-center"
+                  className="place-self-center self-end"
                 >
                   {`No. ${index + 1}`}
                 </Chip>
@@ -506,6 +499,7 @@ const QuestionForm = () => {
                   )}
                   <Tooltip content="Required">
                     <Button
+                      variant="shadow"
                       radius="sm"
                       size={"sm"}
                       onClick={() => {
@@ -524,6 +518,7 @@ const QuestionForm = () => {
                   </Tooltip>
                   <Tooltip content="Duplicate">
                     <Button
+                      variant="shadow"
                       radius="sm"
                       size={"sm"}
                       onClick={() => duplicateQuestions(question)}

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { GlobalContextProvider } from "../Context/store";
 
 export const metadata: Metadata = {
   title: "Survey form json",
@@ -13,10 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <h1>Json for the survey</h1>
-        <GlobalContextProvider>{children}</GlobalContextProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

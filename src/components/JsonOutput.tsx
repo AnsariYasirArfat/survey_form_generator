@@ -13,8 +13,7 @@ const JsonOutput = () => {
   console.log("surveyForm: ", surveyForm);
 
   return (
-    <div>
-      <h1 className="text-center font-bold">JSON</h1>
+    <div className="flex justify-center">
       <Code size="lg">{surveyForm.name}</Code>
       <Code size="lg">{jsonQuestion}</Code>
     </div>

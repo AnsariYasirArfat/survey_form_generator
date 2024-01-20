@@ -3,8 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { GlobalContextProvider } from "./Context/store";
-
-const inter = Inter({ subsets: ["latin"] });
+import NavigationBar from "@/components/NavigationBar";
 
 export const metadata: Metadata = {
   title: "Dynamic Survey Form Generator",
@@ -19,9 +18,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={" "}>
         <GlobalContextProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <div>
+              <NavigationBar />
+              {children}
+            </div>
+          </Providers>
         </GlobalContextProvider>
       </body>
     </html>

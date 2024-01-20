@@ -265,10 +265,14 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
           isDisabled={index === 0 ? true : false}
           onPress={onOpen}
           radius="sm"
+          variant="shadow"
           size={"sm"}
           color={currentQuestion.visibleIf ? "success" : "default"}
         >
-          <Network size={"16"} />
+          <Network /*  size={"16"} */
+            size={currentQuestion.visibleIf ? `18` : `14`}
+            color={currentQuestion.visibleIf ? `white` : `black`}
+          />
         </Button>
       </Tooltip>
       <Modal

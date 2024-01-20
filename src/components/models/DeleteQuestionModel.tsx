@@ -19,7 +19,13 @@ const DeleteQuestionModel = ({ question, index, deleteQuestions }: any) => {
   return (
     <>
       <Tooltip content="Delete" color={"danger"}>
-        <Button onPress={onOpen} radius="sm" size={"sm"} color={"danger"}>
+        <Button
+          onPress={onOpen}
+          radius="sm"
+          size={"sm"}
+          color={"danger"}
+          variant="shadow"
+        >
           <Trash2 size={"16"} />
         </Button>
       </Tooltip>{" "}
