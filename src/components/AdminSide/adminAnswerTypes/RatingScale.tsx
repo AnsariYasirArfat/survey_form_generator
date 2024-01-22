@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button, Divider, Chip } from "@nextui-org/react";
-import Style from "../../style_module/startStyle.module.css";
+import Style from "../../../style_module/startStyle.module.css";
 import { Minus, Plus } from "lucide-react";
 import { AnswerTypeComponentProps } from "@/types/questions";
 

@@ -1,4 +1,4 @@
-import SurveyComposer from "@/components/SurveyComposer";
+import SurveyComposer from "@/components/AdminSide/SurveyComposer";
 import React from "react";
 
 const page = () => {

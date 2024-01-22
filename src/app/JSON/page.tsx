@@ -1,4 +1,4 @@
-import JsonOutput from "@/components/JsonOutput";
+import JsonOutput from "@/components/AdminSide/JsonOutput";
 
 const Json = () => {
   return (

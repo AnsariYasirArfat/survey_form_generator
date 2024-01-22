@@ -1,6 +1,6 @@
 import { Divider } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import Style from "../../style_module/booleanStyle.module.css";
+import Style from "../../../style_module/booleanStyle.module.css";
 import { AnswerTypeComponentProps } from "@/types/questions";
 
 const Boolean = ({
