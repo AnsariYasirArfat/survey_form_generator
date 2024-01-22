@@ -21,13 +21,13 @@ import {
   singleInputTypes,
 } from "@/utils/answerTypesData";
 import ConditionalLogicEditor from "./ConditionalLogicEditor";
-import LongText from "./answerTypes/LongText";
-import RadioGroup from "./answerTypes/RadioGroup";
-import CheckBoxes from "./answerTypes/CheckBoxes";
-import SingleInput from "./answerTypes/SingleInput";
-import Boolean from "./answerTypes/Boolean";
-import RatingScale from "./answerTypes/RatingScale";
-import DefaultAnswer from "./answerTypes/DefaultUI";
+import LongText from "./adminAnswerTypes/LongText";
+import RadioGroup from "./adminAnswerTypes/RadioGroup";
+import CheckBoxes from "./adminAnswerTypes/CheckBoxes";
+import SingleInput from "./adminAnswerTypes/SingleInput";
+import Boolean from "./adminAnswerTypes/Boolean";
+import RatingScale from "./adminAnswerTypes/RatingScale";
+import DefaultAnswer from "./adminAnswerTypes/DefaultUI";
 import { useGlobalContext } from "@/app/Context/store";
 import { Choices, Question } from "@/types/questions";
 import DeleteQuestionModel from "./models/DeleteQuestionModel";
@@ -45,6 +45,19 @@ const QuestionForm = () => {
       });
     }
   }, [generatedQuestionId]);
+
+  useEffect(() => {
+    const isValuePresent =
+      questions.length > 0 &&
+      questions.some(
+        (question: any) => question.name === `Question ${questionCount}`
+      );
+
+    console.log("isValuePresent: ", isValuePresent);
+    if (isValuePresent) {
+      setQuestionCount((prevCount) => prevCount + 1);
+    }
+  }, [questionCount, questions]);
 
   const addQuestions = () => {
     const generatedId = uuidv4();

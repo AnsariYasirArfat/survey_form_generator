@@ -23,13 +23,13 @@ import {
 import { Eraser, Network, Plus, Trash2 } from "lucide-react";
 import { useGlobalContext } from "@/app/Context/store";
 import { Question, VisibleIf } from "@/types/questions";
-import SingleInput from "./answerTypes/SingleInput";
-import LongText from "./answerTypes/LongText";
-import RadioGroup from "./answerTypes/RadioGroup";
-import CheckBoxes from "./answerTypes/CheckBoxes";
-import Boolean from "./answerTypes/Boolean";
-import RatingScale from "./answerTypes/RatingScale";
-import DefaultAnswer from "./answerTypes/DefaultUI";
+import SingleInput from "./adminAnswerTypes/SingleInput";
+import LongText from "./adminAnswerTypes/LongText";
+import RadioGroup from "./adminAnswerTypes/RadioGroup";
+import CheckBoxes from "./adminAnswerTypes/CheckBoxes";
+import Boolean from "./adminAnswerTypes/Boolean";
+import RatingScale from "./adminAnswerTypes/RatingScale";
+import DefaultAnswer from "./adminAnswerTypes/DefaultUI";
 import ClearAllLogicModel from "./models/ClearAllLogicModel";
 import { comparisonOperators, logicalOperators } from "@/utils/answerTypesData";
 
