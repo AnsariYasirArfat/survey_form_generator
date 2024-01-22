@@ -31,38 +31,37 @@ const SurveyComposer = () => {
     }
   };
   return (
-    <section className=" bg-white grid grid-cols-12 justify-center items-center">
-      <aside className="col-span-2 ps-4 h-[90vh] ">
-        <div className="w-full border-small rounded-small border-default-200 dark:border-default-100">
-          <h1 className="font-bold text-base text-center text-blue-400 p-2 bg-blue-200 rounded-t-small">
-            {questions.length === 0
-              ? "Create Survey Questions"
-              : questions.length === 1
-              ? "Survey Question"
-              : "Survey Questions"}
-          </h1>
-          <Divider />
-          <Listbox
-            aria-label="Listbox Variants"
-            color={"primary"}
-            variant={"light"}
-            classNames={{ base: "h-[84vh] overflow-auto bg-blue-50" }}
-            itemClasses={{ title: "font-semibold text-center text-base" }}
-            emptyContent={"Add some questions..."}
-          >
-            {questions.map((question) => (
-              <ListboxItem
-                key={`${question.questionId}`}
-                // href={`#${question.questionId}`}
-                onPress={() => scrollHandle(question.questionId!)}
-              >
-                {question.name}
-              </ListboxItem>
-            ))}
-          </Listbox>
-        </div>
+    <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
+      <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 border-small rounded-small border-default-200 dark:border-default-100">
+        <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-2 p-2 bg-blue-200 rounded-small shadow-lg">
+          {questions.length === 0
+            ? "Create Survey Questions"
+            : questions.length === 1
+            ? "Survey Question"
+            : "Survey Questions"}
+        </h1>
+        <Listbox
+          aria-label="Listbox Variants"
+          color={"primary"}
+          variant={"light"}
+          classNames={{
+            base: "row-span-11 h-full overflow-auto",
+            emptyContent: "text-lg text-center self-center",
+          }}
+          itemClasses={{ title: "font-semibold text-center text-base" }}
+          emptyContent={"Add some questions..."}
+        >
+          {questions.map((question) => (
+            <ListboxItem
+              key={`${question.questionId}`}
+              onPress={() => scrollHandle(question.questionId!)}
+            >
+              {question.name}
+            </ListboxItem>
+          ))}
+        </Listbox>
       </aside>
-      <div className="overflow-auto h-[90vh] col-span-10 px-4 pb-4">
+      <div className="overflow-auto h-full col-span-10 pe-1">
         <div className="">
           <Input
             isClearable

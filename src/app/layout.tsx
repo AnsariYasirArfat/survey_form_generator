@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={" "}>
         <GlobalContextProvider>
           <Providers>
-            <div>
+            <div className="sm:!h-[100vh] ">
               <NavigationBar />
               {children}
             </div>

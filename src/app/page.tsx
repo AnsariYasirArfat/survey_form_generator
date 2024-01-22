@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="p-10 bg-blue-50 flex items-center justify-center">
+    <div className="h-[90vh] p-10 bg-blue-50 flex items-center justify-center">
       <div className="max-w-4xl p-8 bg-white shadow-lg rounded-md">
         <h1 className="text-4xl font-bold mb-4">
           Create Dynamic Surveys with Ease
