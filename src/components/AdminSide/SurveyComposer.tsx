@@ -1,12 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Divider,
-  Input,
-  Listbox,
-  ListboxItem,
-} from "@nextui-org/react";
+import { Input, Listbox, ListboxItem } from "@nextui-org/react";
 import QuestionForm from "./QuestionForm";
 
 import { useGlobalContext } from "@/app/Context/store";
@@ -91,7 +85,7 @@ const SurveyComposer = () => {
             }}
             classNames={{
               base: ["mb-4"],
-              input: ["text-black capitalize font-semibold"],
+              input: ["text-black  font-semibold"],
             }}
           />
         </div>

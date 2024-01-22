@@ -1,9 +1,10 @@
+import SurveyFormUsers from "@/components/UserSide/SurveyFormUsers";
 import React from "react";
 
 const Preview = () => {
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <h1 className="text-center font-bold">Preview page</h1>
+    <div className="h-[90vh] p-2">
+      <SurveyFormUsers />
     </div>
   );
 };

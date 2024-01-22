@@ -46,7 +46,7 @@ export interface SurveyForm {
 }
 
 export interface AnswerTypeComponentProps {
-  adminMode: boolean;
+  adminMode?: boolean;
   index?: number;
   question?: Question;
   handleDataChange?: (
