@@ -1,9 +1,13 @@
-import { AnswerTypeComponentProps } from "@/types/questions";
-import { Divider, Textarea } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import { UserAnswerTypeProps } from "@/types/questions";
+import { Textarea } from "@nextui-org/react";
+import React, { useState } from "react";
 
-const LongText = ({ question }: AnswerTypeComponentProps) => {
-  const [answerValue, setAnswerValue] = useState("");
+const LongText = ({
+  question,
+  index,
+  handleAdminPreviewQuestions,
+}: UserAnswerTypeProps) => {
+  const [answerValue, setAnswerValue] = useState(question?.userAnswer);
 
   // useEffect(() => {
   //   if (logic?.answerValue !== undefined) {
@@ -25,9 +29,9 @@ const LongText = ({ question }: AnswerTypeComponentProps) => {
         }}
         onBlur={() => {
           if (answerValue.trim()) {
-            // handleLogicConditions!(index!, "answerValue", answerValue);
+            handleAdminPreviewQuestions!(index!, "userAnswer", answerValue);
           } else {
-            // handleLogicConditions!(index!, "answerValue", undefined);
+            handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
           }
         }}
         classNames={{

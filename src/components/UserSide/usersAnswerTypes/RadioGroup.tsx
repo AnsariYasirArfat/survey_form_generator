@@ -1,16 +1,16 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { RadioGroup, Radio, Divider, Button, Input } from "@nextui-org/react";
-import { Minus, Plus } from "lucide-react";
-import { AnswerTypeComponentProps } from "@/types/questions";
+import React, { useState } from "react";
+import { RadioGroup, Radio } from "@nextui-org/react";
 
-const RadioChoices = ({ question }: AnswerTypeComponentProps) => {
-  const [choiceCount, setChoiceCount] = useState(3);
-  const [tempChoices, setTempChoices] = useState<any>(
-    question && question!.choices
-  );
-  const [selected, setSelected] = useState("");
+import { UserAnswerTypeProps } from "@/types/questions";
+
+const RadioChoices = ({
+  question,
+  index,
+  handleAdminPreviewQuestions,
+}: UserAnswerTypeProps) => {
+  const [selected, setSelected] = useState(question?.userAnswer);
 
   // useEffect(() => {
   //   if (logic?.answerValue !== undefined) {
@@ -29,9 +29,9 @@ const RadioChoices = ({ question }: AnswerTypeComponentProps) => {
         onValueChange={(selected) => {
           setSelected(selected);
           if (selected) {
-            // handleLogicConditions!(logicIndex!, "answerValue", selected);
+            handleAdminPreviewQuestions!(index!, "userAnswer", selected);
           } else {
-            // handleLogicConditions!(logicIndex!, "answerValue", undefined);
+            handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
           }
         }}
         // label={`${isInvalid ? "Please defined Choice." : ""}`}
@@ -41,24 +41,26 @@ const RadioChoices = ({ question }: AnswerTypeComponentProps) => {
           // label: [`${isInvalid && "text-rose-500 font-semibold"}`],
         }}
       >
-        {question?.choices!.map((choice: any, choiceIndex: number) => {
-          return (
-            <div
-              key={choiceIndex}
-              className="flex justify-between items-center"
-            >
-              <Radio
-                value={choice.value}
-                size={"lg"}
-                classNames={{
-                  label: [` text-base capitalize font-semibold`],
-                }}
+        {question?.parentQuestion?.choices!.map(
+          (choice: any, choiceIndex: number) => {
+            return (
+              <div
+                key={choiceIndex}
+                className="flex justify-between items-center"
               >
-                {choice.text}
-              </Radio>
-            </div>
-          );
-        })}
+                <Radio
+                  value={choice.value}
+                  size={"lg"}
+                  classNames={{
+                    label: [` text-base capitalize font-semibold`],
+                  }}
+                >
+                  {choice.text}
+                </Radio>
+              </div>
+            );
+          }
+        )}
       </RadioGroup>
     </>
   );

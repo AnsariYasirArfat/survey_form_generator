@@ -21,6 +21,7 @@ const QuestionUser = ({ userSurvey }: any) => {
       setQuestionNumber((prev) => prev + 1);
     }
   };
+
   useEffect(() => {
     setCurrentQuestion(userSurvey.questions[questionNumber]);
   }, [questionNumber, userSurvey.questions]);

@@ -62,3 +62,23 @@ export interface AnswerTypeComponentProps {
     value: string | Question | boolean | number | string[] | undefined
   ) => void;
 }
+
+export interface AdminPreviewQuestion extends Question {
+  previewAnswer?: any;
+}
+export interface UserQuestion {
+  userQuestionId: string;
+  questionNo?: string;
+  parentQuestion?: Question;
+  userAnswer?: any;
+}
+
+export interface UserAnswerTypeProps {
+  index?: number;
+  question?: UserQuestion;
+  handleAdminPreviewQuestions?: (
+    index: number,
+    field: keyof UserQuestion,
+    value: string | boolean | number | string[] | undefined
+  ) => void;
+}

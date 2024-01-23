@@ -27,7 +27,7 @@ const SurveyComposer = () => {
   return (
     <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
       <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 border-small rounded-small border-default-200 dark:border-default-100">
-        <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-2 p-2 bg-blue-200 rounded-small shadow-lg">
+        <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
           {questions.length === 0
             ? "Create Survey Questions"
             : questions.length === 1

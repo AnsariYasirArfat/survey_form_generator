@@ -6,10 +6,10 @@ export default function Home() {
   return (
     <div className="h-[90vh] p-10 bg-blue-50 flex items-center justify-center">
       <div className="max-w-4xl p-8 bg-white shadow-lg rounded-md">
-        <h1 className="text-4xl font-bold mb-4">
+        <h1 className="text-4xl font-bold mb-4 text-blue-500">
           Create Dynamic Surveys with Ease
         </h1>
-        <p className="text-gray-600 mb-4">
+        <p className="text-slate-600 mb-4">
           Welcome to our powerful Dynamic Form Builder, where you can
           effortlessly craft engaging survey forms tailored to your needs.
         </p>
@@ -17,7 +17,7 @@ export default function Home() {
           <Link href={"/design"}>
             <Button
               variant="shadow"
-              className="flex gap-2 text-base font-semibold bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+              className="flex gap-2 text-base font-semibold bg-blue-400 text-white rounded-md hover:bg-blue-600 transition duration-300"
             >
               Create Survey
               <MoveRight size={"18"} />
@@ -25,7 +25,9 @@ export default function Home() {
           </Link>
         </div>
         <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Key Features</h2>
+          <h2 className="text-2xl font-bold mb-4 text-blue-400">
+            Key Features
+          </h2>
           <ul className="list-disc list-inside text-gray-600">
             <li>
               Choose from a variety of question types, including single-input,
@@ -50,8 +52,10 @@ export default function Home() {
           </ul>
         </div>
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">How It Works</h2>
+        <div className="">
+          <h2 className="text-2xl font-bold mb-4 text-blue-400">
+            How It Works
+          </h2>
           <p className="text-gray-600">
             Building a survey is as simple as dragging and dropping question
             types, defining conditions, and previewing your creation in

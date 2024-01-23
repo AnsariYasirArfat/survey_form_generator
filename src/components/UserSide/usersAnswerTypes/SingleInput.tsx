@@ -1,37 +1,46 @@
-import { AnswerTypeComponentProps } from "@/types/questions";
-import { Divider, Input, Slider, Switch } from "@nextui-org/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { UserAnswerTypeProps } from "@/types/questions";
+import { Input, Slider } from "@nextui-org/react";
+import React, { ChangeEvent, useState } from "react";
 
-const SingleInput = ({ question }: AnswerTypeComponentProps) => {
-  const [answerValue, setAnswerValue] = useState("");
-  const [rangValue, setRangValue] = useState(0);
+const SingleInput = ({
+  question,
+  index,
+  handleAdminPreviewQuestions,
+}: UserAnswerTypeProps) => {
+  const [answerValue, setAnswerValue] = useState(question?.userAnswer);
+  const [rangValue, setRangValue] = useState(
+    question?.userAnswer ? question?.userAnswer : null
+  );
 
   return (
     <>
-      {question!.inputType !== "range" && (
+      {question?.parentQuestion?.inputType !== "range" && (
         <Input
-          type={question!.inputType}
-          placeholder={`Enter your ${question!.inputType}`}
+          type={question!.parentQuestion?.inputType}
+          placeholder={`Enter your ${question!.parentQuestion?.inputType}`}
           value={answerValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            // if (question!.inputType === "number") {
-            //   setAnswerValue(e.target.valueAsNumber);
-            // } else {
-            //   setAnswerValue(e.target.value);
-            // }
+            if (question!.parentQuestion?.inputType === "number") {
+              setAnswerValue(e.target.valueAsNumber);
+            } else {
+              setAnswerValue(e.target.value);
+            }
           }}
           onBlur={() => {
-            // if (question!.inputType === "number" && answerValue) {
-            //   handleLogicConditions!(logicIndex!, "answerValue", answerValue);
-            // } else if (
-            //   question!.inputType !== "number" &&
-            //   answerValue &&
-            //   answerValue.trim()
-            // ) {
-            //   handleLogicConditions!(logicIndex!, "answerValue", answerValue);
-            // } else {
-            //   handleLogicConditions!(logicIndex!, "answerValue", undefined);
-            // }
+            if (
+              question!.parentQuestion?.inputType === "number" &&
+              answerValue
+            ) {
+              handleAdminPreviewQuestions!(index!, "userAnswer", answerValue);
+            } else if (
+              question!.parentQuestion?.inputType !== "number" &&
+              answerValue &&
+              answerValue.trim()
+            ) {
+              handleAdminPreviewQuestions!(index!, "userAnswer", answerValue);
+            } else {
+              handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
+            }
           }}
           classNames={{
             base: ["w-full p-4"],
@@ -41,21 +50,21 @@ const SingleInput = ({ question }: AnswerTypeComponentProps) => {
           // errorMessage={isInvalid && "Please defined answer"}
         />
       )}
-      {question!.inputType === "range" && (
+      {question!.parentQuestion?.inputType === "range" && (
         <div className="flex flex-col gap-2  p-4 w-full h-full items-start justify-center">
           <Slider
             size="md"
             // color={isInvalid ? "danger" : "primary"}
             label={"Define Range?"}
             value={rangValue}
-            onChange={() => setRangValue}
+            onChange={setRangValue}
             onBlur={() => {
-              // handleLogicConditions!(logicIndex!, "answerValue", rangValue);
+              handleAdminPreviewQuestions!(index!, "userAnswer", rangValue);
             }}
-            step={question!.step}
+            step={question!.parentQuestion?.step}
             showSteps={true}
-            minValue={question!.min}
-            maxValue={question!.max}
+            minValue={question!.parentQuestion?.min}
+            maxValue={question!.parentQuestion?.max}
             className="w-full"
           />
           {/* {isInvalid && (

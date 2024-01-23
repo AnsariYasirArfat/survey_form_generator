@@ -1,10 +1,13 @@
-import { Divider } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Style from "../../../style_module/booleanStyle.module.css";
-import { AnswerTypeComponentProps } from "@/types/questions";
+import { UserAnswerTypeProps } from "@/types/questions";
 
-const Boolean = ({ question }: AnswerTypeComponentProps) => {
-  const [isChecked, setIsChecked] = useState(false);
+const Boolean = ({
+  question,
+  index,
+  handleAdminPreviewQuestions,
+}: UserAnswerTypeProps) => {
+  const [isChecked, setIsChecked] = useState(question?.userAnswer);
 
   // useEffect(() => {
   //   if (logic?.answerValue !== undefined) {
@@ -35,15 +38,15 @@ const Boolean = ({ question }: AnswerTypeComponentProps) => {
             checked={isChecked === undefined ? undefined : !isChecked}
             value={"no"}
             onChange={() => setIsChecked(false)}
-            // onClick={() => handleLogicConditions!(index!, "answerValue", false)}
+            onClick={() =>
+              handleAdminPreviewQuestions!(index!, "userAnswer", false)
+            }
           />
           <span
-            // className={`${Style.name}
-            // ${logic?.answerValue === undefined && "!bg-[#eee]"}
-            // `}
-            className={`${Style.name} 
-            
+            className={`${Style.name}
+            ${question?.userAnswer === undefined && "!bg-[#eee]"}
             `}
+            // className={`${Style.name}`}
           >
             No
           </span>
@@ -54,13 +57,15 @@ const Boolean = ({ question }: AnswerTypeComponentProps) => {
             checked={isChecked === undefined ? undefined : isChecked}
             value={"yes"}
             onChange={() => setIsChecked(true)}
-            // onClick={() => handleLogicConditions!(index!, "answerValue", true)}
+            onClick={() =>
+              handleAdminPreviewQuestions!(index!, "userAnswer", true)
+            }
           />
           <span
-            // className={`${Style.name}  ${
-            //   logic?.answerValue === undefined && "!bg-[#eee]"
-            // }`}
-            className={`${Style.name}`}
+            className={`${Style.name}  ${
+              question?.userAnswer === undefined && "!bg-[#eee]"
+            }`}
+            // className={`${Style.name}`}
           >
             Yes
           </span>

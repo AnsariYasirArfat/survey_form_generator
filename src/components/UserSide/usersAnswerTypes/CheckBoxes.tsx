@@ -1,22 +1,15 @@
 "use client";
 
-import React, { ChangeEvent, useEffect, useState } from "react";
-import {
-  CheckboxGroup,
-  Checkbox,
-  Divider,
-  Button,
-  Input,
-} from "@nextui-org/react";
-import { Minus, Plus } from "lucide-react";
-import { AnswerTypeComponentProps, Choices } from "@/types/questions";
+import React, { useState } from "react";
+import { CheckboxGroup, Checkbox } from "@nextui-org/react";
+import { Choices, UserAnswerTypeProps } from "@/types/questions";
 
-const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
-  const [choiceCount, setChoiceCount] = useState(3);
-  const [tempChoices, setTempChoices] = useState<any>(
-    question && question!.choices
-  );
-  const [selected, setSelected] = useState([""]);
+const CheckBoxes = ({
+  question,
+  index,
+  handleAdminPreviewQuestions,
+}: UserAnswerTypeProps) => {
+  const [selected, setSelected] = useState(question?.userAnswer);
 
   // useEffect(() => {
   //   if (logic?.answerValue !== undefined) {
@@ -26,21 +19,21 @@ const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
   //   }
   // }, [logic?.answerValue, logic?.selectQuestId]);
 
-  useEffect(() => {
-    const isValuePresent =
-      question &&
-      question!.choices!.some(
-        (choice: any) => choice.value === `Choice ${choiceCount}`
-      );
+  // useEffect(() => {
+  //   const isValuePresent =
+  //     question &&
+  //     question!.choices!.some(
+  //       (choice: any) => choice.value === `Choice ${choiceCount}`
+  //     );
 
-    console.log("isValuePresent: ", isValuePresent);
-    if (isValuePresent) {
-      setChoiceCount((prevCount) => prevCount + 1);
-    }
-  }, [choiceCount, question]);
+  //   console.log("isValuePresent: ", isValuePresent);
+  //   if (isValuePresent) {
+  //     setChoiceCount((prevCount) => prevCount + 1);
+  //   }
+  // }, [choiceCount, question]);
 
-  const minLimit = question?.minSelectedChoices!;
-  const maxLimit = question?.maxSelectedChoices!;
+  const minLimit = question?.parentQuestion?.minSelectedChoices!;
+  const maxLimit = question?.parentQuestion?.maxSelectedChoices!;
   const handleDisbleOnMaxlimit = (choice: Choices) => {
     let isDisabled;
     if (selected && selected.length > 0) {
@@ -62,14 +55,14 @@ const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
   //   }
   // };
 
-  console.log(`selected: ${question?.name}`, selected);
+  // console.log(`selected: ${question?.parentQuestion?.name}`, selected);
 
   return (
     <div
     // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}`}
     >
-      <div className="w-full grid grid-cols-4 justify-center gap-2 pt-4">
-        {/* <div className="justify-self-center self-center col-span-2">
+      {/* <div className="w-full grid grid-cols-4 justify-center gap-2 pt-4">
+        <div className="justify-self-center self-center col-span-2">
           <p
             className={`${
               isInvalid()
@@ -91,8 +84,8 @@ const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
                   } within ${minLimit}-${maxLimit} limit.`
             }`}
           </p>
-        </div> */}
-        {/* <Input
+        </div>
+        <Input
           readOnly
           type="number"
           label={`Min. Select Choice${minLimit !== 1 ? "s" : ""}:`}
@@ -108,19 +101,19 @@ const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
           className="justify-self-center max-w-44"
           size="md"
           value={`${maxLimit}`}
-        /> */}
-      </div>
+        />
+      </div> */}
       <CheckboxGroup
         // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkboxGroup`}
         value={selected}
         onValueChange={(selected) => {
           setSelected(selected);
           if (selected.length < 1) {
-            // handleLogicConditions!(logicIndex!, "answerValue", undefined);
+            handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
           } else if (selected.length < minLimit) {
-            // handleLogicConditions!(logicIndex!, "answerValue", undefined);
+            handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
           } else if (selected.length >= minLimit) {
-            // handleLogicConditions!(logicIndex!, "answerValue", selected);
+            handleAdminPreviewQuestions!(index!, "userAnswer", selected);
           }
         }}
         // isInvalid={isInvalid()}
@@ -129,27 +122,29 @@ const CheckBoxes = ({ question }: AnswerTypeComponentProps) => {
           // label: [`${isInvalid() && "text-rose-500 font-semibold"}`],
         }}
       >
-        {question?.choices!.map((choice: Choices, choiceIndex: number) => {
-          return (
-            <div
-              key={choiceIndex}
-              className="flex justify-between items-center"
-            >
-              <Checkbox
-                // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkbox-${choiceIndex}`}
-                isDisabled={handleDisbleOnMaxlimit(choice)}
-                value={choice.value}
-                size={"lg"}
-                radius="sm"
-                classNames={{
-                  label: [` text-base capitalize font-semibold`],
-                }}
+        {question?.parentQuestion?.choices!.map(
+          (choice: Choices, choiceIndex: number) => {
+            return (
+              <div
+                key={choiceIndex}
+                className="flex justify-between items-center"
               >
-                {choice.text}
-              </Checkbox>
-            </div>
-          );
-        })}
+                <Checkbox
+                  // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkbox-${choiceIndex}`}
+                  isDisabled={handleDisbleOnMaxlimit(choice)}
+                  value={choice.value}
+                  size={"lg"}
+                  radius="sm"
+                  classNames={{
+                    label: [` text-base capitalize font-semibold`],
+                  }}
+                >
+                  {choice.text}
+                </Checkbox>
+              </div>
+            );
+          }
+        )}
       </CheckboxGroup>
     </div>
   );
