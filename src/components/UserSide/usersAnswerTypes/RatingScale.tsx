@@ -26,19 +26,20 @@ const RatingScale = ({
     handleAdminPreviewQuestions!(index!, "userAnswer", selected);
   };
 
-  // const isInvalid = logic?.answerValue === undefined;
+  const isInvalid =
+    question?.isAnswerInvalid && question?.userAnswer === undefined;
 
   return (
     <div className="flex flex-col items-center p-4">
-      {/* <p
+      <p
         className={`${
           isInvalid
-            ? "text-rose-500 font-semibold pb-2"
+            ? "text-rose-500 pb-2 capitalize font-semibold text-sm"
             : "text-green-500 font-semibold"
         } `}
       >
-        {`${isInvalid ? `Please defined Rating` : ""}`}
-      </p> */}
+        {`${isInvalid ? `Rating is required!` : ""}`}
+      </p>
 
       {question!.parentQuestion?.rateType === "stars" ? (
         <div

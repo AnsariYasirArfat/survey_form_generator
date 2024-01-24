@@ -17,7 +17,8 @@ const LongText = ({
   //   }
   // }, [logic?.answerValue, logic?.selectQuestId]);
 
-  // const isInvalid = logic?.answerValue === undefined;
+  const isInvalid =
+    question?.isAnswerInvalid && question?.userAnswer === undefined;
 
   return (
     <>
@@ -36,10 +37,11 @@ const LongText = ({
         }}
         classNames={{
           base: ["w-full p-4"],
+          errorMessage: "capitalize font-semibold text-xs",
         }}
-        // isInvalid={isInvalid}
-        // color={isInvalid ? "danger" : "default"}
-        // errorMessage={isInvalid && "Please defined answer"}
+        isInvalid={isInvalid}
+        color={isInvalid ? "danger" : "default"}
+        errorMessage={isInvalid && "Answer is required!"}
       />
     </>
   );

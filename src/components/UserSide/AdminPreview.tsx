@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Chip } from "@nextui-org/react";
 import React, { useState } from "react";
 import SingleInput from "./usersAnswerTypes/SingleInput";
 import LongText from "./usersAnswerTypes/LongText";
@@ -7,49 +7,47 @@ import CheckBoxes from "./usersAnswerTypes/CheckBoxes";
 import Boolean from "./usersAnswerTypes/Boolean";
 import RatingScale from "./usersAnswerTypes/RatingScale";
 import DefaultAnswer from "./usersAnswerTypes/DefaultUI";
-import { AdminPreviewQuestion, UserQuestion } from "@/types/questions";
-import { MoveRight } from "lucide-react";
+import { UserQuestion } from "@/types/questions";
+import { Asterisk, MoveRight } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 
 const AdminPreview = ({
   userSurvey,
-  // adminPreviewQuestion,
-  // setAdminPreviewQuestion,
   userQuestionList,
   setUserQuestionList,
+  setGeneratedUserQuestionId,
 }: any) => {
   const [questionNumber, setQuestionNumber] = useState(1);
-  //   const [currentQuestion, setCurrentQuestion] = useState(
-  //     userSurvey?.questions[questionNumber]
-  //   );
 
   const handleNextQuesiton = () => {
-    // const firstQuestion = parsedData.questions[0];
-    // if (adminPreviewQuestion.length > questionNumber) {
-    // const userQuestion: UserQuestion = {
-    //   userQuestionId: uuidv4(),
-    //   questionNo: `Question ${questionNumber + 1}`,
-    //   question: adminPreviewQuestion[questionNumber]["title"],
-    //   userAnswer: adminPreviewQuestion[questionNumber]["previewAnswer"],
-    // };
+    if (
+      userQuestionList[userQuestionList.length - 1].userAnswer === undefined &&
+      userQuestionList[userQuestionList.length - 1].parentQuestion.isRequired
+    ) {
+      return setUserQuestionList((prev: UserQuestion[]) => {
+        const requiredQuestion = prev[userQuestionList.length - 1];
+        requiredQuestion.isAnswerInvalid = true;
+        return [...prev];
+      });
+    }
+
     if (userSurvey.questions.length > questionNumber) {
+      const generatedId = uuidv4();
+      setGeneratedUserQuestionId(generatedId);
       const userQuestion: UserQuestion = {
-        userQuestionId: uuidv4(),
+        userQuestionId: generatedId,
         questionNo: `Question ${questionNumber + 1}`,
         parentQuestion: userSurvey.questions[questionNumber],
         userAnswer: undefined,
+        isAnswerInvalid: false,
       };
 
       setUserQuestionList((prev: UserQuestion[]) => {
         return [...prev, userQuestion];
       });
     }
-    // }
-    // setAdminPreviewQuestion((prev: AdminPreviewQuestion[]) => [
-    //   ...prev,
-    //   userSurvey.questions[questionNumber + 1],
-    // ]);
+
     if (userSurvey.questions.length >= questionNumber) {
       setQuestionNumber((prev) => prev + 1);
     }
@@ -132,27 +130,66 @@ const AdminPreview = ({
         <>
           <div className="w-full h-full overflow-auto p-2 bg-blue-50 gap-2">
             {userQuestionList.map((question: UserQuestion, index: number) => {
+              const isLastItem = userQuestionList.length - 1 === index;
               return (
                 <Card
+                  id={question.userQuestionId}
                   key={`${question?.parentQuestion?.questionId}-${index}`}
                   className="w-full bg-blue-300 mb-4"
                 >
-                  <CardHeader className="grid grid-cols-4 gap-3">
-                    <Input
+                  <CardHeader className="flex items-center gap-4 pointer-events-none">
+                    <Chip
+                      color="primary"
+                      // size="lg"
+                      radius="sm"
+                      variant="shadow"
+                      className="place-self-center self-start"
+                    >
+                      {`Question ${index + 1}`}
+                    </Chip>
+                    <div className="flex ">
+                      <h1 className="self-center text-base font-semibold text-blue-800">
+                        {`${question?.parentQuestion?.title}`}
+                        {question.parentQuestion?.isRequired && (
+                          <span className="text-red-500 font-bold text-xl">
+                            *
+                          </span>
+                        )}
+                      </h1>
+                      {/* <span>
+                        {question.parentQuestion?.isRequired && (
+                          <Asterisk size={`14`} color={`red`} />
+                        )}
+                      </span> */}
+                    </div>
+                    {/* <Input
                       readOnly
                       isRequired={question?.parentQuestion?.isRequired}
                       type="text"
                       classNames={{
                         base: ["col-span-4"],
                         input: ["text-black capitalize font-semibold"],
-                        description: ["text-black"],
+                        description: ["text-red-500 text-xs font-semibold"],
                       }}
+                      description={`${
+                        question?.parentQuestion?.isRequired
+                          ? "This question is required to answer"
+                          : ""
+                      }`}
+                      startContent={
+                        <>
+                          <div className="me-auto">*</div>
+                        </>
+                      }
                       size={"md"}
-                      value={question?.parentQuestion?.title}
-                    />
+                      value={`${question?.parentQuestion?.title} `}
+                    /> */}
                   </CardHeader>
 
-                  <CardBody className="p-3">
+                  <CardBody
+                    // style={{ pointerEvents: "none", opacity: 0.7 }}
+                    className={`p-3 ${isLastItem ? "" : "pointer-events-none"}`}
+                  >
                     <div className="rounded-md bg-blue-100">
                       {userAnswerField(question, index)}
                     </div>

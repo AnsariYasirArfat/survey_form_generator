@@ -17,19 +17,20 @@ const Boolean = ({
   //   }
   // }, [logic?.answerValue, logic?.selectQuestId]);
 
-  // const isInvalid = logic?.answerValue === undefined;
+  const isInvalid =
+    question?.isAnswerInvalid && question?.userAnswer === undefined;
 
   return (
     <div className="p-4 flex flex-col items-center justify-center">
-      {/* <p
+      <p
         className={`${
           isInvalid
-            ? "text-rose-500 font-semibold  pb-2"
+            ? "text-rose-500 font-semibold  pb-2 capitalize text-sm"
             : "text-green-500 font-semibold"
         }`}
       >
-        {`${isInvalid ? `Please defined Yes or No` : ""}`}
-      </p> */}
+        {`${isInvalid ? `Response is required!` : ""}`}
+      </p>
       <div className={`${Style.radio_inputs} gap-2 `}>
         <label className={`${Style.radio} `}>
           <input

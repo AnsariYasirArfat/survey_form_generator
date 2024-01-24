@@ -71,6 +71,7 @@ export interface UserQuestion {
   questionNo?: string;
   parentQuestion?: Question;
   userAnswer?: any;
+  isAnswerInvalid: boolean;
 }
 
 export interface UserAnswerTypeProps {

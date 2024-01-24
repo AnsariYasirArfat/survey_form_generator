@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CheckboxGroup, Checkbox } from "@nextui-org/react";
+import { CheckboxGroup, Checkbox, Input } from "@nextui-org/react";
 import { Choices, UserAnswerTypeProps } from "@/types/questions";
 
 const CheckBoxes = ({
@@ -19,19 +19,6 @@ const CheckBoxes = ({
   //   }
   // }, [logic?.answerValue, logic?.selectQuestId]);
 
-  // useEffect(() => {
-  //   const isValuePresent =
-  //     question &&
-  //     question!.choices!.some(
-  //       (choice: any) => choice.value === `Choice ${choiceCount}`
-  //     );
-
-  //   console.log("isValuePresent: ", isValuePresent);
-  //   if (isValuePresent) {
-  //     setChoiceCount((prevCount) => prevCount + 1);
-  //   }
-  // }, [choiceCount, question]);
-
   const minLimit = question?.parentQuestion?.minSelectedChoices!;
   const maxLimit = question?.parentQuestion?.maxSelectedChoices!;
   const handleDisbleOnMaxlimit = (choice: Choices) => {
@@ -47,13 +34,13 @@ const CheckBoxes = ({
 
     return isDisabled;
   };
-  // const isInvalid = () => {
-  //   if (selected && selected.length > minLimit) {
-  //     return false;
-  //   } else {
-  //     return logic?.answerValue === undefined;
-  //   }
-  // };
+  const isInvalid = () => {
+    if (selected && selected.length > minLimit) {
+      return false;
+    } else {
+      return question?.isAnswerInvalid && question?.userAnswer === undefined;
+    }
+  };
 
   // console.log(`selected: ${question?.parentQuestion?.name}`, selected);
 
@@ -61,48 +48,14 @@ const CheckBoxes = ({
     <div
     // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}`}
     >
-      {/* <div className="w-full grid grid-cols-4 justify-center gap-2 pt-4">
-        <div className="justify-self-center self-center col-span-2">
-          <p
-            className={`${
-              isInvalid()
-                ? "text-rose-500 font-semibold"
-                : "text-green-500 font-semibold"
-            }`}
-          >
-            {`${
-              isInvalid()
-                ? `Please select at least ${
-                    minLimit === 0 ? 1 : minLimit
-                  } choice${minLimit > 1 ? "s" : ""}.`
-                : logic?.answerValue?.length >= maxLimit
-                ? `Maximum limit of ${maxLimit} choice${
-                    maxLimit > 1 ? "s" : ""
-                  } exceeded.`
-                : `${logic?.answerValue?.length} choice${
-                    logic?.answerValue?.length !== 1 ? "s" : ""
-                  } within ${minLimit}-${maxLimit} limit.`
-            }`}
-          </p>
-        </div>
-        <Input
-          readOnly
-          type="number"
-          label={`Min. Select Choice${minLimit !== 1 ? "s" : ""}:`}
-          className="justify-self-center max-w-44"
-          size="md"
-          value={`${minLimit}`}
-        />
-
-        <Input
-          readOnly
-          type="number"
-          label={`Max. Select Choice${maxLimit !== 1 ? "s" : ""}:`}
-          className="justify-self-center max-w-44"
-          size="md"
-          value={`${maxLimit}`}
-        />
-      </div> */}
+      <div className="w-full pt-4">
+        <h1 className="text-center text-base text-blue-600 font-bold">
+          {`Kindly ensure you select at least ${minLimit} choice${
+            minLimit > 1 ? "s" : ""
+          } & you can choose up to ${maxLimit} choice${maxLimit > 1 ? "s" : ""}
+          for this question.`}
+        </h1>
+      </div>
       <CheckboxGroup
         // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkboxGroup`}
         value={selected}
@@ -116,10 +69,9 @@ const CheckBoxes = ({
             handleAdminPreviewQuestions!(index!, "userAnswer", selected);
           }
         }}
-        // isInvalid={isInvalid()}
+        isInvalid={isInvalid()}
         classNames={{
           base: ["p-4"],
-          // label: [`${isInvalid() && "text-rose-500 font-semibold"}`],
         }}
       >
         {question?.parentQuestion?.choices!.map(
@@ -127,7 +79,7 @@ const CheckBoxes = ({
             return (
               <div
                 key={choiceIndex}
-                className="flex justify-between items-center"
+                className=" flex justify-between items-center"
               >
                 <Checkbox
                   // id={`${logic?.logicDataId}-${logic?.currentQuestionId}-${logic?.selectQuestId}-checkbox-${choiceIndex}`}
@@ -146,6 +98,31 @@ const CheckBoxes = ({
           }
         )}
       </CheckboxGroup>
+      <div className="justify-self-center self-center col-span-2">
+        <p
+          className={` text-center ${
+            isInvalid()
+              ? "text-rose-500 capitalize font-semibold text-sm"
+              : "text-green-500 font-semibold"
+          }`}
+        >
+          {`${
+            isInvalid()
+              ? `Please select at least ${
+                  minLimit === 0 ? 1 : minLimit
+                } choice${minLimit > 1 ? "s" : ""}.`
+              : question?.userAnswer?.length >= maxLimit
+              ? `Maximum limit of ${maxLimit} choice${
+                  maxLimit > 1 ? "s" : ""
+                } exceeded.`
+              : question?.userAnswer
+              ? `${question?.userAnswer?.length} choice${
+                  question?.userAnswer?.length !== 1 ? "s" : ""
+                } within ${minLimit}-${maxLimit} limit.`
+              : ""
+          }`}
+        </p>
+      </div>
     </div>
   );
 };

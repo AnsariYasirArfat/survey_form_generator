@@ -11,7 +11,8 @@ const SingleInput = ({
   const [rangValue, setRangValue] = useState(
     question?.userAnswer ? question?.userAnswer : null
   );
-
+  const isInvalid =
+    question?.isAnswerInvalid && question?.userAnswer === undefined;
   return (
     <>
       {question?.parentQuestion?.inputType !== "range" && (
@@ -44,17 +45,20 @@ const SingleInput = ({
           }}
           classNames={{
             base: ["w-full p-4"],
+            errorMessage: "capitalize font-semibold text-xs",
           }}
-          // isInvalid={isInvalid}
-          // color={isInvalid ? "danger" : "default"}
-          // errorMessage={isInvalid && "Please defined answer"}
+          isInvalid={isInvalid}
+          color={isInvalid ? "danger" : "default"}
+          errorMessage={
+            isInvalid && `${question!.parentQuestion?.inputType} is required!`
+          }
         />
       )}
       {question!.parentQuestion?.inputType === "range" && (
         <div className="flex flex-col gap-2  p-4 w-full h-full items-start justify-center">
           <Slider
             size="md"
-            // color={isInvalid ? "danger" : "primary"}
+            color={isInvalid ? "danger" : "primary"}
             label={"Define Range?"}
             value={rangValue}
             onChange={setRangValue}
@@ -67,11 +71,11 @@ const SingleInput = ({
             maxValue={question!.parentQuestion?.max}
             className="w-full"
           />
-          {/* {isInvalid && (
-            <p className="text-rose-500 font-semibold">
-              Please define the range.
-            </p>
-          )} */}
+          {isInvalid && (
+            <p className="text-rose-500 capitalize font-semibold text-sm">{`${
+              question!.parentQuestion?.inputType
+            } is required!`}</p>
+          )}
         </div>
       )}
     </>

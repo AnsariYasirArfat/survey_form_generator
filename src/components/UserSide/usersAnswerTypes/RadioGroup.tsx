@@ -20,7 +20,8 @@ const RadioChoices = ({
   //   }
   // }, [logic?.answerValue, logic?.selectQuestId]);
 
-  // const isInvalid = logic?.answerValue === undefined;
+  const isInvalid =
+    question?.isAnswerInvalid && question?.userAnswer === undefined;
 
   return (
     <>
@@ -34,11 +35,13 @@ const RadioChoices = ({
             handleAdminPreviewQuestions!(index!, "userAnswer", undefined);
           }
         }}
-        // label={`${isInvalid ? "Please defined Choice." : ""}`}
-        // isInvalid={isInvalid}
+        label={`${isInvalid ? "Choice is required!" : ""}`}
+        isInvalid={isInvalid}
         classNames={{
           base: ["p-4"],
-          // label: [`${isInvalid && "text-rose-500 font-semibold"}`],
+          label: [
+            `${isInvalid && "text-rose-500 capitalize font-semibold text-xs"}`,
+          ],
         }}
       >
         {question?.parentQuestion?.choices!.map(
