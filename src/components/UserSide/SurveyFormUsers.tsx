@@ -10,23 +10,12 @@ const SurveyFormUsers = () => {
     name: "",
     questions: [],
   });
+
   const [generatedUserQuestionId, setGeneratedUserQuestionId] = useState("");
 
   const [userQuestionList, setUserQuestionList] = useState<UserQuestion[]>([]);
 
   console.log("User Question List", userQuestionList);
-  const scrollHandle = (questionId: string) => {
-    const targetElement = document.getElementById(`${questionId}`);
-    if (targetElement) {
-      targetElement.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
-  useEffect(() => {
-    scrollHandle(generatedUserQuestionId);
-  }, [generatedUserQuestionId]);
 
   useEffect(() => {
     const storedData = localStorage.getItem("surveyFormData");
@@ -47,6 +36,18 @@ const SurveyFormUsers = () => {
     }
   }, []);
 
+  const scrollHandle = (questionId: string) => {
+    const targetElement = document.getElementById(`${questionId}`);
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+  useEffect(() => {
+    scrollHandle(generatedUserQuestionId);
+  }, [generatedUserQuestionId]);
   return (
     <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
       <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">

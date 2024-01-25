@@ -13,7 +13,11 @@ const GlobalContext = createContext<GlobalContextProps>({
   setSurveyForm: () => {},
 });
 export const GlobalContextProvider = ({ children }: any) => {
-  const storedData = localStorage.getItem(STORAGE_KEY);
+  let storedData;
+  if (global?.window !== undefined) {
+    storedData = window?.localStorage.getItem(STORAGE_KEY);
+  }
+
   const parsedData = storedData
     ? JSON.parse(storedData)
     : { name: "", questions: [] };
