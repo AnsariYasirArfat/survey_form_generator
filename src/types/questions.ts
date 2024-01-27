@@ -68,7 +68,7 @@ export interface AdminPreviewQuestion extends Question {
 }
 export interface UserQuestion {
   userQuestionId: string;
-  questionNo?: string;
+  // questionNo?: string;
   parentQuestion?: Question;
   userAnswer?: any;
   isAnswerInvalid: boolean;

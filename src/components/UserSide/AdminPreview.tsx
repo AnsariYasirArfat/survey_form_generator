@@ -13,12 +13,18 @@ import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 
 const AdminPreview = ({
-  userSurvey,
+  allSurveyQuestions,
+  setAllSurveyQuestions,
   userQuestionList,
   setUserQuestionList,
+  questionsQueue,
+  setQuestionsQueue,
+  dequeue,
+  enqueue,
   setGeneratedUserQuestionId,
 }: any) => {
-  const [questionNumber, setQuestionNumber] = useState(1);
+  // const [questionNumber, setQuestionNumber] = useState(1);
+  const [isSurveyFinished, setIsSurveyFinished] = useState(false);
 
   const handleNextQuesiton = () => {
     if (
@@ -32,13 +38,14 @@ const AdminPreview = ({
       });
     }
 
-    if (userSurvey.questions.length > questionNumber) {
+    if (questionsQueue.length > 0) {
       const generatedId = uuidv4();
       setGeneratedUserQuestionId(generatedId);
+      const dequeuedQuestion = dequeue();
+
       const userQuestion: UserQuestion = {
         userQuestionId: generatedId,
-        questionNo: `Question ${questionNumber + 1}`,
-        parentQuestion: userSurvey.questions[questionNumber],
+        parentQuestion: dequeuedQuestion,
         userAnswer: undefined,
         isAnswerInvalid: false,
       };
@@ -46,10 +53,8 @@ const AdminPreview = ({
       setUserQuestionList((prev: UserQuestion[]) => {
         return [...prev, userQuestion];
       });
-    }
-
-    if (userSurvey.questions.length >= questionNumber) {
-      setQuestionNumber((prev) => prev + 1);
+    } else {
+      setIsSurveyFinished(true);
     }
   };
 
@@ -126,7 +131,7 @@ const AdminPreview = ({
   };
   return (
     <div className="row-span-10 h-full overflow-auto p-4 flex flex-col justify-between items-center rounded-xl bg-blue-50">
-      {userSurvey.questions.length >= questionNumber ? (
+      {!isSurveyFinished ? (
         <>
           <div className="w-full h-full overflow-auto p-2 bg-blue-50 gap-2">
             {userQuestionList.map((question: UserQuestion, index: number) => {
@@ -156,34 +161,7 @@ const AdminPreview = ({
                           </span>
                         )}
                       </h1>
-                      {/* <span>
-                        {question.parentQuestion?.isRequired && (
-                          <Asterisk size={`14`} color={`red`} />
-                        )}
-                      </span> */}
                     </div>
-                    {/* <Input
-                      readOnly
-                      isRequired={question?.parentQuestion?.isRequired}
-                      type="text"
-                      classNames={{
-                        base: ["col-span-4"],
-                        input: ["text-black capitalize font-semibold"],
-                        description: ["text-red-500 text-xs font-semibold"],
-                      }}
-                      description={`${
-                        question?.parentQuestion?.isRequired
-                          ? "This question is required to answer"
-                          : ""
-                      }`}
-                      startContent={
-                        <>
-                          <div className="me-auto">*</div>
-                        </>
-                      }
-                      size={"md"}
-                      value={`${question?.parentQuestion?.title} `}
-                    /> */}
                   </CardHeader>
 
                   <CardBody
@@ -210,23 +188,6 @@ const AdminPreview = ({
             </Button>
           </div>
         </>
-      ) : userSurvey.questions.length === 0 ? (
-        <div className="h-full flex flex-col justify-center items-center">
-          <h1 className="text-center text-2xl font-semibold text-blue-400 mb-4">
-            No survey quesitons available to preview
-          </h1>
-          <div className="flex items-center justify-center">
-            <Link href={"/design"}>
-              <Button
-                variant="shadow"
-                className="flex gap-2 text-base font-semibold bg-blue-400 text-white rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Go back to Create Survey
-                <MoveRight size={"18"} />
-              </Button>
-            </Link>
-          </div>
-        </div>
       ) : (
         <div className="h-full flex justify-center items-center">
           <h1 className="text-center text-2xl font-semibold text-blue-400">
