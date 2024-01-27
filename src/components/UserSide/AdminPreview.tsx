@@ -8,7 +8,7 @@ import Boolean from "./usersAnswerTypes/Boolean";
 import RatingScale from "./usersAnswerTypes/RatingScale";
 import DefaultAnswer from "./usersAnswerTypes/DefaultUI";
 import { UserQuestion } from "@/types/questions";
-import { Asterisk, MoveRight } from "lucide-react";
+import { MoveRight } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 
