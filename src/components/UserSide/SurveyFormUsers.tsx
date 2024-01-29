@@ -2,28 +2,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Listbox, ListboxItem } from "@nextui-org/react";
 import AdminPreview from "./AdminPreview";
-import { Question, SurveyForm, UserQuestion } from "@/types/questions";
+import { Question, SurveyForm, QueueQuestion } from "@/types/questions";
 import { v4 as uuidv4 } from "uuid";
 
 const SurveyFormUsers = () => {
   const [userSurveyName, setUserSurveyName] = useState<string>("");
-
   const [generatedUserQuestionId, setGeneratedUserQuestionId] = useState("");
-
-  const [questionsQueue, setQuestionsQueue] = useState<Question[]>([]);
+  const [questionsQueue, setQuestionsQueue] = useState<QueueQuestion[]>([]);
   const [allSurveyQuestions, setAllSurveyQuestions] = useState<Question[]>([]);
-  const [userQuestionList, setUserQuestionList] = useState<UserQuestion[]>([]);
+  const [userQuestionList, setUserQuestionList] = useState<QueueQuestion[]>([]);
 
   console.log("Questions Queue List", questionsQueue);
   console.log("All Survey Questions List", allSurveyQuestions);
   console.log("User Question List", userQuestionList);
 
-  const enqueue = useCallback(
-    (question: Question) => {
-      setQuestionsQueue([...questionsQueue, question]);
-    },
-    [questionsQueue]
-  );
+  const enqueue = useCallback((question: QueueQuestion) => {
+    setQuestionsQueue((prev: QueueQuestion[]) => {
+      const newQueue = [...prev, question];
+      return newQueue;
+    });
+  }, []);
 
   const dequeue = () => {
     if (questionsQueue.length === 0) {
@@ -39,37 +37,42 @@ const SurveyFormUsers = () => {
   };
 
   useEffect(() => {
+    // console.log(`
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    //     INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // INITIAL USE EFFECT HOOK
+    // `);
+
     const storedData = localStorage.getItem("surveyFormData");
     const parsedData: SurveyForm = storedData && JSON.parse(storedData);
     setUserSurveyName(parsedData.name);
 
     if (parsedData && parsedData.questions.length > 0) {
-      // Initialize the queue data array and userSurveyQuestions array
-      const noVisibleIfQuestionsQueue: Question[] = [];
+      const noVisibleIfQuestionsQueue: QueueQuestion[] = [];
       const visibleIfQuestionsArray: Question[] = [];
 
-      // // Process each question in the survey data
+      // Process each question in the survey data
       parsedData.questions.forEach((question) => {
-        // Check if the question has visibleIf property
         if (question.visibleIf && question.visibleIf.length > 0) {
           visibleIfQuestionsArray.push(question);
         } else {
-          noVisibleIfQuestionsQueue.push(question);
+          // Push questions (without visibleIf property) to queue array
+          const userQuestion: QueueQuestion = {
+            userQuestionId: uuidv4(),
+            parentQuestion: question,
+            userAnswer: undefined,
+            isAnswerInvalid: false,
+          };
+          noVisibleIfQuestionsQueue.push(userQuestion);
         }
       });
-
-      // Dequeue the first question from the queue and add it to userQuestionList
-      if (noVisibleIfQuestionsQueue.length > 0) {
-        const dequeuedQuestion = noVisibleIfQuestionsQueue.shift();
-        const userQuestion: UserQuestion = {
-          userQuestionId: uuidv4(),
-          // questionNo: `Question 1`,
-          parentQuestion: dequeuedQuestion,
-          userAnswer: undefined,
-          isAnswerInvalid: false,
-        };
-        setUserQuestionList([userQuestion]);
-      }
 
       // Set the initial state for the queue data array and userSurveyQuestions array
       setQuestionsQueue(noVisibleIfQuestionsQueue);
@@ -78,48 +81,88 @@ const SurveyFormUsers = () => {
   }, []);
 
   useEffect(() => {
-    allSurveyQuestions.forEach((question) => {
-      let shouldSkipQuestion = false;
-      const logics = [];
+    if (userQuestionList.length > 0) {
+      allSurveyQuestions.forEach((question: Question) => {
+        let shouldSkipQuestion = false;
+        const logics = [];
 
-      for (let index = 0; index < question.visibleIf!.length; index++) {
-        console.log("main logic runs");
-        const logic = question.visibleIf![index];
-        const matchingVisibleIfQuestion = userQuestionList.find(
-          (response, index) =>
-            // index < userQuestionList.length - 1 &&
-            response.parentQuestion &&
-            response.userAnswer &&
-            response.parentQuestion.questionId === logic.selectQuestId
-        );
+        for (let index = 0; index < question.visibleIf!.length; index++) {
+          console.log("main logic runs FOR: ", question.name);
+          console.log("index: ", index);
+          const logic = question.visibleIf![index];
+          console.log("logic: ", logic);
 
-        if (!matchingVisibleIfQuestion) {
-          shouldSkipQuestion = true;
-          break;
+          const matchingVisibleIfQuestion = userQuestionList.find(
+            (response) =>
+              response.parentQuestion &&
+              // response.userAnswer &&
+              response.parentQuestion.questionId === logic.selectQuestId
+          );
+
+          if (matchingVisibleIfQuestion === undefined) {
+            shouldSkipQuestion = true;
+            console.log("logic failed for: ", question.name);
+            break;
+          }
+
+          const userAnswer = matchingVisibleIfQuestion.userAnswer;
+          let comparisonSymbol: string;
+          if (logic.comparisonOperator === "=") {
+            comparisonSymbol = "===";
+          } else if (logic.comparisonOperator === "<>") {
+            comparisonSymbol = "!==";
+          } else {
+            comparisonSymbol = logic!.comparisonOperator!;
+          }
+          console.log(
+            `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+          );
+          const answerComparison = eval(
+            `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+          );
+          // const answerComparison = userAnswer.map(
+          //   (item: string, index: number) => {
+          //     const result = eval(
+          //       `${item} ${comparisonSymbol} ${logic.answerValue[index]}`
+          //     );
+          //     return result === undefined ? false : result;
+          //   }
+          // );
+          console.log(
+            "ANSWER COMPARISON: ",
+            eval(`'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`)
+          );
+          logics.push(
+            `${index > 0 && logic.logicOperator} ${answerComparison}`
+          );
         }
 
-        const userAnswer = matchingVisibleIfQuestion.userAnswer;
-        const answerComparison = userAnswer === logic.answerValue;
-        logics.push(`${index > 0 && logic.logicOperator} ${answerComparison}`);
-      }
+        if (shouldSkipQuestion) {
+          return;
+        }
 
-      if (shouldSkipQuestion) {
-        return;
-      }
-
-      if (logics.length > 0) {
-        console.log("Logic to statisfy: ", logics);
-        enqueue(question);
-        setAllSurveyQuestions((prev) => {
-          return prev.filter((surveyQuestion) => {
-            question.questionId !== surveyQuestion.questionId;
+        if (logics.length > 0) {
+          console.log("Logic to statisfy: ", logics);
+          const generatedId = uuidv4();
+          setGeneratedUserQuestionId(generatedId);
+          const userQuestion: QueueQuestion = {
+            userQuestionId: generatedId,
+            parentQuestion: question,
+            userAnswer: undefined,
+            isAnswerInvalid: false,
+          };
+          enqueue(userQuestion);
+          setAllSurveyQuestions((prev: Question[]) => {
+            const remainQuesitons = [...prev].filter(
+              (surveyQuestion: Question) => {
+                return question.questionId !== surveyQuestion.questionId;
+              }
+            );
+            return remainQuesitons;
           });
-        });
-        return;
-      } else {
-        return;
-      }
-    });
+        }
+      });
+    }
   }, [allSurveyQuestions, enqueue, userQuestionList]);
 
   const scrollHandle = (questionId: string) => {

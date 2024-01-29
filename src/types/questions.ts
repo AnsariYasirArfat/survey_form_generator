@@ -66,7 +66,7 @@ export interface AnswerTypeComponentProps {
 export interface AdminPreviewQuestion extends Question {
   previewAnswer?: any;
 }
-export interface UserQuestion {
+export interface QueueQuestion {
   userQuestionId: string;
   // questionNo?: string;
   parentQuestion?: Question;
@@ -75,11 +75,12 @@ export interface UserQuestion {
 }
 
 export interface UserAnswerTypeProps {
+  isCurrentQuestion?: boolean;
   index?: number;
-  question?: UserQuestion;
+  question?: QueueQuestion;
   handleAdminPreviewQuestions?: (
     index: number,
-    field: keyof UserQuestion,
+    field: keyof QueueQuestion,
     value: string | boolean | number | string[] | undefined
   ) => void;
 }
