@@ -2,7 +2,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Listbox, ListboxItem } from "@nextui-org/react";
 import AdminPreview from "./AdminPreview";
-import { Question, SurveyForm, QueueQuestion } from "@/types/questions";
+import {
+  Question,
+  SurveyForm,
+  QueueQuestion,
+  Choices,
+} from "@/types/questions";
 import { v4 as uuidv4 } from "uuid";
 
 const SurveyFormUsers = () => {
@@ -106,31 +111,71 @@ const SurveyFormUsers = () => {
           }
 
           const userAnswer = matchingVisibleIfQuestion.userAnswer;
-          let comparisonSymbol: string;
-          if (logic.comparisonOperator === "=") {
+          let comparisonSymbol: string | undefined;
+          let answerComparison;
+
+          if (logic.comparisonOperator === "empty") {
+            // comparisonSymbol = undefined;
+            answerComparison = userAnswer !== undefined ? false : true;
+          } else if (logic.comparisonOperator === "notempty") {
+            // comparisonSymbol = undefined;
+            answerComparison = userAnswer !== undefined ? true : false;
+          } else if (logic.comparisonOperator === "=") {
             comparisonSymbol = "===";
+            answerComparison = eval(
+              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+            );
           } else if (logic.comparisonOperator === "<>") {
             comparisonSymbol = "!==";
+            answerComparison = eval(
+              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+            );
+          } else if (logic.comparisonOperator === "contain") {
+            answerComparison =
+              userAnswer !== undefined
+                ? userAnswer.includes(logic.answerValue)
+                : false;
+          } else if (logic.comparisonOperator === "notcontain") {
+            answerComparison =
+              userAnswer !== undefined
+                ? !userAnswer.includes(logic.answerValue)
+                : true;
+          } else if (logic.comparisonOperator === "allof") {
+            if (
+              logic.answerValue.every((choice: Choices) =>
+                userAnswer.includes(choice)
+              )
+            ) {
+              console.log("The given array have all defined choices ");
+              answerComparison = true;
+            } else {
+              answerComparison = false;
+              console.log("The given array does not have all defined choices");
+            }
+          } else if (logic.comparisonOperator === "anyof") {
+            if (
+              logic.answerValue.some((choice: Choices) =>
+                userAnswer.includes(choice)
+              )
+            ) {
+              console.log("The given array have choice from defined choices");
+              answerComparison = true;
+            } else {
+              answerComparison = false;
+              console.log(
+                "The given array does not have choice from defined choices"
+              );
+            }
           } else {
             comparisonSymbol = logic!.comparisonOperator!;
+            answerComparison = eval(
+              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+            );
           }
+
           console.log(
-            `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
-          );
-          const answerComparison = eval(
-            `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
-          );
-          // const answerComparison = userAnswer.map(
-          //   (item: string, index: number) => {
-          //     const result = eval(
-          //       `${item} ${comparisonSymbol} ${logic.answerValue[index]}`
-          //     );
-          //     return result === undefined ? false : result;
-          //   }
-          // );
-          console.log(
-            "ANSWER COMPARISON: ",
-            eval(`'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`)
+            `ANSWER COMPARISON for ${question.name}: `,
+            answerComparison
           );
           logics.push(
             `${index > 0 && logic.logicOperator} ${answerComparison}`
