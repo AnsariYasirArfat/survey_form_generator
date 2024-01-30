@@ -196,8 +196,15 @@ const SurveyFormUsers = () => {
         if (shouldSkipQuestion) {
           return;
         }
+
         console.log("Logic to statisfy: ", logics);
-        let finalLogicDecision = eval(logics);
+
+        function evaluateLogic() {
+          const result = eval(logics);
+          return result ? result : false;
+        }
+        let finalLogicDecision = evaluateLogic();
+
         console.log("FINAL LOGIC FOR QUESTION: ", finalLogicDecision);
         if (finalLogicDecision) {
           const generatedId = uuidv4();

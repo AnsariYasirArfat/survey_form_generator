@@ -12,15 +12,11 @@ import { MoveRight } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 const AdminPreview = ({
-  allSurveyQuestions,
-  setAllSurveyQuestions,
   userQuestionList,
   setUserQuestionList,
   questionsQueue,
   setQuestionsQueue,
   dequeue,
-  enqueue,
-  setGeneratedUserQuestionId,
 }: any) => {
   // const [questionNumber, setQuestionNumber] = useState(1);
   const [isSurveyFinished, setIsSurveyFinished] = useState(false);
@@ -134,7 +130,7 @@ const AdminPreview = ({
     <div className="row-span-10 h-full overflow-auto p-4 flex flex-col justify-between items-center rounded-xl bg-blue-50">
       {!isSurveyFinished ? (
         <>
-          <div className="w-full h-full overflow-auto p-2 bg-blue-50 gap-2">
+          <div className="w-full  bg-blue-50 gap-2">
             {userQuestionList.map((question: QueueQuestion, index: number) => {
               // const isLastItem = userQuestionList.length - 1 === index;
               return (
@@ -177,12 +173,12 @@ const AdminPreview = ({
               );
             })}
           </div>
-          <div className="w-full">
+          <div className="w-full ">
             {questionsQueue.length > 0 && (
               <Card
                 id={questionsQueue[0].userQuestionId}
                 // key={`${question?.parentQuestion?.questionId}-${index}`}
-                className="w-full bg-blue-300 mb-4"
+                className="w-full bg-blue-300 mb-4 shadow-xl border-2 border-blue-400"
               >
                 <CardHeader className="flex items-center gap-4 pointer-events-none">
                   <Chip
