@@ -89,13 +89,13 @@ const SurveyFormUsers = () => {
     if (userQuestionList.length > 0) {
       allSurveyQuestions.forEach((question: Question) => {
         let shouldSkipQuestion = false;
-        const logics = [];
+        let logics = "";
 
         for (let index = 0; index < question.visibleIf!.length; index++) {
           console.log("main logic runs FOR: ", question.name);
           console.log("index: ", index);
           const logic = question.visibleIf![index];
-          console.log("logic: ", logic);
+          // console.log("logic: ", logic);
 
           const matchingVisibleIfQuestion = userQuestionList.find(
             (response) =>
@@ -104,90 +104,102 @@ const SurveyFormUsers = () => {
               response.parentQuestion.questionId === logic.selectQuestId
           );
 
-          if (matchingVisibleIfQuestion === undefined) {
-            shouldSkipQuestion = true;
-            console.log("logic failed for: ", question.name);
-            break;
-          }
+          // if (matchingVisibleIfQuestion === undefined) {
+          //   shouldSkipQuestion = true;
+          //   console.log("logic failed for: ", question.name);
+          //   break;
+          // }
+          if (matchingVisibleIfQuestion !== undefined) {
+            const userAnswer = matchingVisibleIfQuestion.userAnswer;
+            let comparisonSymbol: string | undefined;
+            let answerComparison;
 
-          const userAnswer = matchingVisibleIfQuestion.userAnswer;
-          let comparisonSymbol: string | undefined;
-          let answerComparison;
-
-          if (logic.comparisonOperator === "empty") {
-            // comparisonSymbol = undefined;
-            answerComparison = userAnswer !== undefined ? false : true;
-          } else if (logic.comparisonOperator === "notempty") {
-            // comparisonSymbol = undefined;
-            answerComparison = userAnswer !== undefined ? true : false;
-          } else if (logic.comparisonOperator === "=") {
-            comparisonSymbol = "===";
-            answerComparison = eval(
-              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
-            );
-          } else if (logic.comparisonOperator === "<>") {
-            comparisonSymbol = "!==";
-            answerComparison = eval(
-              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
-            );
-          } else if (logic.comparisonOperator === "contain") {
-            answerComparison =
-              userAnswer !== undefined
-                ? userAnswer.includes(logic.answerValue)
-                : false;
-          } else if (logic.comparisonOperator === "notcontain") {
-            answerComparison =
-              userAnswer !== undefined
-                ? !userAnswer.includes(logic.answerValue)
-                : true;
-          } else if (logic.comparisonOperator === "allof") {
-            if (
-              logic.answerValue.every((choice: Choices) =>
-                userAnswer.includes(choice)
-              )
-            ) {
-              console.log("The given array have all defined choices ");
-              answerComparison = true;
+            if (logic.comparisonOperator === "empty") {
+              // comparisonSymbol = undefined;
+              answerComparison = userAnswer !== undefined ? false : true;
+            } else if (logic.comparisonOperator === "notempty") {
+              // comparisonSymbol = undefined;
+              answerComparison = userAnswer !== undefined ? true : false;
+            } else if (logic.comparisonOperator === "=") {
+              comparisonSymbol = "===";
+              answerComparison = eval(
+                `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+              );
+            } else if (logic.comparisonOperator === "<>") {
+              comparisonSymbol = "!==";
+              answerComparison = eval(
+                `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+              );
+            } else if (logic.comparisonOperator === "contain") {
+              answerComparison =
+                userAnswer !== undefined
+                  ? userAnswer.includes(logic.answerValue)
+                  : false;
+            } else if (logic.comparisonOperator === "notcontain") {
+              answerComparison =
+                userAnswer !== undefined
+                  ? !userAnswer.includes(logic.answerValue)
+                  : true;
+            } else if (logic.comparisonOperator === "allof") {
+              if (
+                logic.answerValue.every((choice: Choices) =>
+                  userAnswer.includes(choice)
+                )
+              ) {
+                console.log("The given array have all defined choices ");
+                answerComparison = true;
+              } else {
+                answerComparison = false;
+                console.log(
+                  "The given array does not have all defined choices"
+                );
+              }
+            } else if (logic.comparisonOperator === "anyof") {
+              if (
+                logic.answerValue.some((choice: Choices) =>
+                  userAnswer.includes(choice)
+                )
+              ) {
+                console.log("The given array have choice from defined choices");
+                answerComparison = true;
+              } else {
+                answerComparison = false;
+                console.log(
+                  "The given array does not have choice from defined choices"
+                );
+              }
             } else {
-              answerComparison = false;
-              console.log("The given array does not have all defined choices");
-            }
-          } else if (logic.comparisonOperator === "anyof") {
-            if (
-              logic.answerValue.some((choice: Choices) =>
-                userAnswer.includes(choice)
-              )
-            ) {
-              console.log("The given array have choice from defined choices");
-              answerComparison = true;
-            } else {
-              answerComparison = false;
-              console.log(
-                "The given array does not have choice from defined choices"
+              comparisonSymbol = logic!.comparisonOperator!;
+              answerComparison = eval(
+                `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
               );
             }
-          } else {
-            comparisonSymbol = logic!.comparisonOperator!;
-            answerComparison = eval(
-              `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
-            );
-          }
 
-          console.log(
-            `ANSWER COMPARISON for ${question.name}: `,
-            answerComparison
-          );
-          logics.push(
-            `${index > 0 && logic.logicOperator} ${answerComparison}`
-          );
+            console.log(
+              `ANSWER COMPARISON for ${question.name}: `,
+              answerComparison
+            );
+
+            let logicOperator;
+            if (logic.logicOperator === "and") {
+              logicOperator = "&&";
+            } else if (logic.logicOperator === "or") {
+              logicOperator = "||";
+            } else {
+              logicOperator = "";
+            }
+
+            logics += `${logicOperator} ${answerComparison} `;
+          }
         }
 
         if (shouldSkipQuestion) {
           return;
         }
-
-        if (logics.length > 0) {
-          console.log("Logic to statisfy: ", logics);
+        console.log("Logic to statisfy: ", logics);
+        let finalLogicDecision = eval(logics);
+        console.log("FINAL LOGIC FOR QUESTION: ", finalLogicDecision);
+        if (finalLogicDecision) {
           const generatedId = uuidv4();
           setGeneratedUserQuestionId(generatedId);
           const userQuestion: QueueQuestion = {
