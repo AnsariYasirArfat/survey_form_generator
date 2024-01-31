@@ -130,7 +130,7 @@ const AdminPreview = ({
     <div className="row-span-10 h-full overflow-auto p-4 flex flex-col justify-between items-center rounded-xl bg-blue-50">
       {!isSurveyFinished ? (
         <>
-          <div className="w-full  bg-blue-50 gap-2">
+          <div className="w-full bg-blue-50 gap-2">
             {userQuestionList.map((question: QueueQuestion, index: number) => {
               // const isLastItem = userQuestionList.length - 1 === index;
               return (

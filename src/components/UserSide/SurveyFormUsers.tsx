@@ -88,14 +88,12 @@ const SurveyFormUsers = () => {
   useEffect(() => {
     if (userQuestionList.length > 0) {
       allSurveyQuestions.forEach((question: Question) => {
-        let shouldSkipQuestion = false;
         let logics = "";
 
         for (let index = 0; index < question.visibleIf!.length; index++) {
-          console.log("main logic runs FOR: ", question.name);
-          console.log("index: ", index);
+          console.log("Main logic runs for: ", question.name);
+          console.log(`${question.name}'s logic index : `, index);
           const logic = question.visibleIf![index];
-          // console.log("logic: ", logic);
 
           const matchingVisibleIfQuestion = userQuestionList.find(
             (response) =>
@@ -104,11 +102,15 @@ const SurveyFormUsers = () => {
               response.parentQuestion.questionId === logic.selectQuestId
           );
 
-          // if (matchingVisibleIfQuestion === undefined) {
-          //   shouldSkipQuestion = true;
-          //   console.log("logic failed for: ", question.name);
-          //   break;
-          // }
+          let logicOperator;
+          if (logic.logicOperator === "and") {
+            logicOperator = "&&";
+          } else if (logic.logicOperator === "or") {
+            logicOperator = "||";
+          } else {
+            logicOperator = "";
+          }
+
           if (matchingVisibleIfQuestion !== undefined) {
             const userAnswer = matchingVisibleIfQuestion.userAnswer;
             let comparisonSymbol: string | undefined;
@@ -122,6 +124,10 @@ const SurveyFormUsers = () => {
               answerComparison = userAnswer !== undefined ? true : false;
             } else if (logic.comparisonOperator === "=") {
               comparisonSymbol = "===";
+              // console.log(
+              //   "eval for equal: ",
+              //   `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
+              // );
               answerComparison = eval(
                 `'${userAnswer}' ${comparisonSymbol} '${logic.answerValue}'`
               );
@@ -180,32 +186,24 @@ const SurveyFormUsers = () => {
               answerComparison
             );
 
-            let logicOperator;
-            if (logic.logicOperator === "and") {
-              logicOperator = "&&";
-            } else if (logic.logicOperator === "or") {
-              logicOperator = "||";
-            } else {
-              logicOperator = "";
-            }
-
             logics += `${logicOperator} ${answerComparison} `;
+          } else if (matchingVisibleIfQuestion === undefined) {
+            // Making Answer response false, If user taken question is not present in logic data
+
+            console.log(
+              "logic failed for: ",
+              question.name,
+              `${logicOperator} false `
+            );
+            logics += `${logicOperator} false `;
           }
         }
 
-        if (shouldSkipQuestion) {
-          return;
-        }
+        console.log(`Logic to statisfy for ${question.name}`, logics);
 
-        console.log("Logic to statisfy: ", logics);
+        let finalLogicDecision = eval(logics);
 
-        function evaluateLogic() {
-          const result = eval(logics);
-          return result ? result : false;
-        }
-        let finalLogicDecision = evaluateLogic();
-
-        console.log("FINAL LOGIC FOR QUESTION: ", finalLogicDecision);
+        console.log(`FINAL LOGIC FOR ${question.name}`, finalLogicDecision);
         if (finalLogicDecision) {
           const generatedId = uuidv4();
           setGeneratedUserQuestionId(generatedId);
