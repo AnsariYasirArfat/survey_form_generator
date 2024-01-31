@@ -1,6 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
-import { Listbox, ListboxItem } from "@nextui-org/react";
+import { Button, Divider, Listbox, ListboxItem } from "@nextui-org/react";
 import AdminPreview from "./AdminPreview";
 import {
   Question,
@@ -9,13 +9,20 @@ import {
   Choices,
 } from "@/types/questions";
 import { v4 as uuidv4 } from "uuid";
+import { MoveRight } from "lucide-react";
+import SurveyLeaveModel from "./models/SurveyLeaveModel";
 
 const SurveyFormUsers = () => {
-  const [userSurveyName, setUserSurveyName] = useState<string>("");
+  const [rawSurveyData, setRawSurveyData] = useState<SurveyForm>({
+    name: "",
+    questions: [],
+  });
   const [generatedUserQuestionId, setGeneratedUserQuestionId] = useState("");
   const [questionsQueue, setQuestionsQueue] = useState<QueueQuestion[]>([]);
   const [allSurveyQuestions, setAllSurveyQuestions] = useState<Question[]>([]);
   const [userQuestionList, setUserQuestionList] = useState<QueueQuestion[]>([]);
+  const [isSurveyStarted, setIsSurveyStarted] = useState(false);
+  const [isSurveyFinished, setIsSurveyFinished] = useState(false);
 
   console.log("Questions Queue List", questionsQueue);
   console.log("All Survey Questions List", allSurveyQuestions);
@@ -33,7 +40,6 @@ const SurveyFormUsers = () => {
       console.log("Queue is empty");
       return;
     }
-
     // Remove and return the front element from the queue
     const [frontQuestion, ...restOfQueue] = questionsQueue;
     setQuestionsQueue(restOfQueue);
@@ -42,29 +48,18 @@ const SurveyFormUsers = () => {
   };
 
   useEffect(() => {
-    // console.log(`
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    //     INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // INITIAL USE EFFECT HOOK
-    // `);
-
     const storedData = localStorage.getItem("surveyFormData");
     const parsedData: SurveyForm = storedData && JSON.parse(storedData);
-    setUserSurveyName(parsedData.name);
+    setRawSurveyData(parsedData);
+  }, []);
 
-    if (parsedData && parsedData.questions.length > 0) {
+  const handleSurveyData = () => {
+    if (rawSurveyData && rawSurveyData.questions.length > 0) {
       const noVisibleIfQuestionsQueue: QueueQuestion[] = [];
       const visibleIfQuestionsArray: Question[] = [];
 
       // Process each question in the survey data
-      parsedData.questions.forEach((question) => {
+      rawSurveyData.questions.forEach((question) => {
         if (question.visibleIf && question.visibleIf.length > 0) {
           visibleIfQuestionsArray.push(question);
         } else {
@@ -78,12 +73,18 @@ const SurveyFormUsers = () => {
           noVisibleIfQuestionsQueue.push(userQuestion);
         }
       });
-
       // Set the initial state for the queue data array and userSurveyQuestions array
       setQuestionsQueue(noVisibleIfQuestionsQueue);
       setAllSurveyQuestions(visibleIfQuestionsArray);
     }
-  }, []);
+  };
+
+  const handleLeaveSurvey = () => {
+    setIsSurveyStarted(false);
+    setUserQuestionList([]);
+    setQuestionsQueue([]);
+    setAllSurveyQuestions([]);
+  };
 
   useEffect(() => {
     if (userQuestionList.length > 0) {
@@ -236,56 +237,144 @@ const SurveyFormUsers = () => {
       });
     }
   };
+
   useEffect(() => {
     scrollHandle(generatedUserQuestionId);
   }, [generatedUserQuestionId]);
-  return (
-    <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
-      <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">
-        <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
-          Questions seen
-        </h1>
-        <Listbox
-          aria-label="Listbox Variants"
-          color={"primary"}
-          variant={"light"}
-          classNames={{
-            base: "row-span-11 h-full overflow-auto",
-            emptyContent: "text-lg text-center self-center",
-          }}
-          itemClasses={{ title: "font-semibold text-center text-base" }}
-          emptyContent={"Add some questions..."}
-        >
-          {userQuestionList.map((question, index) => (
-            <ListboxItem
-              onPress={() => scrollHandle(question.userQuestionId)}
-              key={`${question.userQuestionId}`}
-            >
-              {`Question ${index + 1}`}
-            </ListboxItem>
-          ))}
-        </Listbox>
-      </aside>
-      <div className="grid grid-rows-12 gap-4 overflow-auto h-full col-span-10 pe-1">
-        <div className="row-span-2 bg-blue-50 shadow-lg p-4 rounded-xl flex justify-center items-center">
-          <h1 className="text-center text-2xl font-bold text-blue-600">
-            {userSurveyName ? userSurveyName : `No Survey Name Available!`}
-          </h1>
-        </div>
 
-        <AdminPreview
-          allSurveyQuestions={allSurveyQuestions}
-          setAllSurveyQuestions={setAllSurveyQuestions}
-          userQuestionList={userQuestionList}
-          setUserQuestionList={setUserQuestionList}
-          questionsQueue={questionsQueue}
-          setQuestionsQueue={setQuestionsQueue}
-          dequeue={dequeue}
-          enqueue={enqueue}
-          setGeneratedUserQuestionId={setGeneratedUserQuestionId}
-        />
+  const surveyWelcomeComponent = () => {
+    return (
+      <div className="h-full p-10 flex items-center justify-center">
+        <div className="max-w-4xl p-8 bg-blue-50 shadow-xl rounded-md">
+          {!isSurveyFinished ? (
+            <>
+              <h1 className="text-center text-xl font-bold mb-4 text-slate-600">
+                Start the
+                <span className="text-blue-500 text-2xl font-bold">{` ${rawSurveyData.name} `}</span>
+                survey now!
+              </h1>
+              <Divider className="mb-4" />
+              <p className="text-slate-600 mb-4 font-semibold">
+                Welcome! Your insights matter. Contribute your valuable input
+                and make a difference!
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-xl font-bold mb-4 text-slate-600">
+                Thank You for Completing the
+                <span className="text-blue-500 text-2xl font-bold">{` ${rawSurveyData.name} `}</span>
+                Survey!
+              </h1>
+              <Divider className="mb-4" />
+
+              <p className="text-slate-600 mb-4 font-semibold">
+                We appreciate the time & effort you&apos;ve invested in sharing
+                your thoughts..
+              </p>
+            </>
+          )}
+
+          <div className="flex items-center justify-center">
+            {!isSurveyFinished ? (
+              <Button
+                isDisabled={rawSurveyData.questions.length < 1}
+                color="primary"
+                variant="shadow"
+                radius="lg"
+                onClick={() => {
+                  setIsSurveyStarted(true);
+                  handleSurveyData();
+                }}
+                className="flex gap-2 text-base font-semibold text-white rounded-md transition duration-300"
+              >
+                Start Survey
+                <MoveRight size={"18"} />
+              </Button>
+            ) : (
+              <Button
+                color="primary"
+                variant="shadow"
+                radius="lg"
+                onClick={() => {
+                  setIsSurveyStarted(true);
+                  setIsSurveyFinished(false);
+                  handleSurveyData();
+                }}
+                className="flex gap-2 text-base font-semibold text-white rounded-md transition duration-300"
+              >
+                Preview Survey Again
+                <MoveRight size={"18"} />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-    </section>
+    );
+  };
+
+  const surveyFormComponent = () => {
+    return (
+      <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
+        <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">
+          <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
+            Questions seen
+          </h1>
+          <Listbox
+            aria-label="Listbox Variants"
+            color={"primary"}
+            variant={"light"}
+            classNames={{
+              base: "row-span-11 h-full overflow-auto",
+              emptyContent: "text-lg text-center self-center",
+            }}
+            itemClasses={{ title: "font-semibold text-center text-base" }}
+            emptyContent={"Add some questions..."}
+          >
+            {userQuestionList.map((question, index) => (
+              <ListboxItem
+                onPress={() => scrollHandle(question.userQuestionId)}
+                key={`${question.userQuestionId}`}
+              >
+                {`Question ${index + 1}`}
+              </ListboxItem>
+            ))}
+          </Listbox>
+        </aside>
+        <div className="grid grid-rows-12 gap-4 overflow-auto h-full col-span-10 pe-1">
+          <div className="row-span-2 grid grid-cols-12 justify-center items-center bg-blue-50 shadow-lg p-4 rounded-xl">
+            <h1 className="col-span-10 text-center text-2xl font-bold text-blue-600">
+              {rawSurveyData.name
+                ? rawSurveyData.name
+                : `No Survey Name Available!`}
+            </h1>
+            <div className="col-span-2 flex items-center justify-center">
+              {questionsQueue.length > 0 ? (
+                <SurveyLeaveModel handleLeaveSurvey={handleLeaveSurvey} />
+              ) : (
+                <div></div>
+              )}
+            </div>
+          </div>
+          <AdminPreview
+            userQuestionList={userQuestionList}
+            setUserQuestionList={setUserQuestionList}
+            questionsQueue={questionsQueue}
+            setQuestionsQueue={setQuestionsQueue}
+            dequeue={dequeue}
+            setIsSurveyFinished={setIsSurveyFinished}
+            handleLeaveSurvey={handleLeaveSurvey}
+          />
+        </div>
+      </section>
+    );
+  };
+  return (
+    <>
+      {isSurveyStarted && !isSurveyFinished
+        ? surveyFormComponent()
+        : surveyWelcomeComponent()}
+    </>
   );
 };
 

@@ -16,8 +16,10 @@ export default function Home() {
         <div className="flex items-center justify-center">
           <Link href={"/design"}>
             <Button
+              radius="none"
               variant="shadow"
-              className="flex gap-2 text-base font-semibold bg-blue-400 text-white rounded-md hover:bg-blue-600 transition duration-300"
+              color="primary"
+              className="flex gap-2 text-base font-semibold text-white rounded-mdtransition duration-300"
             >
               Create Survey
               <MoveRight size={"18"} />

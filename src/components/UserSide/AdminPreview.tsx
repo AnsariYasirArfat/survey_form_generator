@@ -1,5 +1,5 @@
 import { Button, Card, CardBody, CardHeader, Chip } from "@nextui-org/react";
-import React, { useState } from "react";
+import React from "react";
 import SingleInput from "./usersAnswerTypes/SingleInput";
 import LongText from "./usersAnswerTypes/LongText";
 import RadioGroup from "./usersAnswerTypes/RadioGroup";
@@ -7,9 +7,8 @@ import CheckBoxes from "./usersAnswerTypes/CheckBoxes";
 import Boolean from "./usersAnswerTypes/Boolean";
 import RatingScale from "./usersAnswerTypes/RatingScale";
 import DefaultAnswer from "./usersAnswerTypes/DefaultUI";
-import { Question, QueueQuestion } from "@/types/questions";
+import { QueueQuestion } from "@/types/questions";
 import { MoveRight } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
 
 const AdminPreview = ({
   userQuestionList,
@@ -17,9 +16,10 @@ const AdminPreview = ({
   questionsQueue,
   setQuestionsQueue,
   dequeue,
+  setIsSurveyFinished,
+  handleLeaveSurvey,
 }: any) => {
   // const [questionNumber, setQuestionNumber] = useState(1);
-  const [isSurveyFinished, setIsSurveyFinished] = useState(false);
 
   const handleNextQuesiton = () => {
     if (
@@ -42,6 +42,7 @@ const AdminPreview = ({
       });
     } else {
       setIsSurveyFinished(true);
+      handleLeaveSurvey();
     }
   };
 
@@ -128,16 +129,21 @@ const AdminPreview = ({
   };
   return (
     <div className="row-span-10 h-full overflow-auto p-4 flex flex-col justify-between items-center rounded-xl bg-blue-50">
-      {!isSurveyFinished ? (
-        <>
-          <div className="w-full bg-blue-50 gap-2">
+      {/* {!isSurveyFinished ? ( */}
+      <div className="relative w-full h-full overflow-auto ">
+        <div className="w-full h-full overflow-auto p-2">
+          <div
+            className={`w-full bg-blue-50 gap-2 ${
+              questionsQueue.length < 1 && "mb-16"
+            }`}
+          >
             {userQuestionList.map((question: QueueQuestion, index: number) => {
               // const isLastItem = userQuestionList.length - 1 === index;
               return (
                 <Card
                   id={question.userQuestionId}
                   key={`${question?.parentQuestion?.questionId}-${index}`}
-                  className="w-full bg-blue-300 mb-4"
+                  className="w-full bg-blue-300 mb-4 shadow-none"
                 >
                   <CardHeader className="flex items-center gap-4 pointer-events-none">
                     <Chip
@@ -178,7 +184,7 @@ const AdminPreview = ({
               <Card
                 id={questionsQueue[0].userQuestionId}
                 // key={`${question?.parentQuestion?.questionId}-${index}`}
-                className="w-full bg-blue-300 mb-4 shadow-xl border-2 border-blue-400"
+                className="w-full bg-blue-300 shadow-none border-2 border-blue-400 mb-16"
               >
                 <CardHeader className="flex items-center gap-4 pointer-events-none">
                   <Chip
@@ -201,7 +207,6 @@ const AdminPreview = ({
                     </h1>
                   </div>
                 </CardHeader>
-
                 <CardBody
                   // style={{ pointerEvents: "none", opacity: 0.7 }}
                   className={`p-3`}
@@ -213,25 +218,42 @@ const AdminPreview = ({
               </Card>
             )}
           </div>
-          <div className="w-full mt-2">
+        </div>
+        {questionsQueue.length < 1 ? (
+          <div className="absolute bottom-4 right-4 w-full ">
             <Button
+              size="sm"
               onClick={handleNextQuesiton}
               className="h-12 font-semibold text-lg float-end w-48"
               color="primary"
-              radius="none"
-              variant="shadow"
+              radius="sm"
+              variant="solid"
+            >
+              Finished!
+            </Button>
+          </div>
+        ) : (
+          <div className="absolute bottom-4 right-4 w-full ">
+            <Button
+              size="sm"
+              onClick={handleNextQuesiton}
+              className="h-12 font-semibold text-lg float-end w-48"
+              color="primary"
+              radius="sm"
+              variant="solid"
             >
               Go to Next <MoveRight />
             </Button>
           </div>
-        </>
-      ) : (
+        )}
+      </div>
+      {/* ) : (
         <div className="h-full flex justify-center items-center">
           <h1 className="text-center text-2xl font-semibold text-blue-400">
             Thank you for taking this Survey
           </h1>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
