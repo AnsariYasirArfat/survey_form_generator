@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Input, Listbox, ListboxItem } from "@nextui-org/react";
+import { Input, Listbox, ListboxItem, Tooltip } from "@nextui-org/react";
 import QuestionForm from "./QuestionForm";
 
 import { useGlobalContext } from "@/app/Context/store";
+import { Asterisk, Network } from "lucide-react";
 
 const SurveyComposer = () => {
   const { questions, surveyForm, setSurveyForm } = useGlobalContext();
@@ -40,17 +41,31 @@ const SurveyComposer = () => {
           variant={"light"}
           classNames={{
             base: "row-span-11 h-full overflow-auto",
-            emptyContent: "text-lg text-center self-center",
+            emptyContent: "text-base text-center self-center",
           }}
-          itemClasses={{ title: "font-semibold text-center text-base" }}
+          itemClasses={{
+            title: "font-semibold ps-4 text-base hover:!text-blue-400",
+          }}
           emptyContent={"Add some questions..."}
         >
-          {questions.map((question) => (
+          {questions.map((question, index) => (
             <ListboxItem
               key={`${question.questionId}`}
               onPress={() => scrollHandle(question.questionId!)}
             >
-              {question.name}
+              <div className="flex items-center gap-4">
+                <h3> {question.name}</h3>
+                {question.visibleIf && question.visibleIf?.length > 0 && (
+                  <>
+                    <Tooltip content={"Logic Applied"}>
+                      <Network size={`14`} color="green" />
+                    </Tooltip>
+                    <Tooltip content="Question is Required">
+                      <Asterisk size={`16`} color={`red`} />
+                    </Tooltip>
+                  </>
+                )}
+              </div>
             </ListboxItem>
           ))}
         </Listbox>

@@ -248,27 +248,33 @@ const SurveyFormUsers = ({ userMode }: { userMode: boolean }) => {
         <div className="max-w-4xl p-8 bg-blue-50 shadow-xl rounded-md">
           {!isSurveyFinished ? (
             <>
-              <h1 className="text-center text-xl font-bold mb-4 text-slate-600">
+              <h1 className="text-center text-3xl font-bold mb-4 text-blue-500 bg-blue-300 rounded-lg py-2">
+                {userMode ? "User Mode" : "Admin Preview Mode"}
+              </h1>
+              <h1 className="text-center text-lg font-bold mb-4 text-slate-600">
                 Start the
                 <span className="text-blue-500 text-2xl font-bold">{` ${rawSurveyData.name} `}</span>
                 survey now!
               </h1>
               <Divider className="mb-4" />
-              <p className="text-slate-600 mb-4 font-semibold">
+              <p className="text-center  text-slate-600 mb-4 font-semibold">
                 Welcome! Your insights matter. Contribute your valuable input
                 and make a difference!
               </p>
             </>
           ) : (
             <>
-              <h1 className="text-xl font-bold mb-4 text-slate-600">
+              <h1 className="text-center text-3xl font-bold mb-4 text-blue-500 bg-blue-300 rounded-lg py-2">
+                {userMode ? "User Mode" : "Admin Preview Mode"}
+              </h1>
+              <h1 className="text-center text-lg font-bold mb-4 text-slate-600">
                 Thank You for Completing the
                 <span className="text-blue-500 text-2xl font-bold">{` ${rawSurveyData.name} `}</span>
                 Survey!
               </h1>
               <Divider className="mb-4" />
 
-              <p className="text-slate-600 mb-4 font-semibold">
+              <p className="text-center text-slate-600 mb-4 font-semibold">
                 We appreciate the time & effort you&apos;ve invested in sharing
                 your thoughts..
               </p>
@@ -327,10 +333,10 @@ const SurveyFormUsers = ({ userMode }: { userMode: boolean }) => {
               variant={"light"}
               classNames={{
                 base: "row-span-11 h-full overflow-auto",
-                emptyContent: "text-lg text-center self-center",
+                emptyContent: "text-base text-center self-center",
               }}
               itemClasses={{ title: "font-semibold text-center text-base" }}
-              emptyContent={"Add some questions..."}
+              emptyContent={"Answer some question..."}
             >
               {userQuestionList.map((question, index) => (
                 <ListboxItem
@@ -401,27 +407,6 @@ const SurveyFormUsers = ({ userMode }: { userMode: boolean }) => {
             setIsSurveyFinished={setIsSurveyFinished}
             handleLeaveSurvey={handleLeaveSurvey}
           />
-          {/* {userMode ? (
-            <UserQuestionMode
-              userQuestionList={userQuestionList}
-              setUserQuestionList={setUserQuestionList}
-              questionsQueue={questionsQueue}
-              setQuestionsQueue={setQuestionsQueue}
-              dequeue={dequeue}
-              setIsSurveyFinished={setIsSurveyFinished}
-              handleLeaveSurvey={handleLeaveSurvey}
-            />
-          ) : (
-            <AdminPreview
-              userQuestionList={userQuestionList}
-              setUserQuestionList={setUserQuestionList}
-              questionsQueue={questionsQueue}
-              setQuestionsQueue={setQuestionsQueue}
-              dequeue={dequeue}
-              setIsSurveyFinished={setIsSurveyFinished}
-              handleLeaveSurvey={handleLeaveSurvey}
-            />
-          )} */}
         </div>
       </section>
     );

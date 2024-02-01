@@ -1,5 +1,3 @@
-// Hey I am on visibleIf branch
-
 "use client";
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -117,10 +115,12 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
 
   const handleClearAllLogicData = () => {
     setLogicToCurrentQuestions([]);
-    setQuestions((prevQuestions: any) => {
-      prevQuestions[index]["visibleIf"] = undefined;
-      return [...prevQuestions];
-    });
+    if (currentQuestion.visibleIf && currentQuestion.visibleIf.length > 0) {
+      setQuestions((prevQuestions: any) => {
+        prevQuestions[index]["visibleIf"] = undefined;
+        return [...prevQuestions];
+      });
+    }
   };
 
   const handleLogicConditions = (
@@ -167,22 +167,56 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
     }
   };
 
-  const handleVisibleIf = () => {
-    const visibleIfData: VisibleIf[] = logicToCurrentQuestions.map(
-      (logic: VisibleIf) => ({
-        logicDataId: logic.logicDataId,
-        logicOperator: logic.logicOperator,
-        selectQuestId: logic.selectQuestId,
-        selectedQuestion: logic.selectedQuestion,
-        comparisonOperator: logic.comparisonOperator,
-        answerValue: logic.answerValue,
+  const handleVisibleIf = (onClose: any) => {
+    if (logicToCurrentQuestions.length < 1) {
+      if (currentQuestion.visibleIf && currentQuestion.visibleIf.length > 0) {
+        setQuestions((prevQuestions: any) => {
+          prevQuestions[index]["visibleIf"] = undefined;
+          return [...prevQuestions];
+        });
+        onClose();
+      }
+      return;
+    }
+    const isDisabled =
+      logicToCurrentQuestions &&
+      // logicToCurrentQuestions.length > 0 &&
+      logicToCurrentQuestions.every((logic: VisibleIf) => {
+        if (logic.selectQuestId !== undefined) {
+          if (
+            logic.comparisonOperator !== "empty" &&
+            logic.comparisonOperator !== "notempty"
+          ) {
+            return logic.answerValue !== undefined;
+          } else {
+            return true;
+          }
+        }
+        return false;
       })
-    );
-    setQuestions((prevQuestions: any) => {
-      prevQuestions[index]["visibleIf"] = visibleIfData;
-      return [...prevQuestions];
-    });
-    setLogicToCurrentQuestions([]);
+        ? false
+        : true;
+
+    if (!isDisabled && logicToCurrentQuestions.length > 0) {
+      const visibleIfData: VisibleIf[] = logicToCurrentQuestions.map(
+        (logic: VisibleIf) => ({
+          logicDataId: logic.logicDataId,
+          logicOperator: logic.logicOperator,
+          selectQuestId: logic.selectQuestId,
+          selectedQuestion: logic.selectedQuestion,
+          comparisonOperator: logic.comparisonOperator,
+          answerValue: logic.answerValue,
+        })
+      );
+      setQuestions((prevQuestions: any) => {
+        prevQuestions[index]["visibleIf"] = visibleIfData;
+        return [...prevQuestions];
+      });
+      setLogicToCurrentQuestions([]);
+      onClose();
+    } else {
+      return;
+    }
   };
 
   const handleCancelLogic = () => {
@@ -598,31 +632,34 @@ const ConditionalLogicEditor = ({ index }: { index: number }) => {
                 <Button
                   className="col-span-2"
                   color="primary"
-                  onPress={onClose}
+                  onPress={() => handleVisibleIf(onClose)}
                   variant="shadow"
                   radius="sm"
-                  onClick={handleVisibleIf}
-                  isDisabled={
-                    logicToCurrentQuestions &&
-                    logicToCurrentQuestions.length > 0 &&
-                    logicToCurrentQuestions.every((logic: VisibleIf) => {
-                      if (logic.selectQuestId !== undefined) {
-                        if (
-                          logic.comparisonOperator !== "empty" &&
-                          logic.comparisonOperator !== "notempty"
-                        ) {
-                          return logic.answerValue !== undefined;
-                        } else {
-                          return true;
-                        }
-                      }
-                      return false;
-                    })
-                      ? false
-                      : true
-                  }
+                  // onClick={}
+                  // isDisabled={
+                  //   logicToCurrentQuestions &&
+                  //   // logicToCurrentQuestions.length > 0 &&
+                  //   logicToCurrentQuestions.every((logic: VisibleIf) => {
+                  //     if (logic.selectQuestId !== undefined) {
+                  //       if (
+                  //         logic.comparisonOperator !== "empty" &&
+                  //         logic.comparisonOperator !== "notempty"
+                  //       ) {
+                  //         return logic.answerValue !== undefined;
+                  //       } else {
+                  //         return true;
+                  //       }
+                  //     }
+                  //     return false;
+                  //   })
+                  //     ? false
+                  //     : true
+                  // }
                 >
-                  {currentQuestion.visibleIf ? "Update Logic" : "Apply Logic"}
+                  {currentQuestion.visibleIf &&
+                  currentQuestion.visibleIf?.length > 0
+                    ? "Update Logic"
+                    : "Apply Logic"}
                 </Button>
               </ModalFooter>
             </>

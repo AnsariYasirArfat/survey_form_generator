@@ -85,7 +85,7 @@ export default function NavigationBar() {
             Preview
           </Link>
         </NavbarItem>
-        <NavbarItem
+        {/* <NavbarItem
           className={`${
             path === "/json" && "rounded-md bg-blue-300 py-1 px-3"
           }`}
@@ -97,7 +97,7 @@ export default function NavigationBar() {
           >
             Json
           </Link>
-        </NavbarItem>
+        </NavbarItem> */}
         <NavbarItem
           className={`${
             path === "/usermode" && "rounded-md bg-blue-300 py-1 px-3"
