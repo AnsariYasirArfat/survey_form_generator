@@ -20,7 +20,9 @@ import {
 import Image from "next/image";
 import SurveyLogo from "../assests/survey-form.png";
 import { SearchIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 export default function NavigationBar() {
+  const path = usePathname();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
@@ -46,7 +48,7 @@ export default function NavigationBar() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <Link href="/">
+          <Link href="/" className={`${path === "/" && "pointer-events-none"}`}>
             <Image src={SurveyLogo} alt={"survey-logo"} width="36" />
             <p className="font-bold text-inherit text-xl text-center !text-blue-400">
               Questionnaire?
@@ -56,16 +58,58 @@ export default function NavigationBar() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem isActive>
-          <Link href="/design">Design-Survey</Link>
+        <NavbarItem
+          className={`${
+            path === "/design" && "rounded-md bg-blue-300 py-1 px-3"
+          }`}
+          isActive={path === "/design"}
+        >
+          <Link
+            href="/design"
+            className={`${path === "/design" && "pointer-events-none "}`}
+          >
+            Design-Survey
+          </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link href="/preview" aria-current="page">
+        <NavbarItem
+          className={`${
+            path === "/preview" && "rounded-md bg-blue-300 py-1 px-3"
+          }`}
+          isActive={path === "/preview"}
+        >
+          <Link
+            href="/preview"
+            className={`${path === "/preview" && "pointer-events-none "}`}
+            aria-current="page"
+          >
             Preview
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link href="json">Json</Link>
+        <NavbarItem
+          className={`${
+            path === "/json" && "rounded-md bg-blue-300 py-1 px-3"
+          }`}
+          isActive={path === "/json"}
+        >
+          <Link
+            href="json"
+            className={`${path === "/json" && "pointer-events-none "}`}
+          >
+            Json
+          </Link>
+        </NavbarItem>
+        <NavbarItem
+          className={`${
+            path === "/usermode" && "rounded-md bg-blue-300 py-1 px-3"
+          }`}
+          isActive={path === "/usermode"}
+        >
+          <Link
+            href="usermode"
+            className={`${path === "/usermode" && "pointer-events-none "}`}
+          >
+            User-Mode
+          </Link>
         </NavbarItem>
         <Input
           classNames={{

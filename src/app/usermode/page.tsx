@@ -1,12 +1,11 @@
 import SurveyFormUsers from "@/components/UserSide/SurveyFormUsers";
-import React from "react";
 
-const Preview = () => {
+const page = () => {
   return (
     <div className="h-[90vh] p-2">
-      <SurveyFormUsers userMode={false} />
+      <SurveyFormUsers userMode={true} />
     </div>
   );
 };
 
-export default Preview;
+export default page;

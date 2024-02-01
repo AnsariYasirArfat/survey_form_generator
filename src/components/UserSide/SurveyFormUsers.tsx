@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { MoveRight } from "lucide-react";
 import SurveyLeaveModel from "./models/SurveyLeaveModel";
 
-const SurveyFormUsers = () => {
+const SurveyFormUsers = ({ userMode }: { userMode: boolean }) => {
   const [rawSurveyData, setRawSurveyData] = useState<SurveyForm>({
     name: "",
     questions: [],
@@ -239,8 +239,8 @@ const SurveyFormUsers = () => {
   };
 
   useEffect(() => {
-    scrollHandle(generatedUserQuestionId);
-  }, [generatedUserQuestionId]);
+    scrollHandle(questionsQueue[0]?.userQuestionId);
+  }, [generatedUserQuestionId, questionsQueue]);
 
   const surveyWelcomeComponent = () => {
     return (
@@ -303,7 +303,7 @@ const SurveyFormUsers = () => {
                 }}
                 className="flex gap-2 text-base font-semibold text-white rounded-md transition duration-300"
               >
-                Preview Survey Again
+                {userMode ? `Retake Survey` : `Preview Survey Again`}
                 <MoveRight size={"18"} />
               </Button>
             )}
@@ -316,32 +316,67 @@ const SurveyFormUsers = () => {
   const surveyFormComponent = () => {
     return (
       <section className="h-full grid grid-cols-12 gap-4 justify-center items-center ">
-        <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">
-          <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
-            Questions seen
-          </h1>
-          <Listbox
-            aria-label="Listbox Variants"
-            color={"primary"}
-            variant={"light"}
-            classNames={{
-              base: "row-span-11 h-full overflow-auto",
-              emptyContent: "text-lg text-center self-center",
-            }}
-            itemClasses={{ title: "font-semibold text-center text-base" }}
-            emptyContent={"Add some questions..."}
-          >
-            {userQuestionList.map((question, index) => (
-              <ListboxItem
-                onPress={() => scrollHandle(question.userQuestionId)}
-                key={`${question.userQuestionId}`}
-              >
-                {`Question ${index + 1}`}
-              </ListboxItem>
-            ))}
-          </Listbox>
-        </aside>
-        <div className="grid grid-rows-12 gap-4 overflow-auto h-full col-span-10 pe-1">
+        {!userMode && (
+          <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">
+            <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
+              Questions seen
+            </h1>
+            <Listbox
+              aria-label="Listbox Variants"
+              color={"primary"}
+              variant={"light"}
+              classNames={{
+                base: "row-span-11 h-full overflow-auto",
+                emptyContent: "text-lg text-center self-center",
+              }}
+              itemClasses={{ title: "font-semibold text-center text-base" }}
+              emptyContent={"Add some questions..."}
+            >
+              {userQuestionList.map((question, index) => (
+                <ListboxItem
+                  onPress={() => scrollHandle(question.userQuestionId)}
+                  key={`${question.userQuestionId}`}
+                >
+                  {`Question ${index + 1}`}
+                </ListboxItem>
+              ))}
+            </Listbox>
+          </aside>
+        )}
+        {userMode && questionsQueue.length < 1 && (
+          <aside className="col-span-2 grid grid-rows-12 overflow-auto w-full h-full bg-blue-50 shadow-xl border-small rounded-small border-default-200 dark:border-default-100">
+            <h1 className="row-span-1 font-bold text-sm text-center text-blue-400 m-1 p-2 self-center bg-blue-200 rounded-small shadow-lg">
+              Survey responses
+            </h1>
+            <Listbox
+              aria-label="Listbox Variants"
+              color={"primary"}
+              variant={"light"}
+              classNames={{
+                base: "row-span-11 h-full overflow-auto",
+                emptyContent: "text-lg text-center self-center",
+              }}
+              itemClasses={{ title: "font-semibold text-center text-base" }}
+              emptyContent={"Add some questions..."}
+            >
+              {userQuestionList.map((question, index) => (
+                <ListboxItem
+                  onPress={() => scrollHandle(question.userQuestionId)}
+                  key={`${question.userQuestionId}`}
+                >
+                  {`Question ${index + 1}`}
+                </ListboxItem>
+              ))}
+            </Listbox>
+          </aside>
+        )}
+        <div
+          className={`grid grid-rows-12 gap-4 overflow-auto w-full h-full  pe-1 ${
+            userMode && questionsQueue.length > 0
+              ? "col-span-12 "
+              : "col-span-10"
+          }`}
+        >
           <div className="row-span-2 grid grid-cols-12 justify-center items-center bg-blue-50 shadow-lg p-4 rounded-xl">
             <h1 className="col-span-10 text-center text-2xl font-bold text-blue-600">
               {rawSurveyData.name
@@ -357,6 +392,7 @@ const SurveyFormUsers = () => {
             </div>
           </div>
           <AdminPreview
+            userMode={userMode}
             userQuestionList={userQuestionList}
             setUserQuestionList={setUserQuestionList}
             questionsQueue={questionsQueue}
@@ -365,6 +401,27 @@ const SurveyFormUsers = () => {
             setIsSurveyFinished={setIsSurveyFinished}
             handleLeaveSurvey={handleLeaveSurvey}
           />
+          {/* {userMode ? (
+            <UserQuestionMode
+              userQuestionList={userQuestionList}
+              setUserQuestionList={setUserQuestionList}
+              questionsQueue={questionsQueue}
+              setQuestionsQueue={setQuestionsQueue}
+              dequeue={dequeue}
+              setIsSurveyFinished={setIsSurveyFinished}
+              handleLeaveSurvey={handleLeaveSurvey}
+            />
+          ) : (
+            <AdminPreview
+              userQuestionList={userQuestionList}
+              setUserQuestionList={setUserQuestionList}
+              questionsQueue={questionsQueue}
+              setQuestionsQueue={setQuestionsQueue}
+              dequeue={dequeue}
+              setIsSurveyFinished={setIsSurveyFinished}
+              handleLeaveSurvey={handleLeaveSurvey}
+            />
+          )} */}
         </div>
       </section>
     );

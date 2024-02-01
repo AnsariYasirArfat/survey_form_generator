@@ -10,42 +10,41 @@
 // import { Question } from "@/types/questions";
 // import { MoveRight } from "lucide-react";
 
-// const QuestionUser = ({ userSurvey }: any) => {
+// const UserQuestionMode = ({
+//   userQuestionList,
+//   setUserQuestionList,
+//   questionsQueue,
+//   setQuestionsQueue,
+//   dequeue,
+//   setIsSurveyFinished,
+//   handleLeaveSurvey,
+// }: any) => {
 //   const [questionNumber, setQuestionNumber] = useState(0);
-//   const [currentQuestion, setCurrentQuestion] = useState(
-//     userSurvey.questions[questionNumber]
-//   );
 
 //   const handleNextQuesiton = () => {
-//     if (userSurvey.questions.length > questionNumber) {
-//       setQuestionNumber((prev) => prev + 1);
-//     }
-//   };
 
-//   useEffect(() => {
-//     setCurrentQuestion(userSurvey.questions[questionNumber]);
-//   }, [questionNumber, userSurvey.questions]);
+//   };
 
 //   const userAnswerField = (question: Question) => {
 //     switch (question!.type) {
 //       case "singleinput":
-//         return <SingleInput question={question} />;
+//       // return <SingleInput question={question} />;
 
 //       case "textarea":
-//         return <LongText question={question} />;
+//       // return <LongText question={question} />;
 
 //       case "radiogroup":
-//         return <RadioGroup question={question} />;
+//       // return <RadioGroup question={question} />;
 
 //       case "checkboxes":
-//         return <CheckBoxes question={question} />;
+//       // return <CheckBoxes question={question} />;
 
 //       case "boolean":
-//         return <Boolean question={question} />;
+//       // return <Boolean question={question} />;
 
 //       case "ratingscale":
-//         return <RatingScale question={question} />;
-
+//       // return <RatingScale question={question} />;
+//       //
 //       default:
 //         return <DefaultAnswer />;
 //     }
@@ -101,4 +100,4 @@
 //   );
 // };
 
-// export default QuestionUser;
+// export default UserQuestionMode;

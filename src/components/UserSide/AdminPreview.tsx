@@ -18,9 +18,8 @@ const AdminPreview = ({
   dequeue,
   setIsSurveyFinished,
   handleLeaveSurvey,
+  userMode,
 }: any) => {
-  // const [questionNumber, setQuestionNumber] = useState(1);
-
   const handleNextQuesiton = () => {
     if (
       questionsQueue.length > 0 &&
@@ -129,67 +128,111 @@ const AdminPreview = ({
   };
   return (
     <div className="row-span-10 h-full overflow-auto p-4 flex flex-col justify-between items-center rounded-xl bg-blue-50">
-      {/* {!isSurveyFinished ? ( */}
       <div className="relative w-full h-full overflow-auto ">
         <div className="w-full h-full overflow-auto p-2">
-          <div
-            className={`w-full bg-blue-50 gap-2 ${
-              questionsQueue.length < 1 && "mb-16"
-            }`}
-          >
-            {userQuestionList.map((question: QueueQuestion, index: number) => {
-              // const isLastItem = userQuestionList.length - 1 === index;
-              return (
-                <Card
-                  id={question.userQuestionId}
-                  key={`${question?.parentQuestion?.questionId}-${index}`}
-                  className="w-full bg-blue-300 mb-4 shadow-none"
-                >
-                  <CardHeader className="flex items-center gap-4 pointer-events-none">
-                    <Chip
-                      color="primary"
-                      // size="lg"
-                      radius="sm"
-                      variant="shadow"
-                      className="place-self-center self-start"
+          {!userMode && (
+            <div
+              className={`w-full bg-blue-50 gap-2 ${
+                questionsQueue.length < 1 && "mb-16"
+              }`}
+            >
+              {userQuestionList.map(
+                (question: QueueQuestion, index: number) => {
+                  return (
+                    <Card
+                      id={question.userQuestionId}
+                      key={`${question?.parentQuestion?.questionId}-${index}`}
+                      className="w-full bg-blue-300 mb-4 shadow-none"
                     >
-                      {`Question ${index + 1}`}
-                    </Chip>
-                    <div className="flex ">
-                      <h1 className="self-center text-base font-semibold text-blue-800">
-                        {`${question?.parentQuestion?.title}`}
-                        {question.parentQuestion?.isRequired && (
-                          <span className="text-red-500 font-bold text-xl">
-                            *
-                          </span>
-                        )}
-                      </h1>
-                    </div>
-                  </CardHeader>
+                      <CardHeader className="flex items-center gap-4 pointer-events-none">
+                        <Chip
+                          color="primary"
+                          radius="sm"
+                          variant="shadow"
+                          className="place-self-center self-start"
+                        >
+                          {`Question ${index + 1}`}
+                        </Chip>
+                        <div className="flex ">
+                          <h1 className="self-center text-base font-semibold text-blue-800">
+                            {`${question?.parentQuestion?.title}`}
+                            {question.parentQuestion?.isRequired && (
+                              <span className="text-red-500 font-bold text-xl">
+                                *
+                              </span>
+                            )}
+                          </h1>
+                        </div>
+                      </CardHeader>
 
-                  <CardBody
-                    // style={{ pointerEvents: "none", opacity: 0.7 }}
-                    className={`p-3 pointer-events-none`}
-                  >
-                    <div className="rounded-md bg-blue-100">
-                      {userAnswerField(question, index, false)}
-                    </div>
-                  </CardBody>
-                </Card>
-              );
-            })}
-          </div>
-          <div className="w-full ">
-            {questionsQueue.length > 0 && (
-              <Card
-                id={questionsQueue[0].userQuestionId}
-                // key={`${question?.parentQuestion?.questionId}-${index}`}
-                className="w-full bg-blue-300 shadow-none border-2 border-blue-400 mb-16"
-              >
+                      <CardBody className={`p-3 pointer-events-none`}>
+                        <div className="rounded-md bg-blue-100">
+                          {userAnswerField(question, index, false)}
+                        </div>
+                      </CardBody>
+                    </Card>
+                  );
+                }
+              )}
+            </div>
+          )}
+          {userMode && questionsQueue.length < 1 && (
+            <div
+              className={`w-full bg-blue-50 gap-2 ${
+                questionsQueue.length < 1 && "mb-16"
+              }`}
+            >
+              {userQuestionList.map(
+                (question: QueueQuestion, index: number) => {
+                  return (
+                    <Card
+                      id={question.userQuestionId}
+                      key={`${question?.parentQuestion?.questionId}-${index}`}
+                      className="w-full bg-blue-300 mb-4 shadow-none"
+                    >
+                      <CardHeader className="flex items-center gap-4 pointer-events-none">
+                        <Chip
+                          color="primary"
+                          radius="sm"
+                          variant="shadow"
+                          className="place-self-center self-start"
+                        >
+                          {`Question ${index + 1}`}
+                        </Chip>
+                        <div className="flex ">
+                          <h1 className="self-center text-base font-semibold text-blue-800">
+                            {`${question?.parentQuestion?.title}`}
+                            {question.parentQuestion?.isRequired && (
+                              <span className="text-red-500 font-bold text-xl">
+                                *
+                              </span>
+                            )}
+                          </h1>
+                        </div>
+                      </CardHeader>
+
+                      <CardBody className={`p-3 pointer-events-none`}>
+                        <div className="rounded-md bg-blue-100">
+                          {userAnswerField(question, index, false)}
+                        </div>
+                      </CardBody>
+                    </Card>
+                  );
+                }
+              )}
+            </div>
+          )}
+          {questionsQueue.length > 0 && (
+            <div
+              className={`w-full ${
+                userMode && "h-full overflow-auto flex justify-center"
+              }`}
+              id={questionsQueue[0].userQuestionId}
+            >
+              <Card className="w-full bg-blue-300 shadow-none border-2 border-blue-400 mb-16 ">
                 <CardHeader className="flex items-center gap-4 pointer-events-none">
                   <Chip
                     color="primary"
-                    // size="lg"
                     radius="sm"
                     variant="shadow"
                     className="place-self-center self-start"
@@ -207,17 +250,18 @@ const AdminPreview = ({
                     </h1>
                   </div>
                 </CardHeader>
-                <CardBody
-                  // style={{ pointerEvents: "none", opacity: 0.7 }}
-                  className={`p-3`}
-                >
-                  <div className="rounded-md bg-blue-100">
+                <CardBody className={`p-3`}>
+                  <div
+                    className={`rounded-md bg-blue-100 ${
+                      userMode && `my-auto`
+                    }`}
+                  >
                     {userAnswerField(questionsQueue[0], 0, true)}
                   </div>
                 </CardBody>
               </Card>
-            )}
-          </div>
+            </div>
+          )}
         </div>
         {questionsQueue.length < 1 ? (
           <div className="absolute bottom-4 right-4 w-full ">
@@ -233,7 +277,7 @@ const AdminPreview = ({
             </Button>
           </div>
         ) : (
-          <div className="absolute bottom-4 right-4 w-full ">
+          <div className="absolute bottom-4 right-4 w-full">
             <Button
               size="sm"
               onClick={handleNextQuesiton}
@@ -247,13 +291,6 @@ const AdminPreview = ({
           </div>
         )}
       </div>
-      {/* ) : (
-        <div className="h-full flex justify-center items-center">
-          <h1 className="text-center text-2xl font-semibold text-blue-400">
-            Thank you for taking this Survey
-          </h1>
-        </div>
-      )} */}
     </div>
   );
 };
