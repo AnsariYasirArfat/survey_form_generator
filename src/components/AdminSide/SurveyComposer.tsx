@@ -56,14 +56,14 @@ const SurveyComposer = () => {
               <div className="flex items-center gap-4">
                 <h3> {question.name}</h3>
                 {question.visibleIf && question.visibleIf?.length > 0 && (
-                  <>
-                    <Tooltip content={"Logic Applied"}>
-                      <Network size={`14`} color="green" />
-                    </Tooltip>
-                    <Tooltip content="Question is Required">
-                      <Asterisk size={`16`} color={`red`} />
-                    </Tooltip>
-                  </>
+                  <Tooltip content={"Logic Applied"}>
+                    <Network size={`14`} color="green" />
+                  </Tooltip>
+                )}{" "}
+                {question && question.isRequired && (
+                  <Tooltip content="Question is Required">
+                    <Asterisk size={`16`} color={`red`} />
+                  </Tooltip>
                 )}
               </div>
             </ListboxItem>
